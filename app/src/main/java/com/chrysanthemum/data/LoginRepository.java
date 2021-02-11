@@ -1,6 +1,6 @@
 package com.chrysanthemum.data;
 
-import com.chrysanthemum.data.model.LoggedInUser;
+import com.chrysanthemum.data.model.AuthenticationListener;
 
 /**
  * Class that requests authentication and user information from the remote data source and
@@ -10,18 +10,18 @@ public class LoginRepository {
 
     private static volatile LoginRepository instance;
 
-    private LoginDataSource dataSource;
+    private FireBaseAuthenticator dataSource;
 
     // If user credentials will be cached in local storage, it is recommended it be encrypted
     // @see https://developer.android.com/training/articles/keystore
-    private LoggedInUser user = null;
+
 
     // private constructor : singleton access
-    private LoginRepository(LoginDataSource dataSource) {
+    private LoginRepository(FireBaseAuthenticator dataSource) {
         this.dataSource = dataSource;
     }
 
-    public static LoginRepository getInstance(LoginDataSource dataSource) {
+    public static LoginRepository getInstance(FireBaseAuthenticator dataSource) {
         if (instance == null) {
             instance = new LoginRepository(dataSource);
         }
@@ -29,26 +29,20 @@ public class LoginRepository {
     }
 
     public boolean isLoggedIn() {
-        return user != null;
+        //TODO
+        return true;
     }
 
-    public void logout() {
-        user = null;
-        dataSource.logout();
+    private void setLoggedInUser() {
+        //TODO
     }
 
-    private void setLoggedInUser(LoggedInUser user) {
-        this.user = user;
-        // If user credentials will be cached in local storage, it is recommended it be encrypted
-        // @see https://developer.android.com/training/articles/keystore
+    public void requestAccess(AuthenticationListener al, String username, String password) {
+        dataSource.requestAccess(al, username, password);
     }
 
-    public Result<LoggedInUser> login(String username, String password) {
-        // handle login
-        Result<LoggedInUser> result = dataSource.login(username, password);
-        if (result instanceof Result.Success) {
-            setLoggedInUser(((Result.Success<LoggedInUser>) result).getData());
-        }
-        return result;
+    public void releaseAccess() {
+        dataSource.releaseAccess();
     }
+
 }

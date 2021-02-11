@@ -1,4 +1,4 @@
-package com.chrysanthemum.ui.login;
+package com.chrysanthemum.ui.accessAuthentication;
 
 import android.app.Activity;
 
@@ -21,24 +21,24 @@ import android.widget.Toast;
 
 import com.chrysanthemum.R;
 
-public class LoginActivity extends AppCompatActivity {
+public class AppAuthenticationActivity extends AppCompatActivity {
 
-    private LoginViewModel loginViewModel;
+    private AccessAuthenticationViewModel loginViewModel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory()).get(LoginViewModel.class);
+        loginViewModel = new ViewModelProvider(this, new AccessAuthenticationViewModelFactory()).get(AccessAuthenticationViewModel.class);
 
         final EditText usernameEditText = findViewById(R.id.username);
         final EditText passwordEditText = findViewById(R.id.password);
         final Button loginButton = findViewById(R.id.login);
         final ProgressBar loadingProgressBar = findViewById(R.id.loading);
 
-        loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
+        loginViewModel.getLoginFormState().observe(this, new Observer<AuthenticationFormState>() {
             @Override
-            public void onChanged(LoginFormState loginFormState) {
+            public void onChanged(AuthenticationFormState loginFormState) {
                 if (loginFormState == null) {
                     return;
                 }
@@ -52,20 +52,29 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        loginViewModel.getLoginResult().observe(this, new Observer<LoginResult>() {
+        System.out.println("F");
+
+        loginViewModel.getLoginResult().observe(this, new Observer<AccessAuthenticationResult>() {
             @Override
-            public void onChanged(LoginResult loginResult) {
+            public void onChanged(AccessAuthenticationResult loginResult) {
+
+                System.out.println("A");
+
                 if (loginResult == null) {
+                    System.out.println("B");
                     return;
                 }
                 loadingProgressBar.setVisibility(View.GONE);
                 if (loginResult.getError() != null) {
+                    System.out.println("C");
                     showLoginFailed(loginResult.getError());
                 }
-                if (loginResult.getSuccess() != null) {
-                    updateUiWithUser(loginResult.getSuccess());
+                if (loginResult.getSuccess()) {
+                    System.out.println("D");
+                    updateUiWithUser();
                 }
                 setResult(Activity.RESULT_OK);
+                System.out.println("e");
 
                 //Complete and destroy login activity once successful
                 finish();
@@ -113,8 +122,8 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    private void updateUiWithUser(LoggedInUserView model) {
-        String welcome = getString(R.string.welcome) + model.getDisplayName();
+    private void updateUiWithUser() {
+        String welcome = getString(R.string.welcome);
         // TODO : initiate successful logged in experience
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
     }
