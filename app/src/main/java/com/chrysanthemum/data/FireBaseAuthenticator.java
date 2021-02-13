@@ -5,7 +5,6 @@ import androidx.annotation.NonNull;
 import com.chrysanthemum.data.model.AuthenticationListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -14,8 +13,6 @@ import com.google.firebase.auth.FirebaseAuth;
  */
 public class FireBaseAuthenticator {
 
-    protected void init(){
-    }
 
     protected void requestAccess(AuthenticationListener al, String username, String password) {
         final AuthenticationListener auth = al;
