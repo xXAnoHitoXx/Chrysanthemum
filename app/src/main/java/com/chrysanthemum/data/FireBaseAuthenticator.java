@@ -1,5 +1,7 @@
 package com.chrysanthemum.data;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 import com.chrysanthemum.data.model.AuthenticationListener;
@@ -17,7 +19,7 @@ public class FireBaseAuthenticator {
     protected void requestAccess(AuthenticationListener al, String username, String password) {
         final AuthenticationListener auth = al;
 
-        FirebaseAuth.getInstance().createUserWithEmailAndPassword(username, password)
+        FirebaseAuth.getInstance().signInWithEmailAndPassword(username, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
 
 
@@ -26,6 +28,7 @@ public class FireBaseAuthenticator {
                         if (task.isSuccessful()) {
                             auth.accessGranted();
                         } else {
+                            Log.w("signInWithEmail:failure", task.getException());
                             auth.accessDenied();
                         }
 

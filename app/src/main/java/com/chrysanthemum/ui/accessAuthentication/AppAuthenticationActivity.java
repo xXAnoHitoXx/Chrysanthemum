@@ -20,6 +20,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chrysanthemum.R;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class AppAuthenticationActivity extends AppCompatActivity {
 
@@ -58,26 +62,18 @@ public class AppAuthenticationActivity extends AppCompatActivity {
             @Override
             public void onChanged(AccessAuthenticationResult loginResult) {
 
-                System.out.println("A");
-
                 if (loginResult == null) {
-                    System.out.println("B");
                     return;
                 }
                 loadingProgressBar.setVisibility(View.GONE);
                 if (loginResult.getError() != null) {
-                    System.out.println("C");
                     showLoginFailed(loginResult.getError());
                 }
                 if (loginResult.getSuccess()) {
-                    System.out.println("D");
                     updateUiWithUser();
+                    setResult(Activity.RESULT_OK);
+                    finish();
                 }
-                setResult(Activity.RESULT_OK);
-                System.out.println("e");
-
-                //Complete and destroy login activity once successful
-                finish();
             }
         });
 
@@ -120,6 +116,8 @@ public class AppAuthenticationActivity extends AppCompatActivity {
                         passwordEditText.getText().toString());
             }
         });
+
+        initialization();
     }
 
     private void updateUiWithUser() {
@@ -130,5 +128,16 @@ public class AppAuthenticationActivity extends AppCompatActivity {
 
     private void showLoginFailed(Integer errorString) {
         Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
+    }
+
+    private void initialization(){
+        FirebaseOptions.Builder builder = new FirebaseOptions.Builder()
+                .setApplicationId("1:151385711114:android:bd433037e98f367fcef5f3")
+                .setApiKey(" AIzaSyDZq3TRh2t366xuuE4tMW9fIDIMTN0bQIs")
+                .setDatabaseUrl("https://chrysanthemumdb-default-rtdb.firebaseio.com/")
+                .setStorageBucket("gs://chrysanthemumdb.appspot.com");
+        FirebaseApp.initializeApp(this, builder.build());
+
+
     }
 }
