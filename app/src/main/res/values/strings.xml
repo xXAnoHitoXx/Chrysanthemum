@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Chrysanthemum Spa</string>
-    <!-- Strings related to login -->
+
+    <!-- Strings related to access permission -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in_short">Sign in</string>
@@ -10,4 +11,7 @@
     <string name="login_failed">"Login failed"</string>
     <string name="action_sign_in">Sign in</string>
     <string name="title_activity_technician_login">TechnicianLogin</string>
+
+    <!-- Strings related to login -->
+
 </resources>
