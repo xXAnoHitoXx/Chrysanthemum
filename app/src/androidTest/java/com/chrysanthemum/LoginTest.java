@@ -26,14 +26,6 @@ public class LoginTest {
     public ActivityScenarioRule<AppAuthenticationActivity> activityRule =
             new ActivityScenarioRule<>(AppAuthenticationActivity.class);
 
-    @Before
-    public void pretest(){
-        SecurityModule sm = DatabaseModule.getInstance().getSecurityModule();
-        sm.releaseAccess();
-        activityRule =
-                new ActivityScenarioRule<>(AppAuthenticationActivity.class);
-    }
-
     @Test
     public void testAccessPermissionCorrectPassword() throws InterruptedException {
         SecurityModule sm = DatabaseModule.getInstance().getSecurityModule();
