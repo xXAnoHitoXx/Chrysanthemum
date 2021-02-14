@@ -43,6 +43,7 @@ public class LoginRepository extends SecurityModule {
     }
 
     public void releaseAccess() {
+        super.releaseAccess();
         FirebaseAuth.getInstance().signOut();
     }
 }

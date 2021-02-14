@@ -38,4 +38,8 @@ public abstract class SecurityModule {
     public void blockAccess(){
         accessToken.setValue(AccessState.blocked);
     }
+
+    public boolean hasDBAccess(){
+        return accessToken.getValue() == AccessState.hasAccess;
+    }
 }

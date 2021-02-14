@@ -57,21 +57,20 @@ public class AppAuthenticationActivity extends AppCompatActivity {
             }
         });
 
-        System.out.println("F");
 
-        DatabaseModule.getInstance().getLoginModule().observeAccessToken(this, new Observer<SecurityModule.AccessState>() {
+        DatabaseModule.getInstance().getSecurityModule().observeAccessToken(this, new Observer<SecurityModule.AccessState>() {
             @Override
             public void onChanged(SecurityModule.AccessState loginResult) {
 
                 loadingProgressBar.setVisibility(View.GONE);
-                if (loginResult == SecurityModule.AccessState.hasAccess) {
-                    showLoginFailed();
-                }
-
                 if (loginResult == SecurityModule.AccessState.noAccess) {
-                    updateUiWithUser();
+                    showLoginFailed();
                     setResult(Activity.RESULT_OK);
                     finish();
+                }
+
+                if (loginResult == SecurityModule.AccessState.hasAccess) {
+                    updateUiWithUser();
                 }
             }
         });

@@ -15,7 +15,7 @@ public class DatabaseModule {
     public static void init(Context context){
         if(database == null){
             database = new DatabaseModule();
-            database.setLoginModule(new LoginRepository());
+            database.setSecurityModule(new LoginRepository());
             new FirebaseInitializer().initialization(context);
         }
     }
@@ -35,11 +35,11 @@ public class DatabaseModule {
 
     private SecurityModule logRepo;
 
-    private void setLoginModule(SecurityModule repo){
+    private void setSecurityModule(SecurityModule repo){
         logRepo = repo;
     }
 
-    public SecurityModule getLoginModule(){
+    public SecurityModule getSecurityModule(){
         return logRepo;
     }
 
