@@ -2,6 +2,8 @@ package com.chrysanthemum.data;
 
 import android.content.Context;
 
+import androidx.lifecycle.Observer;
+
 import com.chrysanthemum.firebase.FirebaseInitializer;
 import com.chrysanthemum.firebase.LoginRepository;
 
@@ -14,9 +16,11 @@ public class DatabaseModule {
 
     public static void init(Context context){
         if(database == null){
-            database = new DatabaseModule();
-            database.setSecurityModule(new LoginRepository());
             new FirebaseInitializer().initialization(context);
+
+            database = new DatabaseModule();
+
+            database.setSecurityModule(new LoginRepository());
         }
     }
 
