@@ -6,46 +6,24 @@ import androidx.lifecycle.ViewModel;
 
 import android.util.Patterns;
 
-import com.chrysanthemum.data.LoginRepository;
+import com.chrysanthemum.data.DatabaseModule;
 import com.chrysanthemum.R;
-import com.chrysanthemum.data.model.AuthenticationListener;
 
-public class AccessAuthenticationViewModel extends ViewModel {
+class AccessAuthenticationViewModel extends ViewModel {
 
     private MutableLiveData<AuthenticationFormState> loginFormState = new MutableLiveData<>();
-    private MutableLiveData<AccessAuthenticationResult> loginResult = new MutableLiveData<>();
-    private LoginRepository loginRepository;
 
-    AccessAuthenticationViewModel(LoginRepository loginRepository) {
-        this.loginRepository = loginRepository;
-    }
+    AccessAuthenticationViewModel() {}
 
     LiveData<AuthenticationFormState> getLoginFormState() {
         return loginFormState;
     }
 
-    LiveData<AccessAuthenticationResult> getLoginResult() {
-        return loginResult;
+    void login(String username, String password) {
+        DatabaseModule.getInstance().getLoginModule().requestAccess(username, password);
     }
 
-    public void login(String username, String password) {
-
-        loginRepository.requestAccess(new AuthenticationListener(){
-
-            @Override
-            public void accessGranted() {
-                loginResult.setValue(new AccessAuthenticationResult());
-            }
-
-            @Override
-            public void accessDenied() {
-                loginResult.setValue(new AccessAuthenticationResult(R.string.login_failed));
-            }
-
-        },username, password);
-    }
-
-    public void loginDataChanged(String username, String password) {
+    void loginDataChanged(String username, String password) {
         if (!isUserNameValid(username)) {
             loginFormState.setValue(new AuthenticationFormState(R.string.invalid_username, null));
         } else if (!isPasswordValid(password)) {
