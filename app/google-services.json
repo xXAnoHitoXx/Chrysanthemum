@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "151385711114",
+    "firebase_url": "https://chrysanthemumdb-default-rtdb.firebaseio.com",
+    "project_id": "chrysanthemumdb",
+    "storage_bucket": "chrysanthemumdb.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:151385711114:android:bd433037e98f367fcef5f3",
+        "android_client_info": {
+          "package_name": "com.chrysanthemum"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "151385711114-j2rno122ie4qjt0kmjpo520lqfeeqe23.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA8hH9HD2t-vWGP6Vuy1P3c1XtlWUuY2NY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "151385711114-j2rno122ie4qjt0kmjpo520lqfeeqe23.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,14 +1,11 @@
-package com.chrysanthemum.ui.login;
+package com.chrysanthemum.ui.accessAuthentication;
 
 import android.app.Activity;
 
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
-
-import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.text.Editable;
@@ -23,28 +20,30 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chrysanthemum.R;
-import com.chrysanthemum.ui.login.LoginViewModel;
-import com.chrysanthemum.ui.login.LoginViewModelFactory;
+import com.chrysanthemum.data.DatabaseModule;
+import com.chrysanthemum.data.SecurityModule;
 
-public class LoginActivity extends AppCompatActivity {
+public class AppAuthenticationActivity extends AppCompatActivity {
 
-    private LoginViewModel loginViewModel;
+    private AccessAuthenticationViewModel loginViewModel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        DatabaseModule.init(getApplicationContext());
+
         setContentView(R.layout.activity_login);
-        loginViewModel = ViewModelProviders.of(this, new LoginViewModelFactory())
-                .get(LoginViewModel.class);
+        loginViewModel = new ViewModelProvider(this, new AccessAuthenticationViewModelFactory()).get(AccessAuthenticationViewModel.class);
 
         final EditText usernameEditText = findViewById(R.id.username);
         final EditText passwordEditText = findViewById(R.id.password);
         final Button loginButton = findViewById(R.id.login);
         final ProgressBar loadingProgressBar = findViewById(R.id.loading);
 
-        loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
+        loginViewModel.getLoginFormState().observe(this, new Observer<AuthenticationFormState>() {
             @Override
-            public void onChanged(@Nullable LoginFormState loginFormState) {
+            public void onChanged(AuthenticationFormState loginFormState) {
                 if (loginFormState == null) {
                     return;
                 }
@@ -58,23 +57,21 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        loginViewModel.getLoginResult().observe(this, new Observer<LoginResult>() {
-            @Override
-            public void onChanged(@Nullable LoginResult loginResult) {
-                if (loginResult == null) {
-                    return;
-                }
-                loadingProgressBar.setVisibility(View.GONE);
-                if (loginResult.getError() != null) {
-                    showLoginFailed(loginResult.getError());
-                }
-                if (loginResult.getSuccess() != null) {
-                    updateUiWithUser(loginResult.getSuccess());
-                }
-                setResult(Activity.RESULT_OK);
 
-                //Complete and destroy login activity once successful
-                finish();
+        DatabaseModule.getInstance().getSecurityModule().observeAccessToken(this, new Observer<SecurityModule.AccessState>() {
+            @Override
+            public void onChanged(SecurityModule.AccessState loginResult) {
+
+                loadingProgressBar.setVisibility(View.GONE);
+                if (loginResult == SecurityModule.AccessState.noAccess) {
+                    showLoginFailed();
+                    setResult(Activity.RESULT_OK);
+                    finish();
+                }
+
+                if (loginResult == SecurityModule.AccessState.hasAccess) {
+                    updateUiWithUser();
+                }
             }
         });
 
@@ -117,15 +114,16 @@ public class LoginActivity extends AppCompatActivity {
                         passwordEditText.getText().toString());
             }
         });
+
     }
 
-    private void updateUiWithUser(LoggedInUserView model) {
-        String welcome = getString(R.string.welcome) + model.getDisplayName();
+    private void updateUiWithUser() {
+        String welcome = getString(R.string.welcome);
         // TODO : initiate successful logged in experience
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
     }
 
-    private void showLoginFailed(@StringRes Integer errorString) {
-        Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
+    private void showLoginFailed() {
+        Toast.makeText(getApplicationContext(), R.string.login_failed, Toast.LENGTH_SHORT).show();
     }
 }
