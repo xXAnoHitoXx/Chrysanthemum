@@ -16,7 +16,6 @@ public class DataStorageModule implements DataStorageFrontEnd, DataStorageBackEn
     public static void init(Context context){
         if(database == null){
             database = new DataStorageModule(context);
-
         }
     }
 

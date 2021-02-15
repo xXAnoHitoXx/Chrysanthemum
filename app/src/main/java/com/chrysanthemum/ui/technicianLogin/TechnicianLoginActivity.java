@@ -10,8 +10,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.view.View;
+import android.widget.LinearLayout;
 
 public class TechnicianLoginActivity extends AppCompatActivity {
+
+    private TechnicianSelectorPanel selectorPanel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +31,10 @@ public class TechnicianLoginActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        LinearLayout layout = findViewById(R.id.colour_panel);
+        selectorPanel = new TechnicianSelectorPanel(this,
+                layout);
     }
 
 }
