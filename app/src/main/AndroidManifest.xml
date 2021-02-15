@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ui.TechnicianLogin.TechnicianLoginActivity"
+            android:name=".ui.technicianLogin.TechnicianLoginActivity"
             android:label="@string/title_activity_technician_login"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity

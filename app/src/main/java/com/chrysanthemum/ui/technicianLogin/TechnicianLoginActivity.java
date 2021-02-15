@@ -1,4 +1,4 @@
-package com.chrysanthemum.ui.TechnicianLogin;
+package com.chrysanthemum.ui.technicianLogin;
 
 import android.os.Bundle;
 

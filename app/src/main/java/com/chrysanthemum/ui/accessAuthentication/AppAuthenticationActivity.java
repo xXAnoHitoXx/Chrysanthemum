@@ -21,9 +21,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chrysanthemum.R;
-import com.chrysanthemum.data.DatabaseModule;
+import com.chrysanthemum.data.DataStorageModule;
 import com.chrysanthemum.data.SecurityModule;
-import com.chrysanthemum.ui.TechnicianLogin.TechnicianLoginActivity;
+import com.chrysanthemum.ui.technicianLogin.TechnicianLoginActivity;
 
 public class AppAuthenticationActivity extends AppCompatActivity {
 
@@ -33,7 +33,7 @@ public class AppAuthenticationActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        DatabaseModule.init(getApplicationContext());
+        DataStorageModule.init(getApplicationContext());
 
         setContentView(R.layout.activity_login);
         loginViewModel = new ViewModelProvider(this, new AccessAuthenticationViewModelFactory()).get(AccessAuthenticationViewModel.class);
@@ -60,7 +60,7 @@ public class AppAuthenticationActivity extends AppCompatActivity {
         });
 
 
-        DatabaseModule.getInstance().getSecurityModule().observeAccessToken(this, new Observer<SecurityModule.AccessState>() {
+        DataStorageModule.getFrontEnd().getSecurityModule().observeAccessToken(this, new Observer<SecurityModule.AccessState>() {
             @Override
             public void onChanged(SecurityModule.AccessState loginResult) {
 
