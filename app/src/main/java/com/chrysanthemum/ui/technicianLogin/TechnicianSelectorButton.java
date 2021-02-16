@@ -6,31 +6,47 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
-import android.view.View;
-import android.view.ViewGroup;
+import android.util.AttributeSet;
 
 import com.chrysanthemum.R;
 import com.chrysanthemum.data.TechnicianIdentifier;
 
 import androidx.core.content.res.ResourcesCompat;
 
-public class TechnicianSelectorButton extends View {
+public class TechnicianSelectorButton extends androidx.appcompat.widget.AppCompatButton {
 
     private boolean selected;
     private TechnicianIdentifier tech;
     private Resources res;
 
+    public TechnicianSelectorButton(Context context){
+        super(context);
+        initButton(context);
+    }
+
     public TechnicianSelectorButton(Context context, TechnicianIdentifier tech){
         super(context);
-        this.setMinimumHeight(100);
-        selected = false;
-        this.tech = tech;
+        initButton(context);
+        setTech(tech);
+    }
 
+    public TechnicianSelectorButton(Context context, AttributeSet set){
+        super(context, set);
+        initButton(context);
+    }
+
+    private void initButton(Context context){
+        selected = false;
+        this.setMinimumHeight(100);
         res = context.getResources();
     }
 
     public void toggle(){
         selected = !selected;
+    }
+
+    public void setTech(TechnicianIdentifier tech){
+        this.tech = tech;
     }
 
     public TechnicianIdentifier getTech(){
@@ -40,9 +56,11 @@ public class TechnicianSelectorButton extends View {
     protected void onDraw(Canvas canvas) {
         this.getButtonBackgroundDrawable().draw(canvas);
 
+        /*
         if(selected){
             getCheckmarkDrawable().draw(canvas);
         }
+         */
     }
 
     private Drawable getButtonBackgroundDrawable() {
