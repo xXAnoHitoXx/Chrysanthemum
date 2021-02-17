@@ -20,8 +20,4 @@ public class TechnicianIdentifier {
     public int getColour(){
         return colour;
     }
-
-    public void setColour(int colour){
-        this.colour = colour;
-    }
 }

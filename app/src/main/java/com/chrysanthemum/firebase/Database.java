@@ -26,8 +26,6 @@ public class Database {
     public void initialization(Context context){
         mDatabase = FirebaseDatabase.getInstance().getReference();
         retrieveTechnicianList();
-
-
     }
 
     public SecurityModule generateSecurityModule(){
@@ -35,7 +33,7 @@ public class Database {
     }
 
     private void retrieveTechnicianList(){
-        mDatabase.child("technicianList").get().addOnCompleteListener(
+        mDatabase.child("technician").child("technicianList").get().addOnCompleteListener(
                 new OnCompleteListener<DataSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DataSnapshot> task) {
