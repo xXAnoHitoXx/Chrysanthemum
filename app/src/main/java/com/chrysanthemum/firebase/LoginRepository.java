@@ -25,7 +25,7 @@ public class LoginRepository extends SecurityModule {
         FireDatabase.getRef().child("app").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(!snapshot.getValue(String.class).equalsIgnoreCase(appName)){
+                if(!appName.equalsIgnoreCase(snapshot.getValue(String.class))){
                     blockAccess();
                 }
             }
@@ -44,6 +44,7 @@ public class LoginRepository extends SecurityModule {
                 .addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
 
             @Override
+            @SuppressWarnings("ConstantConditions")
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 if(task.isSuccessful()){
                     int correctPass = task.getResult().getValue(Integer.class);
