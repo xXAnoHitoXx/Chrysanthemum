@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel;
 
 import android.util.Patterns;
 
-import com.chrysanthemum.data.DataStorageModule;
+import com.chrysanthemum.appdata.DataStorageModule;
 import com.chrysanthemum.R;
 
 class AccessAuthenticationViewModel extends ViewModel {

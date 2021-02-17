@@ -2,11 +2,16 @@ package com.chrysanthemum.firebase;
 
 import androidx.annotation.NonNull;
 
-import com.chrysanthemum.data.SecurityModule;
+import com.chrysanthemum.appdata.security.LoginStatus;
+import com.chrysanthemum.appdata.security.SecurityModule;
+import com.chrysanthemum.appdata.dataType.TechnicianIdentifier;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 /**
  * Class that requests authentication and user information from the remote data source and
@@ -14,16 +19,58 @@ import com.google.firebase.auth.FirebaseAuth;
  */
 public class LoginRepository extends SecurityModule {
 
-    @Override
-    public void login(String email, String password) {
-        //TODO
+    private static final String appName = "BubbleGum";
+
+    public LoginRepository(){
+        FireDatabase.getRef().child("app").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(!appName.equalsIgnoreCase(snapshot.getValue(String.class))){
+                    blockAccess();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 
     @Override
-    public void logout() {
-        //TODO
+    public void login(final TechnicianIdentifier tech, final int password) {
+
+        FireDatabase.getRef().child("technician").child("password").child("" + tech.getID()).get()
+                .addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+
+            @Override
+            @SuppressWarnings("ConstantConditions")
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if(task.isSuccessful()){
+                    int correctPass = Integer.parseInt(task.getResult().getValue(String.class));
+
+                    if(correctPass < 0 || correctPass > 9999){
+                        LoginStatus.noPass.setTech(tech);
+                        updateLoginStatus(LoginStatus.noPass);
+                    } else if(correctPass == password) {
+                        LoginStatus.loggedIn.setTech(tech);
+                        updateLoginStatus(LoginStatus.loggedIn);
+                    } else {
+                        LoginStatus.loggedOut.setTech(tech);
+                        updateLoginStatus(LoginStatus.loggedOut);
+                    }
+                }
+            }
+        });
     }
 
+    @Override
+    public void registerPassword(TechnicianIdentifier tech, int password) {
+        FireDatabase.getRef().child("technician").child("password")
+                .child("" + tech.getID()).setValue( password + "");
+    }
+
+    @Override
     public void requestAccess(String username, String password) {
 
         FirebaseAuth.getInstance().signInWithEmailAndPassword(username, password)
@@ -42,6 +89,7 @@ public class LoginRepository extends SecurityModule {
                 });
     }
 
+    @Override
     public void releaseAccess() {
         super.releaseAccess();
         FirebaseAuth.getInstance().signOut();

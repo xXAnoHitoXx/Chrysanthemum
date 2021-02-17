@@ -12,7 +12,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.chrysanthemum.R;
-import com.chrysanthemum.data.TechnicianIdentifier;
+import com.chrysanthemum.appdata.dataType.TechnicianIdentifier;
 
 import androidx.core.content.res.ResourcesCompat;
 

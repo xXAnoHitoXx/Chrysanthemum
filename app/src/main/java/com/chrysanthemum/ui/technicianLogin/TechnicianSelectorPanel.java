@@ -3,12 +3,13 @@ package com.chrysanthemum.ui.technicianLogin;
 import android.content.Context;
 import android.widget.LinearLayout;
 
-import com.chrysanthemum.data.DataStorageModule;
-import com.chrysanthemum.data.TechnicianIdentifier;
+import com.chrysanthemum.appdata.DataStorageModule;
+import com.chrysanthemum.appdata.dataType.TechnicianIdentifier;
 
 public class TechnicianSelectorPanel {
 
     private TechnicianSelectorButton selected;
+    private boolean locked = false;
 
     protected TechnicianSelectorPanel(Context context, LinearLayout layout){
         selected = null;
@@ -33,12 +34,21 @@ public class TechnicianSelectorPanel {
     }
 
     void changeSelectedTech(TechnicianSelectorButton newTech){
-        if(selected != null){
+        if(!locked){
+            if(selected != null){
+                selected.toggle();
+            }
+
+            selected = newTech;
             selected.toggle();
         }
-
-        selected = newTech;
-        selected.toggle();
     }
 
+    void lock(){
+        locked = true;
+    }
+
+    void unlock(){
+        locked = false;
+    }
 }

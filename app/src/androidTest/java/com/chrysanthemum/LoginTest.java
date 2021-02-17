@@ -2,8 +2,8 @@ package com.chrysanthemum;
 
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 
-import com.chrysanthemum.data.DataStorageModule;
-import com.chrysanthemum.data.SecurityModule;
+import com.chrysanthemum.appdata.DataStorageModule;
+import com.chrysanthemum.appdata.security.SecurityModule;
 import com.chrysanthemum.ui.accessAuthentication.AppAuthenticationActivity;
 
 import org.junit.Rule;

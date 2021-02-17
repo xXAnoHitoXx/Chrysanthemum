@@ -1,21 +1,24 @@
-package com.chrysanthemum.data;
+package com.chrysanthemum.appdata;
 
 import android.content.Context;
 
-import com.chrysanthemum.firebase.Database;
+import com.chrysanthemum.appdata.security.SecurityModule;
+import com.chrysanthemum.appdata.dataType.TechnicianIdentifier;
+import com.chrysanthemum.firebase.FireDatabase;
 
-import java.util.LinkedList;
+import java.util.Map;
 
 /**
- * the database as percived by the logic system
+ * the database as percived by the system,
+ * the central data storage unit
  */
 public class DataStorageModule implements DataStorageFrontEnd, DataStorageBackEnd {
 
     private static volatile DataStorageModule database;
 
-    public static void init(Context context){
+    public static void init(){
         if(database == null){
-            database = new DataStorageModule(context);
+            database = new DataStorageModule();
         }
     }
 
@@ -27,9 +30,9 @@ public class DataStorageModule implements DataStorageFrontEnd, DataStorageBackEn
         return database;
     }
 
-    private DataStorageModule(Context context){
-        Database firebase = new Database();
-        firebase.initialization(context);
+    private DataStorageModule(){
+        FireDatabase firebase = new FireDatabase();
+        firebase.initialization();
 
         this.setSecurityModule(firebase.generateSecurityModule());
     }
@@ -52,13 +55,17 @@ public class DataStorageModule implements DataStorageFrontEnd, DataStorageBackEn
     }
 
     //-----------------------------------------------------------------------------------------------
-    private LinkedList<TechnicianIdentifier> techList;
+    private Map<String, TechnicianIdentifier> techMap;
 
-    public void storeTechList(LinkedList<TechnicianIdentifier> list){
-        techList = list;
+    public void storeTechMap(Map<String, TechnicianIdentifier> techMap){
+        this.techMap = techMap;
     }
 
     public Iterable<TechnicianIdentifier> getTechList(){
-        return techList;
+        return techMap.values();
+    }
+
+    public TechnicianIdentifier getTech(int id){
+        return techMap.get(id + "");
     }
 }

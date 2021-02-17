@@ -12,6 +12,18 @@
     <string name="action_sign_in">Sign in</string>
     <string name="title_activity_technician_login">TechnicianLogin</string>
 
-    <!-- Strings related to login -->
-
+    <!-- Strings related to login number pad -->
+    <string name="num1">1</string>
+    <string name="num2">2</string>
+    <string name="num3">3</string>
+    <string name="num4">4</string>
+    <string name="num5">5</string>
+    <string name="num6">6</string>
+    <string name="num7">7</string>
+    <string name="num8">8</string>
+    <string name="num9">9</string>
+    <string name="num0">0</string>
+    <string name="bkspc">&lt;&lt;&lt;</string>
+    <string name="go">Go!!!!</string>
+    <string name="lockapp">logout</string>
 </resources>
