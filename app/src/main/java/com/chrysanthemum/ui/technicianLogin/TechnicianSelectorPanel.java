@@ -9,6 +9,7 @@ import com.chrysanthemum.appdata.security.TechnicianIdentifier;
 public class TechnicianSelectorPanel {
 
     private TechnicianSelectorButton selected;
+    private boolean locked = false;
 
     protected TechnicianSelectorPanel(Context context, LinearLayout layout){
         selected = null;
@@ -33,12 +34,21 @@ public class TechnicianSelectorPanel {
     }
 
     void changeSelectedTech(TechnicianSelectorButton newTech){
-        if(selected != null){
+        if(!locked){
+            if(selected != null){
+                selected.toggle();
+            }
+
+            selected = newTech;
             selected.toggle();
         }
-
-        selected = newTech;
-        selected.toggle();
     }
 
+    void lock(){
+        locked = true;
+    }
+
+    void unlock(){
+        locked = true;
+    }
 }
