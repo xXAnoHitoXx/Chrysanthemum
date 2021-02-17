@@ -2,11 +2,10 @@ package com.chrysanthemum;
 
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 
-import com.chrysanthemum.data.DatabaseModule;
+import com.chrysanthemum.data.DataStorageModule;
 import com.chrysanthemum.data.SecurityModule;
 import com.chrysanthemum.ui.accessAuthentication.AppAuthenticationActivity;
 
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,7 +27,7 @@ public class LoginTest {
 
     @Test
     public void testAccessPermissionCorrectPassword() throws InterruptedException {
-        SecurityModule sm = DatabaseModule.getInstance().getSecurityModule();
+        SecurityModule sm = DataStorageModule.getFrontEnd().getSecurityModule();
 
         sm.requestAccess("chrysanthemumspa@gmail.com", "Only4988");
 
@@ -39,7 +38,7 @@ public class LoginTest {
 
     @Test
     public void testAccessPermissionWrongPassword() throws InterruptedException {
-        SecurityModule sm = DatabaseModule.getInstance().getSecurityModule();
+        SecurityModule sm = DataStorageModule.getFrontEnd().getSecurityModule();
 
         sm.requestAccess("chrysanthemumspa@gmail.com", "On8");
 

@@ -10,9 +10,23 @@ public abstract class SecurityModule {
         hasAccess, noAccess, blocked
     }
 
-    public abstract void login(String email, String password);
+    public abstract void login(String name, String password);
     public abstract void logout();
     public abstract void requestAccess(String email, String password);
+
+    public SecurityModule(){
+        this.observeAccessToken(null, new Observer<SecurityModule.AccessState>() {
+
+            @Override
+            public void onChanged(SecurityModule.AccessState accessState) {
+                if(accessState == SecurityModule.AccessState.blocked){
+                    logout();
+                    releaseAccess();
+                    System.exit(0);
+                }
+            }
+        });
+    }
 
     /**
      * token representing the app's access to the database

@@ -5,6 +5,7 @@ import android.app.Activity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -20,8 +21,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chrysanthemum.R;
-import com.chrysanthemum.data.DatabaseModule;
+import com.chrysanthemum.data.DataStorageModule;
 import com.chrysanthemum.data.SecurityModule;
+import com.chrysanthemum.ui.technicianLogin.TechnicianLoginActivity;
 
 public class AppAuthenticationActivity extends AppCompatActivity {
 
@@ -31,7 +33,7 @@ public class AppAuthenticationActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        DatabaseModule.init(getApplicationContext());
+        DataStorageModule.init(getApplicationContext());
 
         setContentView(R.layout.activity_login);
         loginViewModel = new ViewModelProvider(this, new AccessAuthenticationViewModelFactory()).get(AccessAuthenticationViewModel.class);
@@ -58,7 +60,7 @@ public class AppAuthenticationActivity extends AppCompatActivity {
         });
 
 
-        DatabaseModule.getInstance().getSecurityModule().observeAccessToken(this, new Observer<SecurityModule.AccessState>() {
+        DataStorageModule.getFrontEnd().getSecurityModule().observeAccessToken(this, new Observer<SecurityModule.AccessState>() {
             @Override
             public void onChanged(SecurityModule.AccessState loginResult) {
 
@@ -119,8 +121,10 @@ public class AppAuthenticationActivity extends AppCompatActivity {
 
     private void updateUiWithUser() {
         String welcome = getString(R.string.welcome);
-        // TODO : initiate successful logged in experience
         Toast.makeText(getApplicationContext(), welcome, Toast.LENGTH_LONG).show();
+
+        Intent intent = new Intent(this, TechnicianLoginActivity.class);
+        startActivity(intent);
     }
 
     private void showLoginFailed() {

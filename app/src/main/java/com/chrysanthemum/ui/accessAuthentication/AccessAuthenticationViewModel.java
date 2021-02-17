@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel;
 
 import android.util.Patterns;
 
-import com.chrysanthemum.data.DatabaseModule;
+import com.chrysanthemum.data.DataStorageModule;
 import com.chrysanthemum.R;
 
 class AccessAuthenticationViewModel extends ViewModel {
@@ -20,7 +20,7 @@ class AccessAuthenticationViewModel extends ViewModel {
     }
 
     void login(String username, String password) {
-        DatabaseModule.getInstance().getSecurityModule().requestAccess(username, password);
+        DataStorageModule.getFrontEnd().getSecurityModule().requestAccess(username, password);
     }
 
     void loginDataChanged(String username, String password) {
