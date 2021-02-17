@@ -2,12 +2,13 @@ package com.chrysanthemum.data;
 
 import android.content.Context;
 
-import com.chrysanthemum.firebase.Database;
+import com.chrysanthemum.firebase.FireDatabase;
 
 import java.util.LinkedList;
 
 /**
- * the database as percived by the logic system
+ * the database as percived by the logic system,
+ * the connector to different modules
  */
 public class DataStorageModule implements DataStorageFrontEnd, DataStorageBackEnd {
 
@@ -28,7 +29,7 @@ public class DataStorageModule implements DataStorageFrontEnd, DataStorageBackEn
     }
 
     private DataStorageModule(Context context){
-        Database firebase = new Database();
+        FireDatabase firebase = new FireDatabase();
         firebase.initialization(context);
 
         this.setSecurityModule(firebase.generateSecurityModule());

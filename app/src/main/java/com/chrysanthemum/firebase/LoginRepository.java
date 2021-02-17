@@ -7,6 +7,9 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 /**
  * Class that requests authentication and user information from the remote data source and
@@ -14,8 +17,26 @@ import com.google.firebase.auth.FirebaseAuth;
  */
 public class LoginRepository extends SecurityModule {
 
+    private static final String appName = "BubbleGum";
+
+    public LoginRepository(){
+        FireDatabase.getRef().child("app").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(!snapshot.getValue(String.class).equalsIgnoreCase(appName)){
+                    blockAccess();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
     @Override
-    public void login(String email, String password) {
+    public void login(int colour, String password) {
         //TODO
     }
 

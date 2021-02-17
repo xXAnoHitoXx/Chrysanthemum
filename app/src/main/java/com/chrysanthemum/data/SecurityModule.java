@@ -10,7 +10,7 @@ public abstract class SecurityModule {
         hasAccess, noAccess, blocked
     }
 
-    public abstract void login(String name, String password);
+    public abstract void login(int colour, String password);
     public abstract void logout();
     public abstract void requestAccess(String email, String password);
 
@@ -49,7 +49,7 @@ public abstract class SecurityModule {
         accessToken.setValue(AccessState.noAccess);
     }
 
-    public void blockAccess(){
+    protected void blockAccess(){
         accessToken.setValue(AccessState.blocked);
     }
 
