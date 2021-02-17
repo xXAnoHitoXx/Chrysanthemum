@@ -1,8 +1,6 @@
 package com.chrysanthemum.ui.technicianLogin;
 
 import android.content.Context;
-import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.chrysanthemum.data.DataStorageModule;
@@ -14,38 +12,27 @@ public class TechnicianSelectorPanel {
 
     protected TechnicianSelectorPanel(Context context, LinearLayout layout){
         selected = null;
-
-        for(TechnicianIdentifier tech :
-                DataStorageModule.getFrontEnd().getTechList()){
+        Iterable<TechnicianIdentifier> it = DataStorageModule.getFrontEnd().getTechList();
+        for(TechnicianIdentifier tech : it){
 
             final TechnicianSelectorButton button =
-                    new TechnicianSelectorButton(context, tech);
-            /*
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    changeSelectedTech(button);
-                }
-            });
-            */
+                    new TechnicianSelectorButton(context, tech, this);
 
             button.setLayoutParams(
                     new LinearLayout.LayoutParams(
                             LinearLayout.LayoutParams.MATCH_PARENT,
-                            LinearLayout.LayoutParams.WRAP_CONTENT));
-
-            button.setMinimumHeight(100);
+                            100));
 
             layout.addView(button);
+
         }
     }
 
-    /*
     public TechnicianIdentifier getSelectedTech(){
         return selected.getTech();
     }
 
-    private void changeSelectedTech(TechnicianSelectorButton newTech){
+    void changeSelectedTech(TechnicianSelectorButton newTech){
         if(selected != null){
             selected.toggle();
         }
@@ -54,5 +41,4 @@ public class TechnicianSelectorPanel {
         selected.toggle();
     }
 
-    */
 }

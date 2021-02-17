@@ -26,6 +26,8 @@ public class Database {
     public void initialization(Context context){
         mDatabase = FirebaseDatabase.getInstance().getReference();
         retrieveTechnicianList();
+
+
     }
 
     public SecurityModule generateSecurityModule(){
@@ -48,7 +50,6 @@ public class Database {
                             }
 
                             DataStorageModule.getBackEnd().storeTechList(techList);
-
                         } else {
                             Log.w("failed to retrive technician list", "boo");
                         }

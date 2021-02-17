@@ -3,31 +3,39 @@ package com.chrysanthemum.ui.technicianLogin;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
 import android.util.AttributeSet;
+import android.view.View;
 
 import com.chrysanthemum.R;
 import com.chrysanthemum.data.TechnicianIdentifier;
 
 import androidx.core.content.res.ResourcesCompat;
 
-public class TechnicianSelectorButton extends androidx.appcompat.widget.AppCompatButton {
+public class TechnicianSelectorButton extends View implements View.OnClickListener {
+
+    private static final int offsetPercent = 7;
 
     private boolean selected;
     private TechnicianIdentifier tech;
     private Resources res;
+    private TechnicianSelectorPanel panel;
 
     public TechnicianSelectorButton(Context context){
         super(context);
         initButton(context);
     }
 
-    public TechnicianSelectorButton(Context context, TechnicianIdentifier tech){
+    public TechnicianSelectorButton(Context context, TechnicianIdentifier tech, TechnicianSelectorPanel panel){
         super(context);
         initButton(context);
         setTech(tech);
+        this.panel = panel;
+        this.setOnClickListener(this);
     }
 
     public TechnicianSelectorButton(Context context, AttributeSet set){
@@ -37,12 +45,12 @@ public class TechnicianSelectorButton extends androidx.appcompat.widget.AppCompa
 
     private void initButton(Context context){
         selected = false;
-        this.setMinimumHeight(100);
         res = context.getResources();
     }
 
     public void toggle(){
         selected = !selected;
+        this.invalidate();
     }
 
     public void setTech(TechnicianIdentifier tech){
@@ -54,33 +62,31 @@ public class TechnicianSelectorButton extends androidx.appcompat.widget.AppCompa
     }
 
     protected void onDraw(Canvas canvas) {
-        this.getButtonBackgroundDrawable().draw(canvas);
+        Drawable button = getButtonDrawable();
+        button.draw(canvas);
+        button.invalidateSelf();
+    }
 
-        /*
+    private Drawable getButtonDrawable(){
+        LayerDrawable buttonDrawable = new LayerDrawable(new Drawable[]{
+                getButtonBackgroundDrawable()
+        });
+
         if(selected){
-            getCheckmarkDrawable().draw(canvas);
+            buttonDrawable.addLayer(getCheckmarkDrawable());
         }
-         */
+
+        return buttonDrawable;
     }
 
     private Drawable getButtonBackgroundDrawable() {
         ShapeDrawable drawable =  new ShapeDrawable(new RectShape());
-
         drawable.getPaint().setColor(tech.getColour());
-
-        if(selected){
-            drawable.setBounds(this.getClipBounds());
-        } else {
-            int xmargin = 15;
-            int ymargin = 6;
-
-            drawable.setBounds(xmargin, ymargin,
-                    this.getWidth() - xmargin,
-                    this.getHeight() - ymargin);
-        }
+        drawable.setBounds(getBoundingBox());
 
         return drawable;
     }
+
 
     private Drawable getCheckmarkDrawable() {
         Drawable checkmark = ResourcesCompat.getDrawable(res, R.drawable.checkmark, null);
@@ -90,5 +96,26 @@ public class TechnicianSelectorButton extends androidx.appcompat.widget.AppCompa
                 this.getWidth(), this.getHeight());
 
         return checkmark;
+    }
+
+    private Rect getBoundingBox(){
+        return (selected)? getOffsetBox() : getFullBox();
+    }
+
+    private Rect getFullBox(){
+        return new Rect(0, 0, getWidth(), getHeight());
+    }
+
+    private Rect getOffsetBox(){
+        int xMargin = (getWidth() * offsetPercent) / 100;
+        int yMargin = (getHeight() * offsetPercent) / 100;
+
+        return new Rect(xMargin, yMargin,
+                getWidth() - xMargin, getHeight() - yMargin);
+    }
+
+    @Override
+    public void onClick(View v) {
+        panel.changeSelectedTech(this);
     }
 }
