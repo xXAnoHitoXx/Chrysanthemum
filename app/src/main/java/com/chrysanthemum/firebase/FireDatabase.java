@@ -6,20 +6,23 @@ import androidx.annotation.NonNull;
 
 import com.chrysanthemum.appdata.DataStorageModule;
 import com.chrysanthemum.appdata.security.SecurityModule;
-import com.chrysanthemum.appdata.security.TechnicianIdentifier;
+import com.chrysanthemum.appdata.dataType.TechnicianIdentifier;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.LinkedList;
+import java.util.Map;
+import java.util.TreeMap;
 
+/**
+ * provide connection to firebase database
+ */
 public class FireDatabase {
 
-    public void initialization(Context context){
+    public void initialization(){
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-
         observeTechnicianList();
     }
 
@@ -32,13 +35,14 @@ public class FireDatabase {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                LinkedList<TechnicianIdentifier> techList = new LinkedList<>();
+                Map<String, TechnicianIdentifier> m = new TreeMap<>();
 
                 for(DataSnapshot child : snapshot.getChildren()){
-                    techList.add(child.getValue(TechnicianIdentifier.class));
+                    TechnicianIdentifier i = child.getValue(TechnicianIdentifier.class);
+                    m.put(i.getID()+ "", i);
                 }
 
-                DataStorageModule.getBackEnd().storeTechList(techList);
+                DataStorageModule.getBackEnd().storeTechMap(m);
             }
 
             @Override

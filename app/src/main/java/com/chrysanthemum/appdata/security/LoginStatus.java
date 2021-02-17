@@ -1,5 +1,7 @@
 package com.chrysanthemum.appdata.security;
 
+import com.chrysanthemum.appdata.dataType.TechnicianIdentifier;
+
 public enum LoginStatus {
     loggedOut, loggedIn, noPass;
 

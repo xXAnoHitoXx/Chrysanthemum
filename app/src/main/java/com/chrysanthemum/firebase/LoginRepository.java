@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.chrysanthemum.appdata.security.LoginStatus;
 import com.chrysanthemum.appdata.security.SecurityModule;
-import com.chrysanthemum.appdata.security.TechnicianIdentifier;
+import com.chrysanthemum.appdata.dataType.TechnicianIdentifier;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -40,14 +40,14 @@ public class LoginRepository extends SecurityModule {
     @Override
     public void login(final TechnicianIdentifier tech, final int password) {
 
-        FireDatabase.getRef().child("technician").child("password").child("" + tech.getColour()).get()
+        FireDatabase.getRef().child("technician").child("password").child("" + tech.getID()).get()
                 .addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
 
             @Override
             @SuppressWarnings("ConstantConditions")
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 if(task.isSuccessful()){
-                    int correctPass = task.getResult().getValue(Integer.class);
+                    int correctPass = Integer.parseInt(task.getResult().getValue(String.class));
 
                     if(correctPass < 0 || correctPass > 9999){
                         LoginStatus.noPass.setTech(tech);
@@ -64,6 +64,13 @@ public class LoginRepository extends SecurityModule {
         });
     }
 
+    @Override
+    public void registerPassword(TechnicianIdentifier tech, int password) {
+        FireDatabase.getRef().child("technician").child("password")
+                .child("" + tech.getID()).setValue( password + "");
+    }
+
+    @Override
     public void requestAccess(String username, String password) {
 
         FirebaseAuth.getInstance().signInWithEmailAndPassword(username, password)
@@ -82,6 +89,7 @@ public class LoginRepository extends SecurityModule {
                 });
     }
 
+    @Override
     public void releaseAccess() {
         super.releaseAccess();
         FirebaseAuth.getInstance().signOut();

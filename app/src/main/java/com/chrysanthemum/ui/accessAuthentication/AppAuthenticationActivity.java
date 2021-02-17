@@ -34,7 +34,7 @@ public class AppAuthenticationActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        DataStorageModule.init(getApplicationContext());
+        DataStorageModule.init();
 
         setContentView(R.layout.activity_login);
         loginViewModel = new ViewModelProvider(this, new AccessAuthenticationViewModelFactory()).get(AccessAuthenticationViewModel.class);

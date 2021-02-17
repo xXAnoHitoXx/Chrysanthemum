@@ -138,7 +138,7 @@
             app:layout_constraintTop_toBottomOf="@+id/button7" />
 
         <Button
-            android:id="@+id/button15"
+            android:id="@+id/buttonGo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -148,16 +148,16 @@
             app:layout_constraintTop_toBottomOf="@+id/button9" />
 
         <TextView
-            android:id="@+id/message"
+            android:id="@+id/statusMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            app:layout_constraintBottom_toTopOf="@+id/progress"
+            app:layout_constraintBottom_toTopOf="@+id/passwordProgress"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
-            android:id="@+id/progress"
+            android:id="@+id/passwordProgress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"

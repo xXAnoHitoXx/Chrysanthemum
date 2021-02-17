@@ -11,7 +11,7 @@ import com.chrysanthemum.R;
 import com.chrysanthemum.appdata.DataStorageModule;
 import com.chrysanthemum.appdata.security.LoginStatus;
 import com.chrysanthemum.appdata.security.SecurityModule;
-import com.chrysanthemum.appdata.security.TechnicianIdentifier;
+import com.chrysanthemum.appdata.dataType.TechnicianIdentifier;
 
 public class PasswordNumberPad {
 
@@ -20,7 +20,7 @@ public class PasswordNumberPad {
     }
 
     private int value = 0;
-    private int savedvalue = 0;
+    private int savedValue = 0;
     private int digitCount = 0;
     private Mode mode = Mode.Login;
     private boolean locked = false;
@@ -45,6 +45,7 @@ public class PasswordNumberPad {
     private void clear(){
         value = 0;
         digitCount = 0;
+        displayProgress();
     }
 
     //-------------------------------------------------------------------------------------
@@ -104,17 +105,23 @@ public class PasswordNumberPad {
                     if (tech == null) {
                         setMessage("Please chose a colour!");
                     } else if (mode == Mode.Login) {
-                        locked = true;
+                        lock();
                         SecurityModule sm = DataStorageModule.getFrontEnd().getSecurityModule();
                         sm.login(panel.getSelectedTech(), value);
                     } else {
-                        if (value == savedvalue) {
-                            //todo
+                        mode = Mode.Login;
+
+                        if (value == savedValue) {
+                            DataStorageModule.getFrontEnd().getSecurityModule()
+                                    .registerPassword(panel.getSelectedTech(), value);
+                            setMessage("New password registered!");
+                            clear();
                         } else {
-                            panel.unlock();
-                            setMessage("Password did not match!");
+                            setMessage("Passwords did not match!");
                             clear();
                         }
+
+                        panel.unlock();
                     }
                 }
             }
@@ -137,6 +144,7 @@ public class PasswordNumberPad {
         sm.observeLoginStatus(owner, new Observer<LoginStatus>() {
             @Override
             public void onChanged(LoginStatus loginStatus) {
+                unlock();
                 switch(loginStatus){
                     case loggedIn: {
                         //todo new activity
@@ -145,16 +153,14 @@ public class PasswordNumberPad {
                     case noPass: {
                         panel.lock();
                         setMessage("Enter again to verify new password!!!");
-                        savedvalue = value;
+                        savedValue = value;
                         clear();
                         mode = Mode.CreatePassword;
-                        locked = false;
                         break;
                     }
                     case loggedOut: {
                         setMessage("Wrong password!");
                         clear();
-                        locked = false;
                         break;
                     }
                 }
@@ -170,4 +176,14 @@ public class PasswordNumberPad {
     private String getRes(int resID){
         return message.getContext().getResources().getString(resID);
     }
+
+    private void lock(){
+        locked = true;
+    }
+
+    private void unlock(){
+        locked = false;
+    }
+
+
 }

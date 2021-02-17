@@ -4,6 +4,9 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
+import com.chrysanthemum.appdata.DataStorageModule;
+import com.chrysanthemum.appdata.dataType.TechnicianIdentifier;
+
 public abstract class SecurityModule {
 
     public SecurityModule(){
@@ -12,8 +15,7 @@ public abstract class SecurityModule {
             @Override
             public void onChanged(AccessState accessState) {
                 if(accessState == AccessState.blocked){
-                    logout();
-                    releaseAccess();
+                    DataStorageModule.getFrontEnd().close();
                     System.exit(0);
                 }
             }
@@ -48,10 +50,6 @@ public abstract class SecurityModule {
         accessToken.setValue(AccessState.blocked);
     }
 
-    public boolean hasDBAccess(){
-        return accessToken.getValue() == AccessState.hasAccess;
-    }
-
     //----------------------------------------------------------------------------------------------
     private final MutableLiveData<LoginStatus> status = new MutableLiveData<>();
 
@@ -72,4 +70,6 @@ public abstract class SecurityModule {
     public void logout(){
         updateLoginStatus(LoginStatus.loggedOut);
     }
+
+    public abstract void registerPassword(TechnicianIdentifier tech, int password);
 }

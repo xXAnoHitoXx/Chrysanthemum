@@ -4,7 +4,7 @@ import android.content.Context;
 import android.widget.LinearLayout;
 
 import com.chrysanthemum.appdata.DataStorageModule;
-import com.chrysanthemum.appdata.security.TechnicianIdentifier;
+import com.chrysanthemum.appdata.dataType.TechnicianIdentifier;
 
 public class TechnicianSelectorPanel {
 
@@ -49,6 +49,6 @@ public class TechnicianSelectorPanel {
     }
 
     void unlock(){
-        locked = true;
+        locked = false;
     }
 }

@@ -10,11 +10,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 public class TechnicianLoginActivity extends AppCompatActivity {
-
-    private TechnicianSelectorPanel selectorPanel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +33,29 @@ public class TechnicianLoginActivity extends AppCompatActivity {
         });
 
         LinearLayout layout = findViewById(R.id.colour_panel);
-        selectorPanel = new TechnicianSelectorPanel(this,
+
+        TechnicianSelectorPanel selectorPanel = new TechnicianSelectorPanel(this,
                 layout);
+
+        Button[] controls = {
+                findViewById(R.id.button0),
+                findViewById(R.id.button1),
+                findViewById(R.id.button2),
+                findViewById(R.id.button3),
+                findViewById(R.id.button4),
+                findViewById(R.id.button5),
+                findViewById(R.id.button6),
+                findViewById(R.id.button7),
+                findViewById(R.id.button8),
+                findViewById(R.id.button9),
+                findViewById(R.id.buttonDel),
+                findViewById(R.id.buttonGo)
+        };
+
+        TextView message = findViewById(R.id.statusMessage);
+        TextView progress = findViewById(R.id.passwordProgress);
+
+        PasswordNumberPad numPad = new PasswordNumberPad(controls, selectorPanel, message, progress, this);
     }
 
 }
