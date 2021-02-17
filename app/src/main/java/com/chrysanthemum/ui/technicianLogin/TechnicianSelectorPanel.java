@@ -3,8 +3,8 @@ package com.chrysanthemum.ui.technicianLogin;
 import android.content.Context;
 import android.widget.LinearLayout;
 
-import com.chrysanthemum.data.DataStorageModule;
-import com.chrysanthemum.data.TechnicianIdentifier;
+import com.chrysanthemum.appdata.DataStorageModule;
+import com.chrysanthemum.appdata.security.TechnicianIdentifier;
 
 public class TechnicianSelectorPanel {
 

@@ -1,4 +1,4 @@
-package com.chrysanthemum.data;
+package com.chrysanthemum.appdata.security;
 
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
@@ -6,20 +6,12 @@ import androidx.lifecycle.Observer;
 
 public abstract class SecurityModule {
 
-    public enum AccessState {
-        hasAccess, noAccess, blocked
-    }
-
-    public abstract void login(int colour, String password);
-    public abstract void logout();
-    public abstract void requestAccess(String email, String password);
-
     public SecurityModule(){
-        this.observeAccessToken(null, new Observer<SecurityModule.AccessState>() {
+        this.observeAccessToken(null, new Observer<AccessState>() {
 
             @Override
-            public void onChanged(SecurityModule.AccessState accessState) {
-                if(accessState == SecurityModule.AccessState.blocked){
+            public void onChanged(AccessState accessState) {
+                if(accessState == AccessState.blocked){
                     logout();
                     releaseAccess();
                     System.exit(0);
@@ -27,6 +19,9 @@ public abstract class SecurityModule {
             }
         });
     }
+
+    //--------------------------------------------------------------------------------------------
+    public abstract void requestAccess(String email, String password);
 
     /**
      * token representing the app's access to the database
@@ -55,5 +50,26 @@ public abstract class SecurityModule {
 
     public boolean hasDBAccess(){
         return accessToken.getValue() == AccessState.hasAccess;
+    }
+
+    //----------------------------------------------------------------------------------------------
+    private final MutableLiveData<LoginStatus> status = new MutableLiveData<>();
+
+    public void observeLoginStatus(LifecycleOwner owner, Observer<LoginStatus> observer){
+        if(owner == null){
+            status.observeForever(observer);
+        } else {
+            status.observe(owner, observer);
+        }
+    }
+
+    protected void updateLoginStatus(LoginStatus newStatus){
+        status.setValue(newStatus);
+    }
+
+    public abstract void login(TechnicianIdentifier tech, int password);
+
+    public void logout(){
+        updateLoginStatus(LoginStatus.loggedOut);
     }
 }

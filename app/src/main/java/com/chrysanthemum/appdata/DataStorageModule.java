@@ -1,7 +1,9 @@
-package com.chrysanthemum.data;
+package com.chrysanthemum.appdata;
 
 import android.content.Context;
 
+import com.chrysanthemum.appdata.security.SecurityModule;
+import com.chrysanthemum.appdata.security.TechnicianIdentifier;
 import com.chrysanthemum.firebase.FireDatabase;
 
 import java.util.LinkedList;

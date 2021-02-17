@@ -1,4 +1,4 @@
-package com.chrysanthemum.data;
+package com.chrysanthemum.appdata.security;
 
 public class TechnicianIdentifier {
     private String name;

@@ -1,18 +1,12 @@
 package com.chrysanthemum.firebase;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import com.chrysanthemum.data.DataStorageModule;
-import com.chrysanthemum.data.SecurityModule;
-import com.chrysanthemum.data.TechnicianIdentifier;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.FirebaseOptions;
-import com.google.firebase.auth.FirebaseAuth;
+import com.chrysanthemum.appdata.DataStorageModule;
+import com.chrysanthemum.appdata.security.SecurityModule;
+import com.chrysanthemum.appdata.security.TechnicianIdentifier;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;

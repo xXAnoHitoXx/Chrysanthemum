@@ -1,4 +1,6 @@
-package com.chrysanthemum.data;
+package com.chrysanthemum.appdata;
+
+import com.chrysanthemum.appdata.security.TechnicianIdentifier;
 
 import java.util.LinkedList;
 

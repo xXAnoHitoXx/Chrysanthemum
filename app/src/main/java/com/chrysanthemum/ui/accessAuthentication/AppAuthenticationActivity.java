@@ -21,8 +21,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chrysanthemum.R;
-import com.chrysanthemum.data.DataStorageModule;
-import com.chrysanthemum.data.SecurityModule;
+import com.chrysanthemum.appdata.DataStorageModule;
+import com.chrysanthemum.appdata.security.AccessState;
+import com.chrysanthemum.appdata.security.SecurityModule;
 import com.chrysanthemum.ui.technicianLogin.TechnicianLoginActivity;
 
 public class AppAuthenticationActivity extends AppCompatActivity {
@@ -60,18 +61,18 @@ public class AppAuthenticationActivity extends AppCompatActivity {
         });
 
 
-        DataStorageModule.getFrontEnd().getSecurityModule().observeAccessToken(this, new Observer<SecurityModule.AccessState>() {
+        DataStorageModule.getFrontEnd().getSecurityModule().observeAccessToken(this, new Observer<AccessState>() {
             @Override
-            public void onChanged(SecurityModule.AccessState loginResult) {
+            public void onChanged(AccessState loginResult) {
 
                 loadingProgressBar.setVisibility(View.GONE);
-                if (loginResult == SecurityModule.AccessState.noAccess) {
+                if (loginResult == AccessState.noAccess) {
                     showLoginFailed();
                     setResult(Activity.RESULT_OK);
                     finish();
                 }
 
-                if (loginResult == SecurityModule.AccessState.hasAccess) {
+                if (loginResult == AccessState.hasAccess) {
                     updateUiWithUser();
                 }
             }

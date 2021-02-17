@@ -2,7 +2,9 @@ package com.chrysanthemum.firebase;
 
 import androidx.annotation.NonNull;
 
-import com.chrysanthemum.data.SecurityModule;
+import com.chrysanthemum.appdata.security.LoginStatus;
+import com.chrysanthemum.appdata.security.SecurityModule;
+import com.chrysanthemum.appdata.security.TechnicianIdentifier;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -36,13 +38,29 @@ public class LoginRepository extends SecurityModule {
     }
 
     @Override
-    public void login(int colour, String password) {
-        //TODO
-    }
+    public void login(final TechnicianIdentifier tech, final int password) {
 
-    @Override
-    public void logout() {
-        //TODO
+        FireDatabase.getRef().child("technician").child("password").child("" + tech.getColour()).get()
+                .addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if(task.isSuccessful()){
+                    int correctPass = task.getResult().getValue(Integer.class);
+
+                    if(correctPass < 0 || correctPass > 9999){
+                        LoginStatus.noPass.setTech(tech);
+                        updateLoginStatus(LoginStatus.noPass);
+                    } else if(correctPass == password) {
+                        LoginStatus.loggedIn.setTech(tech);
+                        updateLoginStatus(LoginStatus.loggedIn);
+                    } else {
+                        LoginStatus.loggedOut.setTech(tech);
+                        updateLoginStatus(LoginStatus.loggedOut);
+                    }
+                }
+            }
+        });
     }
 
     public void requestAccess(String username, String password) {
