@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
 import com.chrysanthemum.appdata.DataStorageModule;
-import com.chrysanthemum.appdata.dataType.TechnicianIdentifier;
+import com.chrysanthemum.appdata.dataType.Technician;
 
 public abstract class SecurityModule {
 
@@ -65,11 +65,11 @@ public abstract class SecurityModule {
         status.setValue(newStatus);
     }
 
-    public abstract void login(TechnicianIdentifier tech, int password);
+    public abstract void login(Technician tech, int password);
 
     public void logout(){
         updateLoginStatus(LoginStatus.loggedOut);
     }
 
-    public abstract void registerPassword(TechnicianIdentifier tech, int password);
+    public abstract void registerPassword(Technician tech, int password);
 }

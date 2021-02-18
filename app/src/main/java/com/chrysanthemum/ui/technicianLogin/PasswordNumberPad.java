@@ -11,7 +11,7 @@ import com.chrysanthemum.R;
 import com.chrysanthemum.appdata.DataStorageModule;
 import com.chrysanthemum.appdata.security.LoginStatus;
 import com.chrysanthemum.appdata.security.SecurityModule;
-import com.chrysanthemum.appdata.dataType.TechnicianIdentifier;
+import com.chrysanthemum.appdata.dataType.Technician;
 
 public class PasswordNumberPad {
 
@@ -100,7 +100,7 @@ public class PasswordNumberPad {
             @Override
             public void onClick(View v) {
                 if(!locked) {
-                    TechnicianIdentifier tech = panel.getSelectedTech();
+                    Technician tech = panel.getSelectedTech();
 
                     if (tech == null) {
                         setMessage("Please chose a colour!");

@@ -4,7 +4,7 @@ import android.content.Context;
 import android.widget.LinearLayout;
 
 import com.chrysanthemum.appdata.DataStorageModule;
-import com.chrysanthemum.appdata.dataType.TechnicianIdentifier;
+import com.chrysanthemum.appdata.dataType.Technician;
 
 public class TechnicianSelectorPanel {
 
@@ -13,8 +13,8 @@ public class TechnicianSelectorPanel {
 
     protected TechnicianSelectorPanel(Context context, LinearLayout layout){
         selected = null;
-        Iterable<TechnicianIdentifier> it = DataStorageModule.getFrontEnd().getTechList();
-        for(TechnicianIdentifier tech : it){
+        Iterable<Technician> it = DataStorageModule.getFrontEnd().getTechList();
+        for(Technician tech : it){
 
             final TechnicianSelectorButton button =
                     new TechnicianSelectorButton(context, tech, this);
@@ -29,7 +29,7 @@ public class TechnicianSelectorPanel {
         }
     }
 
-    public TechnicianIdentifier getSelectedTech(){
+    public Technician getSelectedTech(){
         return selected.getTech();
     }
 

@@ -12,7 +12,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.chrysanthemum.R;
-import com.chrysanthemum.appdata.dataType.TechnicianIdentifier;
+import com.chrysanthemum.appdata.dataType.Technician;
 
 import androidx.core.content.res.ResourcesCompat;
 
@@ -21,7 +21,7 @@ public class TechnicianSelectorButton extends View implements View.OnClickListen
     private static final int offsetPercent = 7;
 
     private boolean selected;
-    private TechnicianIdentifier tech;
+    private Technician tech;
     private Resources res;
     private TechnicianSelectorPanel panel;
 
@@ -30,7 +30,7 @@ public class TechnicianSelectorButton extends View implements View.OnClickListen
         initButton(context);
     }
 
-    public TechnicianSelectorButton(Context context, TechnicianIdentifier tech, TechnicianSelectorPanel panel){
+    public TechnicianSelectorButton(Context context, Technician tech, TechnicianSelectorPanel panel){
         super(context);
         initButton(context);
         setTech(tech);
@@ -53,11 +53,11 @@ public class TechnicianSelectorButton extends View implements View.OnClickListen
         this.invalidate();
     }
 
-    public void setTech(TechnicianIdentifier tech){
+    public void setTech(Technician tech){
         this.tech = tech;
     }
 
-    public TechnicianIdentifier getTech(){
+    public Technician getTech(){
         return tech;
     }
 

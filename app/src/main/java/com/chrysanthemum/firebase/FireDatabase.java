@@ -1,12 +1,10 @@
 package com.chrysanthemum.firebase;
 
-import android.content.Context;
-
 import androidx.annotation.NonNull;
 
 import com.chrysanthemum.appdata.DataStorageModule;
 import com.chrysanthemum.appdata.security.SecurityModule;
-import com.chrysanthemum.appdata.dataType.TechnicianIdentifier;
+import com.chrysanthemum.appdata.dataType.Technician;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -35,10 +33,10 @@ public class FireDatabase {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-                Map<String, TechnicianIdentifier> m = new TreeMap<>();
+                Map<String, Technician> m = new TreeMap<>();
 
                 for(DataSnapshot child : snapshot.getChildren()){
-                    TechnicianIdentifier i = child.getValue(TechnicianIdentifier.class);
+                    Technician i = child.getValue(Technician.class);
                     m.put(i.getID()+ "", i);
                 }
 

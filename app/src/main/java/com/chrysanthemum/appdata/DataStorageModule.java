@@ -1,9 +1,7 @@
 package com.chrysanthemum.appdata;
 
-import android.content.Context;
-
 import com.chrysanthemum.appdata.security.SecurityModule;
-import com.chrysanthemum.appdata.dataType.TechnicianIdentifier;
+import com.chrysanthemum.appdata.dataType.Technician;
 import com.chrysanthemum.firebase.FireDatabase;
 
 import java.util.Map;
@@ -55,17 +53,17 @@ public class DataStorageModule implements DataStorageFrontEnd, DataStorageBackEn
     }
 
     //-----------------------------------------------------------------------------------------------
-    private Map<String, TechnicianIdentifier> techMap;
+    private Map<String, Technician> techMap;
 
-    public void storeTechMap(Map<String, TechnicianIdentifier> techMap){
+    public void storeTechMap(Map<String, Technician> techMap){
         this.techMap = techMap;
     }
 
-    public Iterable<TechnicianIdentifier> getTechList(){
+    public Iterable<Technician> getTechList(){
         return techMap.values();
     }
 
-    public TechnicianIdentifier getTech(int id){
+    public Technician getTech(int id){
         return techMap.get(id + "");
     }
 }

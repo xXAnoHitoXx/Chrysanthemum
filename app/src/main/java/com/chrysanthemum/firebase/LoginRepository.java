@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 
 import com.chrysanthemum.appdata.security.LoginStatus;
 import com.chrysanthemum.appdata.security.SecurityModule;
-import com.chrysanthemum.appdata.dataType.TechnicianIdentifier;
+import com.chrysanthemum.appdata.dataType.Technician;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -38,7 +38,7 @@ public class LoginRepository extends SecurityModule {
     }
 
     @Override
-    public void login(final TechnicianIdentifier tech, final int password) {
+    public void login(final Technician tech, final int password) {
 
         FireDatabase.getRef().child("technician").child("password").child("" + tech.getID()).get()
                 .addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
@@ -65,7 +65,7 @@ public class LoginRepository extends SecurityModule {
     }
 
     @Override
-    public void registerPassword(TechnicianIdentifier tech, int password) {
+    public void registerPassword(Technician tech, int password) {
         FireDatabase.getRef().child("technician").child("password")
                 .child("" + tech.getID()).setValue( password + "");
     }

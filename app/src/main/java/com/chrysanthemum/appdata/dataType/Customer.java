@@ -1,17 +1,17 @@
 package com.chrysanthemum.appdata.dataType;
 
-public class TechnicianIdentifier {
+public class Customer {
     private String name;
-    private int colour;
+    private String phoneNumber;
     private long id;
 
-    public TechnicianIdentifier(){
+    public Customer(){
 
     }
 
-    public TechnicianIdentifier(String name, int colour, long id){
+    public Customer(String name, String phoneNumber, long id){
         this.name = name;
-        this.colour = colour;
+        this.phoneNumber = phoneNumber;
         this.id = id;
     }
 
@@ -19,9 +19,10 @@ public class TechnicianIdentifier {
         return name;
     }
 
-    public int getColour(){
-        return colour;
+    public String getPhoneNumber(){
+        return phoneNumber;
     }
+
     public long getID(){
         return id;
     }

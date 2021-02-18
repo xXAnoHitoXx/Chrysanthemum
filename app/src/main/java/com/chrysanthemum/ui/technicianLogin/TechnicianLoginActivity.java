@@ -1,8 +1,11 @@
 package com.chrysanthemum.ui.technicianLogin;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.chrysanthemum.R;
+import com.chrysanthemum.appdata.DataStorageModule;
+import com.chrysanthemum.ui.accessAuthentication.AppAuthenticationActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -56,6 +59,20 @@ public class TechnicianLoginActivity extends AppCompatActivity {
         TextView progress = findViewById(R.id.passwordProgress);
 
         PasswordNumberPad numPad = new PasswordNumberPad(controls, selectorPanel, message, progress, this);
+
+        View x = findViewById(R.id.fab);
+        x.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                endSession();
+            }
+        });
+    }
+
+    private void endSession() {
+        DataStorageModule.getFrontEnd().close();
+        Intent intent = new Intent(this, AppAuthenticationActivity.class);
+        startActivity(intent);
     }
 
 }

@@ -1,7 +1,7 @@
 package com.chrysanthemum.appdata;
 
 import com.chrysanthemum.appdata.security.SecurityModule;
-import com.chrysanthemum.appdata.dataType.TechnicianIdentifier;
+import com.chrysanthemum.appdata.dataType.Technician;
 
 /**
  * interface between DataStorageModule and UI
@@ -9,6 +9,6 @@ import com.chrysanthemum.appdata.dataType.TechnicianIdentifier;
 public interface DataStorageFrontEnd {
     void close();
     SecurityModule getSecurityModule();
-    Iterable<TechnicianIdentifier> getTechList();
-    TechnicianIdentifier getTech(int id);
+    Iterable<Technician> getTechList();
+    Technician getTech(int id);
 }

@@ -1,17 +1,17 @@
 package com.chrysanthemum.appdata.security;
 
-import com.chrysanthemum.appdata.dataType.TechnicianIdentifier;
+import com.chrysanthemum.appdata.dataType.Technician;
 
 public enum LoginStatus {
     loggedOut, loggedIn, noPass;
 
-    private TechnicianIdentifier tech;
+    private Technician tech;
 
-    public void setTech(TechnicianIdentifier tech) {
+    public void setTech(Technician tech) {
         this.tech = tech;
     }
 
-    public TechnicianIdentifier getTech() {
+    public Technician getTech() {
         return tech;
     }
 }

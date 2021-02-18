@@ -1,9 +1,9 @@
 package com.chrysanthemum.appdata;
 
-import com.chrysanthemum.appdata.dataType.TechnicianIdentifier;
+import com.chrysanthemum.appdata.dataType.Technician;
 
 import java.util.Map;
 
 public interface DataStorageBackEnd {
-    void storeTechMap(Map<String, TechnicianIdentifier> techMap);
+    void storeTechMap(Map<String, Technician> techMap);
 }
