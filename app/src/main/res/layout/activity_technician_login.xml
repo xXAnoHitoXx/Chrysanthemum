@@ -8,7 +8,7 @@
 
     <LinearLayout
         android:id="@+id/colour_panel"
-        android:layout_width="@dimen/colour_panel_width"
+        android:layout_width="@dimen/left_pannel_width"
         android:layout_height="0dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -1,7 +1,9 @@
 package com.chrysanthemum.appdata.dataType;
 
 import com.chrysanthemum.appdata.dataType.subType.Date;
+import com.chrysanthemum.appdata.dataType.subType.Money;
 import com.chrysanthemum.appdata.dataType.subType.Time;
+import com.chrysanthemum.appdata.dataType.subType.TransactionStatus;
 
 public class Transaction {
 
@@ -11,7 +13,7 @@ public class Transaction {
 
     //------------------------------
     private Technician tech;
-    private int amount;
+    private Money amount;
     private String services;
 
     public Transaction(){
@@ -34,7 +36,7 @@ public class Transaction {
     }
 
     public void setAmount (int amount){
-        this.amount = amount;
+        this.amount = new Money(amount);
     }
 
     public void setServices(String s){
@@ -60,10 +62,34 @@ public class Transaction {
     }
 
     public int getAmount(){
-        return amount;
+        return amount.getAmount();
     }
 
     public String getServices(){
         return services;
+    }
+
+    public String getDisplayData(){
+        StringBuilder b = new StringBuilder();
+
+        b.append(c.getName());
+        b.append("\n").append(c.getPhoneNumber());
+
+        if(services != null){
+            b.append("\n").append(services);
+            b.append("\n").append(c.getPhoneNumber());
+        }
+
+        return b.toString();
+    }
+
+    public TransactionStatus getStatus(){
+        if(tech == null){
+            return TransactionStatus.Open;
+        } else if(amount == null){
+            return TransactionStatus.Claimed;
+        } else {
+            return TransactionStatus.Closed;
+        }
     }
 }

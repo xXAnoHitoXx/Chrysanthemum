@@ -30,17 +30,17 @@ public class TechnicianSelectorButton extends View implements View.OnClickListen
         initButton(context);
     }
 
+    public TechnicianSelectorButton(Context context, AttributeSet set){
+        super(context, set);
+        initButton(context);
+    }
+
     public TechnicianSelectorButton(Context context, Technician tech, TechnicianSelectorPanel panel){
         super(context);
         initButton(context);
         setTech(tech);
         this.panel = panel;
         this.setOnClickListener(this);
-    }
-
-    public TechnicianSelectorButton(Context context, AttributeSet set){
-        super(context, set);
-        initButton(context);
     }
 
     private void initButton(Context context){
