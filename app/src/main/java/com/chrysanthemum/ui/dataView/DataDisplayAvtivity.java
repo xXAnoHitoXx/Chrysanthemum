@@ -1,4 +1,4 @@
-package com.chrysanthemum.ui.dataDisplay;
+package com.chrysanthemum.ui.dataView;
 
 import android.os.Bundle;
 
