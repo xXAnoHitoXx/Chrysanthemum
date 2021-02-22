@@ -1,9 +1,15 @@
 package com.chrysanthemum.appdata;
 
+import androidx.lifecycle.MutableLiveData;
+
+import com.chrysanthemum.appdata.dataType.Customer;
+import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
 import com.chrysanthemum.appdata.security.SecurityModule;
 import com.chrysanthemum.appdata.dataType.Technician;
 import com.chrysanthemum.firebase.FireDatabase;
+import com.chrysanthemum.firebase.RemoteDataBase;
 
+import java.util.LinkedList;
 import java.util.Map;
 
 /**
@@ -13,6 +19,7 @@ import java.util.Map;
 public class DataStorageModule implements DataStorageFrontEnd, DataStorageBackEnd {
 
     private static volatile DataStorageModule database;
+    private RemoteDataBase remote;
 
     public static void init(){
         if(database == null){
@@ -33,6 +40,7 @@ public class DataStorageModule implements DataStorageFrontEnd, DataStorageBackEn
         firebase.initialization();
 
         this.setSecurityModule(firebase.generateSecurityModule());
+        remote = firebase;
     }
 
     public void close(){
@@ -63,7 +71,14 @@ public class DataStorageModule implements DataStorageFrontEnd, DataStorageBackEn
         return techMap.values();
     }
 
-    public Technician getTech(int id){
+    public Technician getTech(long id){
         return techMap.get(id + "");
     }
+
+    //-----------------------------------------------------------------------------------------------
+
+    public void requestCustomerByPhone(long phoneNumber, MutableLiveData<LinkedList<Customer>> dataViewer){
+
+    }
+
 }

@@ -2,14 +2,14 @@ package com.chrysanthemum.appdata.dataType;
 
 public class Customer {
     private String name;
-    private String phoneNumber;
+    private long phoneNumber;
     private long id;
 
     public Customer(){
 
     }
 
-    public Customer(String name, String phoneNumber, long id){
+    public Customer(String name, long phoneNumber, long id){
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.id = id;
@@ -19,7 +19,7 @@ public class Customer {
         return name;
     }
 
-    public String getPhoneNumber(){
+    public long getPhoneNumber(){
         return phoneNumber;
     }
 

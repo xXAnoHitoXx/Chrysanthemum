@@ -5,12 +5,16 @@ import android.os.Bundle;
 
 import com.chrysanthemum.R;
 import com.chrysanthemum.appdata.DataStorageModule;
+import com.chrysanthemum.appdata.security.LoginStatus;
+import com.chrysanthemum.appdata.security.SecurityModule;
 import com.chrysanthemum.ui.accessAuthentication.AppAuthenticationActivity;
+import com.chrysanthemum.ui.dataView.DataDisplayAvtivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.Observer;
 
 import android.view.View;
 import android.widget.Button;
@@ -58,6 +62,21 @@ public class TechnicianLoginActivity extends AppCompatActivity {
                 endSession();
             }
         });
+
+        SecurityModule sm = DataStorageModule.getFrontEnd().getSecurityModule();
+        sm.observeLoginStatus(this, new Observer<LoginStatus>() {
+            @Override
+            public void onChanged(LoginStatus loginStatus) {
+                if(loginStatus == LoginStatus.loggedIn){
+                    onLoginSuccess();
+                }
+            }
+        });
+    }
+
+    private void onLoginSuccess(){
+        Intent intent = new Intent(this, DataDisplayAvtivity.class);
+        startActivity(intent);
     }
 
     private void endSession() {

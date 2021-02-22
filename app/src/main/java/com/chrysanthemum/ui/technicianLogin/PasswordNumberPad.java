@@ -146,10 +146,6 @@ public class PasswordNumberPad {
             public void onChanged(LoginStatus loginStatus) {
                 unlock();
                 switch(loginStatus){
-                    case loggedIn: {
-                        //todo new activity
-                        break;
-                    }
                     case noPass: {
                         panel.lock();
                         setMessage("Enter again to verify new password!!!");
