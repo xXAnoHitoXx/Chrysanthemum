@@ -2,6 +2,7 @@ package com.chrysanthemum.ui.dataView.display;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 
@@ -33,7 +34,7 @@ public class DataDisplay extends androidx.appcompat.widget.AppCompatTextView {
 
     protected void onDraw(Canvas canvas) {
         if(hasData()){
-            Drawable bg = data.getBGDrawable();
+            Drawable bg = data.getBGDrawable(getRekt());
 
             if(bg != null){
                 bg.draw(canvas);
@@ -47,11 +48,16 @@ public class DataDisplay extends androidx.appcompat.widget.AppCompatTextView {
         super.onDraw(canvas);
     }
 
+    private Rect getRekt(){
+        return new Rect(0, 0, getWidth(), getHeight());
+    }
+
     private void updateOnclick(){
         if(data == null){
             setOnClickListener(null);
         } else {
             setOnClickListener(data.getOnclickListener());
+            setOnLongClickListener(data.getOnLongClickListener());
         }
     }
 }

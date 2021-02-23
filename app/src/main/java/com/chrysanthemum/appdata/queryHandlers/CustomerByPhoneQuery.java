@@ -1,55 +1,63 @@
 package com.chrysanthemum.appdata.queryHandlers;
 
-import androidx.lifecycle.MutableLiveData;
-
 import com.chrysanthemum.appdata.dataType.Customer;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
 import com.chrysanthemum.firebase.RemoteDataBase;
 
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.TreeMap;
 
-public class CustomerByPhoneQuery {
-    private RemoteDataBase remote;
-    private final LinkedList<Customer> data;
+public class CustomerByPhoneQuery extends Query<Map<String, Customer>>{
+    private final Map<String, Customer> data;
+    private final long phoneNumber;
+    private int entryCount;
 
-    public CustomerByPhoneQuery(RemoteDataBase remote) {
-        this.remote = remote;
-        data = new LinkedList<>();
+    public CustomerByPhoneQuery(RemoteDataBase remote, DataRetriever<Map<String, Customer>> retriever,
+                                long phoneNumber) {
+        super(remote, retriever);
+        data = new TreeMap<>();
+        this.phoneNumber = phoneNumber;
     }
 
-    public void excecuteQuery(long phoneNumber){
-        remote.findCustomerIDsByPhone(phoneNumber,
+    public void executeQuery(){
+        getRemoteDB().findCustomerIDsByPhone(phoneNumber,
                 new DataRetriever<LinkedList<Long>>() {
                     @Override
                     public void retrievedData(LinkedList<Long> ids) {
-                        if(ids != null){
+                        entryCount = ids.size();
+
+                        if(entryCount > 0){
                             for(long id : ids){
                                 executeSubQuery(id);
                             }
+                        } else {
+                            complete(data);
                         }
                     }
                 });
     }
 
     private void executeSubQuery(long id){
-        remote.findCustomerByID(id,
-                new DataRetriever<Customer>() {
-                    @Override
-                    public void retrievedData(Customer c) {
-                        data.add(c);
-                    }
-                });
+        getRemoteDB().findCustomerByID(id, createSubQueryRetriever());
     }
 
-    public static class Result {
-        private final LinkedList<Customer> data;
+    private DataRetriever<Customer> createSubQueryRetriever(){
+        return new DataRetriever<Customer>() {
+            @Override
+            public void retrievedData(Customer c) {
+                retrievedSubQueryData(c);
+            }
+        };
+    }
 
-        private Result(LinkedList<Customer> data){
-            this.data = data;
+    private synchronized void retrievedSubQueryData(Customer c){
+        if(data.size() < entryCount){
+            data.put(c.getName(), c);
         }
 
-        public LinkedList<Customer> getData(){
-            return data;
+        if(data.size() == entryCount && !isCompleted()){
+            complete(data);
         }
     }
 }

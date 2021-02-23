@@ -1,56 +1,56 @@
 package com.chrysanthemum.appdata.dataType;
 
-import com.chrysanthemum.appdata.dataType.subType.Date;
-import com.chrysanthemum.appdata.dataType.subType.Money;
-import com.chrysanthemum.appdata.dataType.subType.Time;
+import com.chrysanthemum.appdata.DataStorageModule;
 import com.chrysanthemum.appdata.dataType.subType.TransactionStatus;
 
 public class Transaction {
 
-    private Date d;
-    private Time t;
-    private Customer c;
+    private final String date;
+    private final int time;
+    private final Customer c;
+    private final long id;
 
     //------------------------------
     private Technician tech;
-    private Money amount;
+    private float amount = -1000;
+    private float tip = -1000;
     private String services;
 
-    public Transaction(){
-
+    public Transaction(String date, int time, Customer c, long id){
+        this.date = date;
+        this.time = time;
+        this.c = c;
+        this.id = id;
     }
-
-    public Transaction(Date d, Time t, Customer c){
-        this.d =d;
-        this.t = t; this.c = c;
-    }
-
-    public Transaction(Date d, Time t, Customer c, Technician tech){
-        this.d =d;
-        this.t = t; this.c = c;
+    public Transaction(String date, int time, Customer c, long id, Technician tech, float amount, float tip, String services) {
+        this.date = date;
+        this.time = time;
+        this.c = c;
+        this.id = id;
         this.tech = tech;
+        this.amount = amount;
+        this.tip = tip;
+        this.services = services;
     }
 
     public void setTech(Technician tech){
         this.tech = tech;
     }
 
-    public void setAmount (int amount){
-        this.amount = new Money(amount);
-    }
-
-    public void setServices(String s){
-        services = s;
+    public void setBill (float amount, float tip, String services){
+        this.amount = amount;
+        this.tip = tip;
+        this.services = services;
     }
 
     //------------------------------------------------------------------------------------
 
-    public Date getDate(){
-        return d;
+    public String getDate(){
+        return date;
     }
 
-    public Time getTime(){
-        return t;
+    public int getTime(){
+        return time;
     }
 
     public Technician getTech(){
@@ -61,8 +61,16 @@ public class Transaction {
         return c;
     }
 
-    public int getAmount(){
-        return amount.getAmount();
+    public long getID(){
+        return id;
+    }
+
+    public float getAmount(){
+        return amount;
+    }
+
+    public float getTip(){
+        return tip;
     }
 
     public String getServices(){
@@ -86,7 +94,7 @@ public class Transaction {
     public TransactionStatus getStatus(){
         if(tech == null){
             return TransactionStatus.Open;
-        } else if(amount == null){
+        } else if(amount < 0){
             return TransactionStatus.Claimed;
         } else {
             return TransactionStatus.Closed;

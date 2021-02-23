@@ -1,7 +1,9 @@
 package com.chrysanthemum.ui.dataView;
 
+import android.content.Context;
 import android.os.Bundle;
 
+import com.chrysanthemum.appdata.DataStorageModule;
 import com.chrysanthemum.ui.dataView.display.DisplayBoard;
 import com.chrysanthemum.ui.dataView.task.CustomerFinderTask;
 import com.chrysanthemum.ui.dataView.task.Task;
@@ -13,7 +15,8 @@ import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import android.util.Log;
+import android.telephony.PhoneNumberUtils;
+import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,7 +30,6 @@ import java.util.Objects;
 public class DataDisplayAvtivity extends AppCompatActivity implements TaskHostestActivity {
 
     private final LinkedList<TaskSelectionButtion> taskPanel= new LinkedList<>();
-    private Task activeTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +37,7 @@ public class DataDisplayAvtivity extends AppCompatActivity implements TaskHostes
         setContentView(R.layout.activity_data_display_avtivity);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        Objects.requireNonNull(getSupportActionBar()).setTitle("");
+        setBarText(DataStorageModule.getFrontEnd().getSecurityModule().getLoggedinTech().getName());
 
         instantiateTaskPanel();
 
@@ -88,9 +90,26 @@ public class DataDisplayAvtivity extends AppCompatActivity implements TaskHostes
         };
     }
 
+    private String taskTitle;
+
     private void setTask(Task t, String taskName){
-        activeTask = t;
-        Objects.requireNonNull(getSupportActionBar()).setTitle(taskName);
+        taskTitle = taskName;
+        setBarText(taskName);
+        t.start();
+    }
+
+    public String getTaskTitle(){
+        return taskTitle;
+    }
+
+    @Override
+    public String formatPhoneNumber(long phone) {
+        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        return PhoneNumberUtils.formatNumber(phone + "", telephonyManager.getNetworkCountryIso().toUpperCase());
+    }
+
+    public void setBarText(String s){
+        Objects.requireNonNull(getSupportActionBar()).setTitle(s);
     }
 
     public DisplayBoard createBoard(int col) {
@@ -100,13 +119,16 @@ public class DataDisplayAvtivity extends AppCompatActivity implements TaskHostes
 
     @Override
     public EditText getForm(int row) {
-        EditText r = (EditText) ((row == 1)? findViewById(R.id.FormText1)
+        return (EditText) ((row == 1)? findViewById(R.id.FormText1)
                         : findViewById(R.id.FormText2));
-        return r;
     }
 
     @Override
     public Button getFormButton() {
         return findViewById(R.id.formButton);
+    }
+
+    public LinearLayout getTechList() {
+        return findViewById(R.id.TechList);
     }
 }

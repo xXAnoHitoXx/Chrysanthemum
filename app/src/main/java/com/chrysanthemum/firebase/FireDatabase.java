@@ -4,7 +4,9 @@ import androidx.annotation.NonNull;
 
 import com.chrysanthemum.appdata.DataStorageModule;
 import com.chrysanthemum.appdata.dataType.Customer;
+import com.chrysanthemum.appdata.dataType.Transaction;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
+import com.chrysanthemum.appdata.dataType.subType.TransactionFrame;
 import com.chrysanthemum.appdata.security.SecurityModule;
 import com.chrysanthemum.appdata.dataType.Technician;
 import com.google.firebase.database.DataSnapshot;
@@ -15,6 +17,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.TreeMap;
 
 /**
@@ -60,17 +63,16 @@ public class FireDatabase implements RemoteDataBase {
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        LinkedList<Long> IDList = new LinkedList<>();
+
                         if(snapshot.exists()){
-                            LinkedList<Long> IDList = new LinkedList<>();
                             for(DataSnapshot child : snapshot.getChildren()){
                                 long id = child.getValue(Long.class);
                                 IDList.add(id);
                             }
-
-                            retriever.retrievedData(IDList);
-                        } else {
-                            retriever.retrievedData(null);
                         }
+
+                        retriever.retrievedData(IDList);
                     }
 
                     @Override
@@ -98,22 +100,71 @@ public class FireDatabase implements RemoteDataBase {
         );
     }
 
-    public void addNewCustomer(final Customer c){
-        findCustomerIDsByPhone(c.getPhoneNumber(), new DataRetriever<LinkedList<Long>>() {
-            @Override
-            public void retrievedData(LinkedList<Long> data) {
-                if(data == null){
-                    data = new LinkedList<>(); //if there's no list associated with this number make a new list
-                }
+    public void uploadCustomer(final Customer c){
+        //indexed by phone number
+        getRef().child("customer").child("phone").child("" + c.getPhoneNumber()).child("" + c.getID()).setValue(c.getID());
 
-                //add c's id to then list, then send the list to firebase
-                data.add(c.getID());
-                getRef().child("customer").child("phone").child("" + c.getPhoneNumber()).setValue(data);
-            }
-        });
-
-        // insert the customer at this position too
+        // store the customer by id
         getRef().child("customer").child("id").child("" + c.getID()).setValue(c);
+    }
+
+    @Override
+    public void uploadTransaction(Transaction transaction) {
+        DatabaseReference commonRef = getRef().child("transaction");
+
+        // store by id
+        commonRef.child("id").child("" + transaction.getID())
+                .setValue(new TransactionFrame(transaction));
+
+        //indexed by date
+        Scanner scanner = new Scanner(transaction.getDate());
+        String day = scanner.next();
+        String month = scanner.next();
+        String year = scanner.next();
+        scanner.close();
+
+        commonRef.child(year).child(month).child(day).child("Open")
+        .child("" + transaction.getID()).setValue(transaction.getID());
+
+        // indexed by customer
+        commonRef.child("customer")
+                .child("" + transaction.getCustomer().getID())
+                .child(transaction.getID() + "").setValue(transaction.getID());
+    }
+
+    public void attachTransactionTech(Transaction transaction){
+        //update technicianID
+        getRef().child("transaction").child("id").child("" + transaction.getID())
+                .child("technicianID").setValue(transaction.getTech().getID());
+    }
+
+    public void closeTransaction(Transaction transaction){
+        DatabaseReference commonRef = getRef().child("transaction").child("id")
+                .child("" + transaction.getID());
+
+        //update amount
+        commonRef.child("amount").setValue(transaction.getAmount());
+        //update tip
+        commonRef.child("tip").setValue(transaction.getTip());
+        //update services
+        commonRef.child("services").setValue(transaction.getServices());
+
+        //change grouping
+
+        //indexed by date
+        Scanner scanner = new Scanner(transaction.getDate());
+        String day = scanner.next();
+        String month = scanner.next();
+        String year = scanner.next();
+        scanner.close();
+
+        DatabaseReference indexRef = getRef().child("transaction")
+                .child(year).child(month).child(day);
+
+        //move data from one place to another
+        indexRef.child("Open").child("" + transaction.getID()).removeValue();
+        indexRef.child(transaction.getTech().getID() + "")
+                .child("" + transaction.getID()).setValue(transaction.getID());
     }
 
     static DatabaseReference getRef(){

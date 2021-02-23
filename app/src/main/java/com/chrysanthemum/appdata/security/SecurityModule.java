@@ -67,6 +67,10 @@ public abstract class SecurityModule {
 
     public abstract void login(Technician tech, int password);
 
+    public Technician getLoggedinTech() {
+        return status.getValue().getTech();
+    }
+
     public void logout(){
         updateLoginStatus(LoginStatus.loggedOut);
     }
