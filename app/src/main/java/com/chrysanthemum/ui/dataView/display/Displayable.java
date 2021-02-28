@@ -9,10 +9,34 @@ import androidx.annotation.Nullable;
 /**
  * implements this interface to be displayed by the board
  */
-public interface Displayable {
+public abstract class Displayable implements Comparable<Displayable> {
+
+    private final long id;
+
+    public Displayable(){
+        id = createID();
+    }
+
     @Nullable
-    Drawable getBGDrawable(Rect boundingBox);
-    String getDisplayData();
-    View.OnClickListener getOnclickListener();
-    View.OnLongClickListener getOnLongClickListener();
+    public abstract Drawable getBGDrawable(Rect boundingBox);
+    public abstract String getDisplayData();
+    public abstract View.OnClickListener getOnclickListener();
+    public abstract View.OnLongClickListener getOnLongClickListener();
+    public abstract int getX();
+    public abstract int getY();
+    public abstract int getWidth();
+    public abstract int getHeight();
+
+    @Override
+    public int compareTo(Displayable o) {
+        long comp = this.id - o.id;
+        if(comp != 0){
+            comp = comp / (Math.abs(comp));
+        }
+        return (int) comp;
+    }
+
+    private static synchronized long createID(){
+        return System.currentTimeMillis();
+    }
 }

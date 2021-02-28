@@ -11,7 +11,7 @@ public class TechnicianSelectorPanel {
     private TechnicianSelectorButton selected;
     private boolean locked = false;
 
-    protected TechnicianSelectorPanel(Context context, LinearLayout layout){
+    public TechnicianSelectorPanel(Context context, LinearLayout layout, boolean vertical){
         selected = null;
         Iterable<Technician> it = DataStorageModule.getFrontEnd().getTechList();
         for(Technician tech : it){
@@ -19,13 +19,22 @@ public class TechnicianSelectorPanel {
             final TechnicianSelectorButton button =
                     new TechnicianSelectorButton(context, tech, this);
 
-            button.setLayoutParams(
-                    new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT,
-                            100));
+            button.setLayoutParams(getParam(vertical));
 
             layout.addView(button);
 
+        }
+    }
+
+    private LinearLayout.LayoutParams getParam(boolean vertical){
+        if(vertical){
+            return new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    100);
+        } else {
+            return new LinearLayout.LayoutParams(
+                    100,
+                    LinearLayout.LayoutParams.MATCH_PARENT);
         }
     }
 

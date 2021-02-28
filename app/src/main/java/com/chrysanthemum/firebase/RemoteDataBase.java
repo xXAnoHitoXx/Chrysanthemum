@@ -3,6 +3,7 @@ package com.chrysanthemum.firebase;
 import com.chrysanthemum.appdata.dataType.Customer;
 import com.chrysanthemum.appdata.dataType.Transaction;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
+import com.chrysanthemum.appdata.dataType.subType.TransactionFrame;
 
 import java.util.LinkedList;
 
@@ -16,6 +17,9 @@ public interface RemoteDataBase {
     void uploadCustomer(Customer c);
 
     //----------------------------------------------------------------------------------------------
+
+    void findOpenTransactionIDsByDate(String date, DataRetriever<LinkedList<Long>> retriever);
+    void findTransactionByID(long id, DataRetriever<TransactionFrame> retriever);
 
     void uploadTransaction(Transaction transaction);
     void attachTransactionTech(Transaction transaction);

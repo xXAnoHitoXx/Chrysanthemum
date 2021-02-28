@@ -11,21 +11,20 @@ import android.util.AttributeSet;
  */
 public class DataDisplay extends androidx.appcompat.widget.AppCompatTextView {
 
-    private Displayable data;
+    public static final int STANDARD_BOX_WIDTH = 200;
+    public static final int STANDARD_BOX_HEIGHT = 100;
 
-    public DataDisplay(Context context) {
+    private final Displayable data;
+
+    public DataDisplay(Context context, Displayable data) {
         super(context);
-        data = null;
+        this.data = data;
+        updateOnclick();
     }
 
     public DataDisplay(Context context, AttributeSet set){
         super(context, set);
         data = null;
-    }
-
-    public void setData(Displayable data){
-        this.data = data;
-        updateOnclick();
     }
 
     public boolean hasData(){
@@ -52,10 +51,8 @@ public class DataDisplay extends androidx.appcompat.widget.AppCompatTextView {
         return new Rect(0, 0, getWidth(), getHeight());
     }
 
-    private void updateOnclick(){
-        if(data == null){
-            setOnClickListener(null);
-        } else {
+    private void updateOnclick() {
+        if(data != null) {
             setOnClickListener(data.getOnclickListener());
             setOnLongClickListener(data.getOnLongClickListener());
         }

@@ -9,6 +9,8 @@ import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
 import com.chrysanthemum.appdata.dataType.subType.TransactionFrame;
 import com.chrysanthemum.appdata.security.SecurityModule;
 import com.chrysanthemum.appdata.dataType.Technician;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -59,45 +61,36 @@ public class FireDatabase implements RemoteDataBase {
     }
 
     public void findCustomerIDsByPhone(long phoneNumber, final DataRetriever<LinkedList<Long>> retriever){
-        getRef().child("customer").child("phone").child(phoneNumber + "").addValueEventListener(
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        LinkedList<Long> IDList = new LinkedList<>();
+        getRef().child("customer").child("phone").child(phoneNumber + "").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if(task.isSuccessful()){
+                    DataSnapshot snapshot = task.getResult();
+                    LinkedList<Long> IDList = new LinkedList<>();
 
-                        if(snapshot.exists()){
-                            for(DataSnapshot child : snapshot.getChildren()){
-                                long id = child.getValue(Long.class);
-                                IDList.add(id);
-                            }
+                    if(snapshot.exists()){
+                        for(DataSnapshot child : snapshot.getChildren()){
+                            long id = child.getValue(Long.class);
+                            IDList.add(id);
                         }
-
-                        retriever.retrievedData(IDList);
                     }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
+                    retriever.retrievedData(IDList);
                 }
-        );
+            }
+        });
     }
 
     public void findCustomerByID(long id, final DataRetriever<Customer> retriever){
-        getRef().child("customer").child("id").child("" + id).addValueEventListener(
-                new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        Customer c = snapshot.getValue(Customer.class);
-                        retriever.retrievedData(c);
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
+        getRef().child("customer").child("id").child("" + id).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if(task.isSuccessful()){
+                    Customer c = task.getResult().getValue(Customer.class);
+                    retriever.retrievedData(c);
                 }
-        );
+            }
+        });
     }
 
     public void uploadCustomer(final Customer c){
@@ -106,6 +99,47 @@ public class FireDatabase implements RemoteDataBase {
 
         // store the customer by id
         getRef().child("customer").child("id").child("" + c.getID()).setValue(c);
+    }
+
+    @Override
+    public void findOpenTransactionIDsByDate(String date, final DataRetriever<LinkedList<Long>> retriever) {
+        Scanner scanner = new Scanner(date);
+        String day = scanner.next();
+        String month = scanner.next();
+        String year = scanner.next();
+        scanner.close();
+
+        getRef().child("transaction").child(year).child(month).child(day).child("Open").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if(task.isSuccessful()){
+                    DataSnapshot snapshot = task.getResult();
+                    LinkedList<Long> IDList = new LinkedList<>();
+
+                    if(snapshot.exists()){
+                        for(DataSnapshot child : snapshot.getChildren()){
+                            long id = child.getValue(Long.class);
+                            IDList.add(id);
+                        }
+                    }
+
+                    retriever.retrievedData(IDList);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void findTransactionByID(long id, final DataRetriever<TransactionFrame> retriever) {
+        getRef().child("transaction").child("id").child("" + id).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if(task.isSuccessful()){
+                    TransactionFrame c = task.getResult().getValue(TransactionFrame.class);
+                    retriever.retrievedData(c);
+                }
+            }
+        });
     }
 
     @Override

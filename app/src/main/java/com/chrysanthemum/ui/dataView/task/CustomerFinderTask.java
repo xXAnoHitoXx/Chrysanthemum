@@ -1,23 +1,24 @@
 package com.chrysanthemum.ui.dataView.task;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RectShape;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
 
 import com.chrysanthemum.appdata.DataStorageModule;
 import com.chrysanthemum.appdata.dataType.Customer;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
+import com.chrysanthemum.ui.dataView.display.DataDisplay;
 import com.chrysanthemum.ui.dataView.display.DisplayBoard;
 import com.chrysanthemum.ui.dataView.display.Displayable;
+import com.chrysanthemum.ui.dataView.task.taskListener.CustomerFoundListener;
 
 import java.util.Map;
 
@@ -27,31 +28,27 @@ public class CustomerFinderTask extends Task {
     private Map<String, Customer> customerMap;
 
     private long selectedPhoneNumber;
-    private Customer selectedCustomer;
+    private final CustomerFoundListener purpose;
 
-    public CustomerFinderTask(TaskHostestActivity host) {
+    private EditText form;
+
+    public CustomerFinderTask(TaskHostestActivity host, CustomerFoundListener purpose) {
         super(host);
+        this.purpose = purpose;
     }
 
     public void start(){
-        board = host.createBoard(4);
-
-        LinearLayout list = host.getTechList();
-        list.removeAllViews();
-        list.setVisibility(View.INVISIBLE);
-
         setupFindState();
     }
 
     private void setupFindState() {
+        host.clearForm();
         host.setBarText(host.getTaskTitle());
 
-        EditText form1 = host.getForm(1);
-        form1.setText("");
-        form1.setHint("Phone Number");
-        form1.setVisibility(View.VISIBLE);
+        form = host.createEditableForm(1);
 
-        host.getForm(2).setVisibility(View.INVISIBLE);
+        form.setText("");
+        form.setHint("Phone Number");
 
         Button b = host.getFormButton();
         b.setText("Search");
@@ -64,7 +61,6 @@ public class CustomerFinderTask extends Task {
     }
 
     private void searchCustomer(){
-        EditText form = host.getForm(1);
         long phoneNumber = checkPhoneNumber(form.getText().toString());
         if (phoneNumber < 0) {
             form.setError("example: 19029992703");
@@ -75,6 +71,9 @@ public class CustomerFinderTask extends Task {
     }
 
     private void loadBoard(){
+        board = host.getBoard();
+        board.clear();
+
         DataStorageModule.getFrontEnd().requestCustomerByPhone(selectedPhoneNumber, new DataRetriever<Map<String, Customer>>() {
             @Override
             public void retrievedData(Map<String, Customer> data) {
@@ -90,47 +89,39 @@ public class CustomerFinderTask extends Task {
         for(String customerName : customerMap.keySet()){
             final Customer c = customerMap.get(customerName);
 
-            board.displayData(index % 4, index / 4, new CustomerDisplay(c,
+            board.displayData(new CustomerDisplay(c,
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            selectedCustomer = c;
-                            setupNewAppointmentState();
+                            purpose.found(c);
                         }
                     },
-                    new View.OnLongClickListener(){
-
-                        @Override
-                        public boolean onLongClick(View v) {
-                            selectedCustomer = c;
-                            setupDetailedCustomerViewState();
-                            return true;
-                        }
-                    }
+                    null,
+                    (index % 4) * (DataDisplay.STANDARD_BOX_WIDTH + 1),
+                    (index / 4) * (DataDisplay.STANDARD_BOX_HEIGHT + 1)
             ));
 
             index++;
         }
 
-        board.displayData(index % 4, index / 4, new CustomerDisplay(
+        board.displayData(new CustomerDisplay(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         setupNewCustomerState();
                     }
-                }));
+                },
+                (index % 4) * (DataDisplay.STANDARD_BOX_WIDTH + 5),
+                (index / 4) * (DataDisplay.STANDARD_BOX_HEIGHT + 5)
+        ));
 
     }
 
     private void setupNewCustomerState(){
         host.setBarText(host.getTaskTitle() + " >>> New Customer");
 
-        EditText form1 = host.getForm(1);
-        form1.setText("");
-        form1.setHint("Customer Name");
-        form1.setVisibility(View.VISIBLE);
-
-        host.getForm(2).setVisibility(View.INVISIBLE);
+        form.setText("");
+        form.setHint("Customer Name");
 
         Button b = host.getFormButton();
         b.setText("Create");
@@ -143,45 +134,17 @@ public class CustomerFinderTask extends Task {
     }
 
     private void createCustomer(){
-        EditText form = host.getForm(1);
         String name = form.getText().toString();
-        selectedCustomer = DataStorageModule.getFrontEnd()
-                .createNewCustomerEntry(name, selectedPhoneNumber);
-        setupNewAppointmentState();
-    }
+        Customer customer;
 
-    private void setupNewAppointmentState(){
-        host.setBarText(host.getTaskTitle() + " >>> New Appointment");
+        if(customerMap.containsKey(name)){
+            customer = customerMap.get(name);
+        } else {
+            customer = DataStorageModule.getFrontEnd()
+                    .createNewCustomerEntry(name, selectedPhoneNumber);
+        }
 
-        EditText form1 = host.getForm(1);
-        form1.setText("");
-        form1.setHint("Date");
-        form1.setVisibility(View.VISIBLE);
-
-        EditText form2 = host.getForm(2);
-        form2.setText("");
-        form2.setHint("Time");
-        form2.setVisibility(View.VISIBLE);
-
-        Button b = host.getFormButton();
-        b.setText("Create");
-        b.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                createAppointment();
-            }
-        });
-    }
-
-    private void createAppointment(){
-
-    }
-
-    private void setupDetailedCustomerViewState(){
-        Log.w("Entered Method", "Detailed view");
-        Log.w("Customer Name", selectedCustomer.getName());
-        Log.w("Customer Number", selectedCustomer.getPhoneNumber() + "");
-        //TODO
+        purpose.found(customer);
     }
 
     private long checkPhoneNumber(String s){
@@ -196,31 +159,37 @@ public class CustomerFinderTask extends Task {
         }
     }
 
-    private class CustomerDisplay implements Displayable {
+    private class CustomerDisplay extends Displayable {
 
         private final String data;
         private final View.OnClickListener onclick;
         private final View.OnLongClickListener onLongClick;
         private final int colour;
+        private final int x;
+        private final int y;
 
-        public CustomerDisplay(Customer c, View.OnClickListener listener, View.OnLongClickListener onLongClick){
+        public CustomerDisplay(Customer c, View.OnClickListener listener, View.OnLongClickListener onLongClick, int x, int y){
             onclick = listener;
             this.onLongClick = onLongClick;
-            data = c.getName() +
+            data = "  " +
+                    c.getName() +
                     "\n" +
                     host.formatPhoneNumber(c.getPhoneNumber());
-            colour = Color.GRAY;
+            colour = Color.CYAN;
+            this.x = x;
+            this.y = y;
         }
 
-        public CustomerDisplay(View.OnClickListener listener) {
+        public CustomerDisplay(View.OnClickListener listener, int x, int y) {
             onclick = listener;
             onLongClick = null;
-            data = "New Customer";
+            data = "  New Customer";
             colour = Color.LTGRAY;
+            this.x = x;
+            this.y = y;
         }
 
         @Nullable
-        @Override
         public Drawable getBGDrawable(Rect boundingBox) {
             ShapeDrawable drawable =  new ShapeDrawable(new RectShape());
             drawable.getPaint().setColor(colour);
@@ -228,19 +197,49 @@ public class CustomerFinderTask extends Task {
             return drawable;
         }
 
-        @Override
         public String getDisplayData() {
             return data;
         }
 
-        @Override
         public View.OnClickListener getOnclickListener() {
             return onclick;
         }
 
-        @Override
         public View.OnLongClickListener getOnLongClickListener() {
             return onLongClick;
         }
+
+        public int getX() {
+            return x;
+        }
+
+        public int getY() {
+            return y;
+        }
+
+        @Override
+        public int getWidth() {
+            return DataDisplay.STANDARD_BOX_WIDTH;
+        }
+
+        @Override
+        public int getHeight() {
+            return DataDisplay.STANDARD_BOX_HEIGHT;
+        }
+
+    }
+
+    public static TaskSelectionButtion getMenuButton(Context c, final TaskHostestActivity host, final CustomerFoundListener purpose){
+        return new TaskSelectionButtion(c){
+            @Override
+            public Task getTask() {
+                return new CustomerFinderTask(host, purpose);
+            }
+
+            @Override
+            public String getTaskName() {
+                return "Customer Finder";
+            }
+        };
     }
 }

@@ -6,24 +6,29 @@ import com.chrysanthemum.firebase.RemoteDataBase;
 
 public abstract class Query<T> {
 
-    private DataRetriever<T> retriever;
-    private RemoteDataBase remote;
-    private boolean completed;
+    private final DataRetriever<T> retriever;
+    private final RemoteDataBase remote;
+    private boolean incomplete;
 
     public Query(RemoteDataBase remote, DataRetriever<T> retriever){
         this.remote = remote;
         this.retriever = retriever;
-        completed = false;
+        incomplete = true;
     }
 
     public abstract void executeQuery();
-    public boolean isCompleted(){
-        return completed;
+
+    private synchronized boolean isIncomplete(){
+        boolean status = incomplete;
+        incomplete = false;
+        return status;
     }
 
+    // calling retriever outside of synchronization
     protected void complete(T data){
-        completed = true;
-        retriever.retrievedData(data);
+        if(isIncomplete()){
+            retriever.retrievedData(data);
+        }
     }
 
     protected RemoteDataBase getRemoteDB(){

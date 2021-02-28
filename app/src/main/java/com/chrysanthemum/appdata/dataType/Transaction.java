@@ -1,12 +1,12 @@
 package com.chrysanthemum.appdata.dataType;
 
-import com.chrysanthemum.appdata.DataStorageModule;
 import com.chrysanthemum.appdata.dataType.subType.TransactionStatus;
 
 public class Transaction {
 
-    private final String date;
-    private final int time;
+    private final String date; // dd mm yyyy
+    private final int appointmentTime; // hour * 60 + min
+    private final int duration;
     private final Customer c;
     private final long id;
 
@@ -16,15 +16,19 @@ public class Transaction {
     private float tip = -1000;
     private String services;
 
-    public Transaction(String date, int time, Customer c, long id){
+    public Transaction(String date, int appointmentTime, int duration, Customer c, long id){
         this.date = date;
-        this.time = time;
+        this.appointmentTime = appointmentTime;
+        this.duration = duration;
         this.c = c;
         this.id = id;
+        this.amount = 0;// default 0
+        services = "";
     }
-    public Transaction(String date, int time, Customer c, long id, Technician tech, float amount, float tip, String services) {
+    public Transaction(String date, int time, int duration, Customer c, long id, Technician tech, float amount, float tip, String services) {
         this.date = date;
-        this.time = time;
+        this.appointmentTime = time;
+        this.duration = duration;
         this.c = c;
         this.id = id;
         this.tech = tech;
@@ -49,8 +53,12 @@ public class Transaction {
         return date;
     }
 
-    public int getTime(){
-        return time;
+    public int getAppointmentTime(){
+        return appointmentTime;
+    }
+
+    public int getDuration(){
+        return duration;
     }
 
     public Technician getTech(){
@@ -77,16 +85,29 @@ public class Transaction {
         return services;
     }
 
-    public String getDisplayData(){
+    public String getAppointmentDisplayData(){
+        StringBuilder b = new StringBuilder();
+
+
+        b.append(c.getName()).append(" - ");
+        b.append(getDisplayTime());
+        b.append("\n").append(services);
+
+        return b.toString();
+    }
+
+    public String getTransactionDisplayData(){
         StringBuilder b = new StringBuilder();
 
         b.append(c.getName());
         b.append("\n").append(c.getPhoneNumber());
 
-        if(services != null){
-            b.append("\n").append(services);
-            b.append("\n").append(c.getPhoneNumber());
+        if(amount >= 0){
+            b.append("\n").append(amount);
+            b.append("(").append(tip).append(")");
         }
+
+        b.append("\n").append(services);
 
         return b.toString();
     }
@@ -99,5 +120,12 @@ public class Transaction {
         } else {
             return TransactionStatus.Closed;
         }
+    }
+
+    private String getDisplayTime(){
+        int hour = appointmentTime / 60;
+        int min = appointmentTime % 60;
+
+        return (hour < 12)? hour +":" + min + " am" : (hour - 12) + ":" + min + " pm";
     }
 }

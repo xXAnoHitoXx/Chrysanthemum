@@ -13,8 +13,8 @@ public class CustomerByPhoneQuery extends Query<Map<String, Customer>>{
     private final long phoneNumber;
     private int entryCount;
 
-    public CustomerByPhoneQuery(RemoteDataBase remote, DataRetriever<Map<String, Customer>> retriever,
-                                long phoneNumber) {
+    public CustomerByPhoneQuery(RemoteDataBase remote, long phoneNumber,
+                                DataRetriever<Map<String, Customer>> retriever) {
         super(remote, retriever);
         data = new TreeMap<>();
         this.phoneNumber = phoneNumber;
@@ -29,7 +29,7 @@ public class CustomerByPhoneQuery extends Query<Map<String, Customer>>{
 
                         if(entryCount > 0){
                             for(long id : ids){
-                                executeSubQuery(id);
+                                customerByIDSubQuery(id);
                             }
                         } else {
                             complete(data);
@@ -38,26 +38,24 @@ public class CustomerByPhoneQuery extends Query<Map<String, Customer>>{
                 });
     }
 
-    private void executeSubQuery(long id){
-        getRemoteDB().findCustomerByID(id, createSubQueryRetriever());
-    }
-
-    private DataRetriever<Customer> createSubQueryRetriever(){
-        return new DataRetriever<Customer>() {
+    private void customerByIDSubQuery(long id){
+        CustomerByIDQuery q = new CustomerByIDQuery(getRemoteDB(), id, new DataRetriever<Customer>() {
             @Override
             public void retrievedData(Customer c) {
                 retrievedSubQueryData(c);
+
+                if(data.size() == entryCount){
+                    complete(data);
+                }
             }
-        };
+        });
+
+        q.executeQuery();
     }
 
     private synchronized void retrievedSubQueryData(Customer c){
         if(data.size() < entryCount){
             data.put(c.getName(), c);
-        }
-
-        if(data.size() == entryCount && !isCompleted()){
-            complete(data);
         }
     }
 }

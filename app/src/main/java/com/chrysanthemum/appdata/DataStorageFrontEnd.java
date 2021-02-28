@@ -22,15 +22,13 @@ public interface DataStorageFrontEnd {
     Technician getTech(long id);
 
     //--------------------------------------------------------------------------------------------------
-    boolean isDate(String s);
-    int parseTime(String s);
-
-    //--------------------------------------------------------------------------------------------------
     void requestCustomerByPhone(long phoneNumber, DataRetriever<Map<String, Customer>> retriever);
     Customer createNewCustomerEntry(String name, long phoneNumber);
 
     //--------------------------------------------------------------------------------------------------
-    Transaction createAppointment(String date, int time, Customer c);
+    void loadAppointmentList(String date, DataRetriever<LinkedList<Transaction>> retriever);
+
+    Transaction createAppointment(String date, int time, int duration, Customer c);
     void attachTransactionTech(Transaction transaction, Technician technician);
     void closeTransaction(Transaction transaction, float amount, float tip, String services);
 }

@@ -10,7 +10,8 @@ import com.chrysanthemum.appdata.dataType.Transaction;
 public class TransactionFrame {
     private long id;
     private String date;
-    private int time;
+    private int appointmentTime;
+    private int duration;
     private long customerID;
     private long technicianID;
     private float amount;
@@ -24,7 +25,8 @@ public class TransactionFrame {
     public TransactionFrame(Transaction transaction){
         id = transaction.getID();
         date = transaction.getDate();
-        time = transaction.getTime();
+        appointmentTime = transaction.getAppointmentTime();
+        duration = transaction.getDuration();
         customerID = transaction.getCustomer().getID();
         technicianID = transaction.getTech().getID();
         amount = transaction.getAmount();
@@ -41,6 +43,6 @@ public class TransactionFrame {
     }
 
     public Transaction formTransaction(Customer c, Technician t){
-        return new Transaction(date, time, c, id, t, amount, tip, services);
+        return new Transaction(date, appointmentTime, duration, c, id, t, amount, tip, services);
     }
 }

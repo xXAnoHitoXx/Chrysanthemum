@@ -6,6 +6,7 @@ import com.chrysanthemum.appdata.dataType.Customer;
 import com.chrysanthemum.appdata.dataType.Transaction;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
 import com.chrysanthemum.appdata.queryHandlers.CustomerByPhoneQuery;
+import com.chrysanthemum.appdata.queryHandlers.LoadAppointmentListByDayQuery;
 import com.chrysanthemum.appdata.queryHandlers.Query;
 import com.chrysanthemum.appdata.security.SecurityModule;
 import com.chrysanthemum.appdata.dataType.Technician;
@@ -15,6 +16,7 @@ import com.chrysanthemum.firebase.RemoteDataBase;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -87,93 +89,8 @@ public class DataStorageModule implements DataStorageFrontEnd, DataStorageBackEn
 
     //-----------------------------------------------------------------------------------------------
 
-    public boolean isDate(String s){
-        Scanner scan = new Scanner(s);
-
-        if(!scan.hasNextInt()){
-            return false;
-        }
-
-        int year = scan.nextInt();
-
-        if(!scan.hasNextInt()){
-            return false;
-        }
-
-        int m = scan.nextInt();
-        String month = (m < 10)? "0" + m: "" + m;
-
-        if(!scan.hasNextInt()){
-            return false;
-        }
-
-        int d =scan.nextInt();
-        String day = (d < 10)? "0"+ d : "" + d;
-
-
-        @SuppressLint("SimpleDateFormat") DateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-
-        // Input to be parsed should strictly follow the defined date format
-        // above.
-        format.setLenient(false);
-
-        String date = day + "/" + month + "/" + year;
-        try {
-            format.parse(date);
-        } catch (ParseException e) {
-            return false;
-        }
-
-        return true;
-    }
-
-    public int parseTime(String s) {
-        Scanner scan = new Scanner(s);
-
-        if(!scan.hasNextInt()){
-            return -1;
-        }
-
-        int hour = scan.nextInt();
-
-        if(!scan.hasNextInt() || hour < 1 || hour > 12){
-            return -1;
-        }
-
-        int min = scan.nextInt();
-
-        if(!scan.hasNext() || min < 0 || min > 59){
-            return -1;
-        }
-
-        String m = scan.next();
-        m = m.toLowerCase();
-
-        int time = 0;
-
-        if(m.equals("am")){
-            if(hour != 12){
-                time += hour;
-            }
-        } else if(m.equals("pm")){
-            if(hour != 12){
-                time += hour;
-            }
-            time += 12;
-        } else {
-            return -1;
-        }
-
-        time *= 60;
-        time += min;
-
-        return time;
-    }
-
-    //-----------------------------------------------------------------------------------------------
-
     public void requestCustomerByPhone(long phoneNumber, DataRetriever<Map<String, Customer>> retriever){
-        Query<Map<String, Customer>> q = new CustomerByPhoneQuery(remote, retriever, phoneNumber);
+        Query<Map<String, Customer>> q = new CustomerByPhoneQuery(remote, phoneNumber, retriever);
         q.executeQuery();
     }
 
@@ -185,8 +102,13 @@ public class DataStorageModule implements DataStorageFrontEnd, DataStorageBackEn
 
     //-----------------------------------------------------------------------------------------------
 
-    public Transaction createAppointment(String date, int time, Customer c){
-        Transaction transaction = new Transaction(date, time, c, generateID());
+    public void loadAppointmentList(String date, DataRetriever<LinkedList<Transaction>> retriever){
+        Query<LinkedList<Transaction>> q = new LoadAppointmentListByDayQuery(remote, date, retriever);
+        q.executeQuery();
+    }
+
+    public Transaction createAppointment(String date, int time, int duration, Customer c){
+        Transaction transaction = new Transaction(date, time, duration, c, generateID());
         remote.uploadTransaction(transaction);
         return transaction;
     }

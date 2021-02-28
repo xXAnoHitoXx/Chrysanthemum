@@ -29,13 +29,13 @@
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginTop="@dimen/fab_margin"
+        android:layout_marginEnd="@dimen/fab_margin"
+        android:contentDescription="@string/lockapp"
         app:backgroundTint="#9A516A"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_delete"
-        android:contentDescription="@string/lockapp" />
+        app:srcCompat="@android:drawable/ic_delete" />
 
     <ScrollView
         android:id="@+id/scrollView2"
@@ -53,50 +53,34 @@
     </ScrollView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
+        android:id="@+id/Form"
         android:layout_width="0dp"
         android:layout_height="@dimen/data_view_form_height"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/scrollView2"
         app:layout_constraintTop_toBottomOf="@+id/appBarLayout2">
 
-        <LinearLayout
-            android:id="@+id/TechList"
+        <HorizontalScrollView
+            android:id="@+id/horizontalScrollView2"
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginStart="50dp"
-            android:layout_marginEnd="50dp"
-            android:orientation="horizontal"
+            android:layout_height="0dp"
+            android:layout_marginStart="@dimen/data_view_form_height_div"
+            android:layout_marginTop="@dimen/data_view_form_height_div"
+            android:layout_marginEnd="@dimen/data_view_form_height_div"
+            android:layout_marginBottom="@dimen/data_view_form_height_div"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/formButton"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"></LinearLayout>
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0">
 
-        <EditText
-            android:id="@+id/FormText1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="100dp"
-            android:layout_marginTop="40dp"
-            android:layout_marginEnd="100dp"
-            android:ems="10"
-            android:inputType="textPersonName"
-            app:layout_constraintEnd_toStartOf="@+id/formButton"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <EditText
-            android:id="@+id/FormText2"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="100dp"
-            android:layout_marginEnd="100dp"
-            android:layout_marginBottom="40dp"
-            android:ems="10"
-            android:inputType="textPersonName"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/formButton"
-            app:layout_constraintStart_toStartOf="parent" />
+            <LinearLayout
+                android:id="@+id/TechList"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"></LinearLayout>
+        </HorizontalScrollView>
 
         <Button
             android:id="@+id/formButton"
@@ -115,13 +99,19 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/scrollView2"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
+        app:layout_constraintTop_toBottomOf="@+id/Form">
 
-        <LinearLayout
-            android:id="@+id/display_columns_list"
+        <ScrollView
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="horizontal" />
+            android:layout_height="match_parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/Board"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
     </HorizontalScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

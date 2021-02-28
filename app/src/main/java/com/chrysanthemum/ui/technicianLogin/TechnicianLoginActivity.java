@@ -9,8 +9,6 @@ import com.chrysanthemum.appdata.security.LoginStatus;
 import com.chrysanthemum.appdata.security.SecurityModule;
 import com.chrysanthemum.ui.accessAuthentication.AppAuthenticationActivity;
 import com.chrysanthemum.ui.dataView.DataDisplayAvtivity;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -33,7 +31,7 @@ public class TechnicianLoginActivity extends AppCompatActivity {
         LinearLayout layout = findViewById(R.id.colour_panel);
 
         TechnicianSelectorPanel selectorPanel = new TechnicianSelectorPanel(this,
-                layout);
+                layout, true);
 
         Button[] controls = {
                 findViewById(R.id.button0),
@@ -53,7 +51,7 @@ public class TechnicianLoginActivity extends AppCompatActivity {
         TextView message = findViewById(R.id.statusMessage);
         TextView progress = findViewById(R.id.passwordProgress);
 
-        PasswordNumberPad numPad = new PasswordNumberPad(controls, selectorPanel, message, progress, this);
+        new PasswordNumberPad(controls, selectorPanel, message, progress, this);
 
         View x = findViewById(R.id.fab);
         x.setOnClickListener(new View.OnClickListener() {

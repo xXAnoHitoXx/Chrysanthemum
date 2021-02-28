@@ -1,12 +1,14 @@
 package com.chrysanthemum.ui.dataView.display;
 
 import android.content.Context;
-import android.view.View;
-import android.widget.LinearLayout;
 
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.core.view.ViewCompat;
+
+import java.util.TreeMap;
+
+import static com.chrysanthemum.appdata.Util.AppUtil.dpToPx;
 
 /**
  * fixed column count board
@@ -15,43 +17,43 @@ import androidx.lifecycle.Observer;
 public class DisplayBoard {
 
     Context c;
-    LinearLayout columnLayout;
-    DataColumn[] columns;
-    MutableLiveData<Integer> scrollSynchronizer;
+    ConstraintLayout layout;
+    TreeMap<Displayable, DataDisplay> subviews;
 
-    public DisplayBoard(Context c, LifecycleOwner o, LinearLayout board, int columnCount){
-        columnLayout = board;
-        columnLayout.removeAllViewsInLayout();
+    public DisplayBoard(Context c, ConstraintLayout layout){
         this.c = c;
-        scrollSynchronizer = new MutableLiveData<Integer>();
-        scrollSynchronizer.observe(o, new Observer<Integer>() {
-            @Override
-            public void onChanged(Integer integer) {
-                for(DataColumn d : columns){
-                    d.getScroll().smoothScrollTo(0, integer);
-                }
-            }
-        });
-        createColumns(columnCount);
+        this.layout = layout;
+        subviews = new TreeMap<>();
     }
 
-    public void displayData(int col, int row, Displayable data){
-        if(col < columns.length){
-            columns[col].display(row, data);
-        }
+    public void displayData(Displayable d){
+        int viewID = ViewCompat.generateViewId();
+        int layoutID = layout.getId();
+
+        DataDisplay display = new DataDisplay(c, d);
+        display.setId(viewID);
+
+        subviews.put(d, display);
+        layout.addView(display);
+
+        ConstraintSet constraintSet = new ConstraintSet();
+        constraintSet.connect(viewID, ConstraintSet.LEFT, layoutID, ConstraintSet.LEFT, dpToPx(c, d.getX()));
+        constraintSet.connect(viewID, ConstraintSet.TOP, layoutID, ConstraintSet.TOP, dpToPx(c, d.getY()));
+        constraintSet.constrainWidth(viewID, dpToPx(c, d.getWidth()));
+        constraintSet.constrainHeight(viewID, dpToPx(c, d.getHeight()));
+
+        constraintSet.applyTo(layout);
+        display.invalidate();
     }
 
-    private void createColumns(int columnCount){
-        columns = new DataColumn[columnCount];
-
-        for(int i = 0; i < columnCount; i++){
-            columns[i] = new DataColumn(c, columnLayout, new View.OnScrollChangeListener() {
-                @Override
-                public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                    scrollSynchronizer.setValue(scrollY);
-                }
-            });
-        }
+    public void remove(Displayable d){
+        DataDisplay display = subviews.remove(d);
+        layout.removeView(display);
+        layout.invalidate();
     }
 
+    public void clear(){
+        subviews = new TreeMap<>();
+        layout.removeAllViews();
+    }
 }
