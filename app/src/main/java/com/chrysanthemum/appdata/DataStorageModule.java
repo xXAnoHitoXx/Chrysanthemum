@@ -107,10 +107,16 @@ public class DataStorageModule implements DataStorageFrontEnd, DataStorageBackEn
         q.executeQuery();
     }
 
-    public Transaction createAppointment(String date, int time, int duration, Customer c){
-        Transaction transaction = new Transaction(date, time, duration, c, generateID());
+    public Transaction createAppointment(String date, int time, int duration, Customer c, String services){
+        Transaction transaction = new Transaction(date, time, duration, c, generateID(), services);
         remote.uploadTransaction(transaction);
         return transaction;
+    }
+
+    @Override
+    public void markAsNoShow(Transaction transaction) {
+        transaction.markNoShow();
+        remote.markNoShow(transaction);
     }
 
     public void attachTransactionTech(Transaction transaction, Technician technician){
@@ -118,7 +124,7 @@ public class DataStorageModule implements DataStorageFrontEnd, DataStorageBackEn
         remote.attachTransactionTech(transaction);
     }
 
-    public void closeTransaction(Transaction transaction, float amount, float tip, String services){
+    public void closeTransaction(Transaction transaction, int amount, int tip, String services){
         transaction.setBill(amount, tip, services);
         remote.closeTransaction(transaction);
     }

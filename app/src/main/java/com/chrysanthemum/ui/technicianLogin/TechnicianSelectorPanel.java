@@ -14,6 +14,7 @@ public class TechnicianSelectorPanel {
     public TechnicianSelectorPanel(Context context, LinearLayout layout, boolean vertical){
         selected = null;
         Iterable<Technician> it = DataStorageModule.getFrontEnd().getTechList();
+
         for(Technician tech : it){
 
             final TechnicianSelectorButton button =
@@ -39,6 +40,10 @@ public class TechnicianSelectorPanel {
     }
 
     public Technician getSelectedTech(){
+        if(selected == null){
+            return null;
+        }
+
         return selected.getTech();
     }
 

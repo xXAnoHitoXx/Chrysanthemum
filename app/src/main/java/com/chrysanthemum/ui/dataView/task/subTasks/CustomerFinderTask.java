@@ -1,5 +1,6 @@
-package com.chrysanthemum.ui.dataView.task;
+package com.chrysanthemum.ui.dataView.task.subTasks;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -9,6 +10,7 @@ import android.graphics.drawable.shapes.RectShape;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
@@ -18,7 +20,9 @@ import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
 import com.chrysanthemum.ui.dataView.display.DataDisplay;
 import com.chrysanthemum.ui.dataView.display.DisplayBoard;
 import com.chrysanthemum.ui.dataView.display.Displayable;
-import com.chrysanthemum.ui.dataView.task.taskListener.CustomerFoundListener;
+import com.chrysanthemum.ui.dataView.task.Task;
+import com.chrysanthemum.ui.dataView.task.TaskHostestActivity;
+import com.chrysanthemum.ui.dataView.task.TaskSelectionButtion;
 
 import java.util.Map;
 
@@ -28,11 +32,12 @@ public class CustomerFinderTask extends Task {
     private Map<String, Customer> customerMap;
 
     private long selectedPhoneNumber;
-    private final CustomerFoundListener purpose;
+    private final DataRetriever<Customer> purpose;
 
     private EditText form;
+    private TextView label;
 
-    public CustomerFinderTask(TaskHostestActivity host, CustomerFoundListener purpose) {
+    public CustomerFinderTask(TaskHostestActivity host, DataRetriever<Customer> purpose) {
         super(host);
         this.purpose = purpose;
     }
@@ -41,14 +46,18 @@ public class CustomerFinderTask extends Task {
         setupFindState();
     }
 
+    @SuppressLint("SetTextI18n")
     private void setupFindState() {
         host.clearForm();
-        host.setBarText(host.getTaskTitle());
+        host.setBarText(host.getMainTaskTitle());
 
         form = host.createEditableForm(1);
+        label = host.createFormLabel(1);
+
+        label.setText("Phone Number:");
 
         form.setText("");
-        form.setHint("Phone Number");
+        form.setHint("19029992703");
 
         Button b = host.getFormButton();
         b.setText("Search");
@@ -63,7 +72,7 @@ public class CustomerFinderTask extends Task {
     private void searchCustomer(){
         long phoneNumber = checkPhoneNumber(form.getText().toString());
         if (phoneNumber < 0) {
-            form.setError("example: 19029992703");
+            form.setError("Example: 19029992703");
         } else {
             selectedPhoneNumber = phoneNumber;
             loadBoard();
@@ -93,7 +102,7 @@ public class CustomerFinderTask extends Task {
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            purpose.found(c);
+                            purpose.retrievedData(c);
                         }
                     },
                     null,
@@ -117,11 +126,14 @@ public class CustomerFinderTask extends Task {
 
     }
 
+    @SuppressLint("SetTextI18n")
     private void setupNewCustomerState(){
-        host.setBarText(host.getTaskTitle() + " >>> New Customer");
+        host.setBarText(host.getMainTaskTitle() + " >>> New Customer");
+
+        label.setText("Customer Name:");
 
         form.setText("");
-        form.setHint("Customer Name");
+        form.setHint("John Doe");
 
         Button b = host.getFormButton();
         b.setText("Create");
@@ -144,7 +156,7 @@ public class CustomerFinderTask extends Task {
                     .createNewCustomerEntry(name, selectedPhoneNumber);
         }
 
-        purpose.found(customer);
+        purpose.retrievedData(customer);
     }
 
     private long checkPhoneNumber(String s){
@@ -229,8 +241,8 @@ public class CustomerFinderTask extends Task {
 
     }
 
-    public static TaskSelectionButtion getMenuButton(Context c, final TaskHostestActivity host, final CustomerFoundListener purpose){
-        return new TaskSelectionButtion(c){
+    public static TaskSelectionButtion getMenuButton(Context context, final TaskHostestActivity host, final DataRetriever<Customer> purpose){
+        return new TaskSelectionButtion(context){
             @Override
             public Task getTask() {
                 return new CustomerFinderTask(host, purpose);

@@ -46,6 +46,14 @@ public class DisplayBoard {
         display.invalidate();
     }
 
+    public void invalidateData(Displayable d){
+        DataDisplay display = subviews.get(d);
+
+        if(display != null){
+            display.invalidate();
+        }
+    }
+
     public void remove(Displayable d){
         DataDisplay display = subviews.remove(d);
         layout.removeView(display);

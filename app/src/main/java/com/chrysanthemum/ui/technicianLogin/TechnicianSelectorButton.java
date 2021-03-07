@@ -18,7 +18,7 @@ import androidx.core.content.res.ResourcesCompat;
 
 public class TechnicianSelectorButton extends View implements View.OnClickListener {
 
-    private static final int offsetPercent = 7;
+    private static final int OFFSET_PERCENT = 7;
 
     private boolean selected;
     private Technician tech;
@@ -73,7 +73,11 @@ public class TechnicianSelectorButton extends View implements View.OnClickListen
         });
 
         if(selected){
-            buttonDrawable.addLayer(getCheckmarkDrawable());
+            Drawable drawable = getCheckMarkDrawable();
+
+            if(drawable != null){
+                buttonDrawable.addLayer(getCheckMarkDrawable());
+            }
         }
 
         return buttonDrawable;
@@ -88,14 +92,18 @@ public class TechnicianSelectorButton extends View implements View.OnClickListen
     }
 
 
-    private Drawable getCheckmarkDrawable() {
-        Drawable checkmark = ResourcesCompat.getDrawable(res, R.drawable.checkmark, null);
+    private Drawable getCheckMarkDrawable() {
+        Drawable checkMark = ResourcesCompat.getDrawable(res, R.drawable.checkmark, null);
 
-        checkmark.setBounds(this.getWidth() - checkmark.getIntrinsicWidth(),
-                this.getHeight() - checkmark.getIntrinsicHeight(),
+        if(checkMark == null){
+            return null;
+        }
+
+        checkMark.setBounds(this.getWidth() - checkMark.getIntrinsicWidth(),
+                this.getHeight() - checkMark.getIntrinsicHeight(),
                 this.getWidth(), this.getHeight());
 
-        return checkmark;
+        return checkMark;
     }
 
     private Rect getBoundingBox(){
@@ -107,8 +115,8 @@ public class TechnicianSelectorButton extends View implements View.OnClickListen
     }
 
     private Rect getOffsetBox(){
-        int xMargin = (getWidth() * offsetPercent) / 100;
-        int yMargin = (getHeight() * offsetPercent) / 100;
+        int xMargin = (getWidth() * OFFSET_PERCENT) / 100;
+        int yMargin = (getHeight() * OFFSET_PERCENT) / 100;
 
         return new Rect(xMargin, yMargin,
                 getWidth() - xMargin, getHeight() - yMargin);

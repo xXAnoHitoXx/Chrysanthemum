@@ -22,7 +22,7 @@ public class LoginRepository extends SecurityModule {
     private static final String appName = "BubbleGum";
 
     public LoginRepository(){
-        FireDatabase.getRef().child("app").addValueEventListener(new ValueEventListener() {
+        FireDatabase.getRef().child(DatabaseStructure.CURRENTLY_ACTIVE_APP_INSTANCE).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(!appName.equalsIgnoreCase(snapshot.getValue(String.class))){
@@ -40,7 +40,9 @@ public class LoginRepository extends SecurityModule {
     @Override
     public void login(final Technician tech, final int password) {
 
-        FireDatabase.getRef().child("technician").child("password").child("" + tech.getID()).get()
+        FireDatabase.getRef().child(DatabaseStructure.TechnicianBranch.BRANCH_NAME)
+                .child(DatabaseStructure.TechnicianBranch.PASSWORD_STORAGE)
+                .child("" + tech.getID()).get()
                 .addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
 
             @Override
@@ -66,7 +68,8 @@ public class LoginRepository extends SecurityModule {
 
     @Override
     public void registerPassword(Technician tech, int password) {
-        FireDatabase.getRef().child("technician").child("password")
+        FireDatabase.getRef().child(DatabaseStructure.TechnicianBranch.BRANCH_NAME)
+                .child(DatabaseStructure.TechnicianBranch.PASSWORD_STORAGE)
                 .child("" + tech.getID()).setValue( password + "");
     }
 

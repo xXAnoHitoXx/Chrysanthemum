@@ -1,6 +1,11 @@
 package com.chrysanthemum.appdata.dataType;
 
+import com.chrysanthemum.appdata.dataType.parsing.PaymentParser;
+import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
 import com.chrysanthemum.appdata.dataType.subType.TransactionStatus;
+
+import java.time.LocalDate;
+import java.util.Scanner;
 
 public class Transaction {
 
@@ -12,20 +17,21 @@ public class Transaction {
 
     //------------------------------
     private Technician tech;
-    private float amount = -1000;
-    private float tip = -1000;
+    private int amount;
+    private int tip;
     private String services;
 
-    public Transaction(String date, int appointmentTime, int duration, Customer c, long id){
+    public Transaction(String date, int appointmentTime, int duration, Customer c, long id, String services){
         this.date = date;
         this.appointmentTime = appointmentTime;
         this.duration = duration;
         this.c = c;
         this.id = id;
         this.amount = 0;// default 0
-        services = "";
+        this.tip = 0;
+        this.services = services;
     }
-    public Transaction(String date, int time, int duration, Customer c, long id, Technician tech, float amount, float tip, String services) {
+    public Transaction(String date, int time, int duration, Customer c, long id, Technician tech, int amount, int tip, String services) {
         this.date = date;
         this.appointmentTime = time;
         this.duration = duration;
@@ -41,7 +47,7 @@ public class Transaction {
         this.tech = tech;
     }
 
-    public void setBill (float amount, float tip, String services){
+    public void setBill (int amount, int tip, String services){
         this.amount = amount;
         this.tip = tip;
         this.services = services;
@@ -73,11 +79,11 @@ public class Transaction {
         return id;
     }
 
-    public float getAmount(){
+    public int getAmount(){
         return amount;
     }
 
-    public float getTip(){
+    public int getTip(){
         return tip;
     }
 
@@ -85,47 +91,48 @@ public class Transaction {
         return services;
     }
 
+    public boolean noShow(){
+        return amount < 0;
+    }
+
+    public void markNoShow(){
+        amount = -1000;
+    }
+
     public String getAppointmentDisplayData(){
-        StringBuilder b = new StringBuilder();
 
-
-        b.append(c.getName()).append(" - ");
-        b.append(getDisplayTime());
-        b.append("\n").append(services);
-
-        return b.toString();
+        return c.getName() + " - " +
+                TimeParser.reverseParse(appointmentTime) +
+                "\n" + services;
     }
 
     public String getTransactionDisplayData(){
-        StringBuilder b = new StringBuilder();
 
-        b.append(c.getName());
-        b.append("\n").append(c.getPhoneNumber());
-
-        if(amount >= 0){
-            b.append("\n").append(amount);
-            b.append("(").append(tip).append(")");
-        }
-
-        b.append("\n").append(services);
-
-        return b.toString();
+        return c.getName() +
+                "\n" + c.getPhoneNumber() +
+                "\n" +
+                PaymentParser.reverseParse(amount, tip) +
+                "\n" + services;
     }
 
     public TransactionStatus getStatus(){
         if(tech == null){
             return TransactionStatus.Open;
-        } else if(amount < 0){
+        } else if(amount <= 0){
             return TransactionStatus.Claimed;
         } else {
             return TransactionStatus.Closed;
         }
     }
 
-    private String getDisplayTime(){
-        int hour = appointmentTime / 60;
-        int min = appointmentTime % 60;
+    public LocalDate getLocalDate(){
+        Scanner scanner = new Scanner(getDate());
+        int day = scanner.nextInt();
+        int month = scanner.nextInt();
+        int year = scanner.nextInt();
+        scanner.close();
 
-        return (hour < 12)? hour +":" + min + " am" : (hour - 12) + ":" + min + " pm";
+        return LocalDate.of(year, month, day);
     }
+
 }

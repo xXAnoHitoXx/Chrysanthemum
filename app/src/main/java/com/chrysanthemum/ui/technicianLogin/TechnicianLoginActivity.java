@@ -8,7 +8,7 @@ import com.chrysanthemum.appdata.DataStorageModule;
 import com.chrysanthemum.appdata.security.LoginStatus;
 import com.chrysanthemum.appdata.security.SecurityModule;
 import com.chrysanthemum.ui.accessAuthentication.AppAuthenticationActivity;
-import com.chrysanthemum.ui.dataView.DataDisplayAvtivity;
+import com.chrysanthemum.ui.dataView.DataDisplayActivity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -73,7 +73,7 @@ public class TechnicianLoginActivity extends AppCompatActivity {
     }
 
     private void onLoginSuccess(){
-        Intent intent = new Intent(this, DataDisplayAvtivity.class);
+        Intent intent = new Intent(this, DataDisplayActivity.class);
         startActivity(intent);
     }
 

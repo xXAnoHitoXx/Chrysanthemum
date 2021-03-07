@@ -22,6 +22,7 @@ public interface RemoteDataBase {
     void findTransactionByID(long id, DataRetriever<TransactionFrame> retriever);
 
     void uploadTransaction(Transaction transaction);
+    void markNoShow(Transaction transaction);
     void attachTransactionTech(Transaction transaction);
     void closeTransaction(Transaction transaction);
 }

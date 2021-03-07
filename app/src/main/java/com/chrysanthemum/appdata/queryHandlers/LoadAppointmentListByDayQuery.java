@@ -48,6 +48,8 @@ public class LoadAppointmentListByDayQuery extends Query<LinkedList<Transaction>
                 }
             }
         });
+
+        q.executeQuery();
     }
 
 

@@ -27,7 +27,7 @@ public class TransactionByIDQuery extends Query<Transaction> {
             @Override
             public void retrievedData(TransactionFrame data) {
                 frame = data;
-                tech = DataStorageModule.getFrontEnd().getTech(frame.getTechnicianID());
+                tech = (frame.getTechnicianID() > 0)? DataStorageModule.getFrontEnd().getTech(frame.getTechnicianID()) : null;
                 customerByIDSubQuery(frame.getCustomerID());
 
             }

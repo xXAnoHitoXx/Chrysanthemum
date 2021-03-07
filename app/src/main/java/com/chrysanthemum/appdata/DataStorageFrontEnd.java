@@ -28,7 +28,8 @@ public interface DataStorageFrontEnd {
     //--------------------------------------------------------------------------------------------------
     void loadAppointmentList(String date, DataRetriever<LinkedList<Transaction>> retriever);
 
-    Transaction createAppointment(String date, int time, int duration, Customer c);
+    Transaction createAppointment(String date, int time, int duration, Customer c, String services);
+    void markAsNoShow(Transaction transaction);
     void attachTransactionTech(Transaction transaction, Technician technician);
-    void closeTransaction(Transaction transaction, float amount, float tip, String services);
+    void closeTransaction(Transaction transaction, int amount, int tip, String services);
 }

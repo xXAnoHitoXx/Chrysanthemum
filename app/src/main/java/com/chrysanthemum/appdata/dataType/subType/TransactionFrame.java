@@ -6,16 +6,18 @@ import com.chrysanthemum.appdata.dataType.Transaction;
 
 /**
  * how a transaction is written into firebase database
+ * Customer and Technician are stored by their ids only
+ * Strings are cheaper to store since range of values are small
  */
 public class TransactionFrame {
     private long id;
     private String date;
-    private int appointmentTime;
-    private int duration;
+    private String appointmentTime;
+    private String duration;
     private long customerID;
     private long technicianID;
-    private float amount;
-    private float tip;
+    private String amount;
+    private String tip;
     private String services;
 
     public TransactionFrame(){
@@ -25,24 +27,53 @@ public class TransactionFrame {
     public TransactionFrame(Transaction transaction){
         id = transaction.getID();
         date = transaction.getDate();
-        appointmentTime = transaction.getAppointmentTime();
-        duration = transaction.getDuration();
+        appointmentTime = transaction.getAppointmentTime() + "";
+        duration = transaction.getDuration() + "";
         customerID = transaction.getCustomer().getID();
-        technicianID = transaction.getTech().getID();
-        amount = transaction.getAmount();
-        tip = transaction.getTip();
+        technicianID = (transaction.getTech() != null)? transaction.getTech().getID() : -1;
+        amount = transaction.getAmount() + "";
+        tip = transaction.getTip() + "";
         services = transaction.getServices();
+    }
+
+    public void setID(long id){
+        this.id = id;
+    }
+
+    public String getDate(){
+        return date;
+    }
+
+    public String getAppointmentTime(){
+        return appointmentTime;
+    }
+
+    public String getDuration(){
+        return duration;
     }
 
     public long getCustomerID(){
         return  customerID;
     }
 
-    public  long getTechnicianID(){
+    public long getTechnicianID(){
         return technicianID;
     }
 
+    public String getAmount(){
+        return amount;
+    }
+
+    public String getTip(){
+        return tip;
+    }
+
+    public String getServices(){
+        return services;
+    }
+
     public Transaction formTransaction(Customer c, Technician t){
-        return new Transaction(date, appointmentTime, duration, c, id, t, amount, tip, services);
+        return new Transaction(date, Integer.parseInt(appointmentTime), Integer.parseInt(duration), c, id, t,
+                Integer.parseInt(amount), Integer.parseInt(amount), services);
     }
 }
