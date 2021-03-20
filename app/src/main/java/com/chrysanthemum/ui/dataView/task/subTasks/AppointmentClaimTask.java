@@ -5,11 +5,12 @@ import android.content.DialogInterface;
 import android.view.View;
 import android.widget.Button;
 
-import com.chrysanthemum.appdata.DataStorageModule;
 import com.chrysanthemum.appdata.dataType.Technician;
 import com.chrysanthemum.appdata.dataType.Transaction;
 import com.chrysanthemum.appdata.dataType.retreiver.NullRetriever;
-import com.chrysanthemum.appdata.dataType.subType.TransactionStatus;
+import com.chrysanthemum.appdata.dataType.subType.AppointmentStatus;
+import com.chrysanthemum.appdata.querries.appointments.AttachTechnicianToAppointmentQuery;
+import com.chrysanthemum.appdata.querries.appointments.MarkAppointmentAsNoShowQuery;
 import com.chrysanthemum.ui.dataView.task.Task;
 import com.chrysanthemum.ui.dataView.task.TaskHostestActivity;
 import com.chrysanthemum.ui.technicianLogin.TechnicianSelectorPanel;
@@ -42,14 +43,14 @@ public class AppointmentClaimTask  extends Task {
             public void onClick(View v) {
                 Technician t = panel.getSelectedTech();
 
-                if(transaction.getStatus() == TransactionStatus.Open
+                if(transaction.getAppointmentStatus() == AppointmentStatus.Open
                         && t != null){
                     //claim
-                    DataStorageModule.getFrontEnd().attachTransactionTech(transaction, t);
-                } else if(transaction.getStatus() == TransactionStatus.Claimed
+                    new AttachTechnicianToAppointmentQuery(transaction, t).executeQuery();
+                } else if(transaction.getAppointmentStatus() == AppointmentStatus.Claimed
                         && t != null && transaction.getTech().getID() != t.getID()){
                     //change Tech
-                    DataStorageModule.getFrontEnd().attachTransactionTech(transaction, t);
+                    new AttachTechnicianToAppointmentQuery(transaction, t).executeQuery();
                 } else {
                     noSHowAlert();
                 }
@@ -69,7 +70,7 @@ public class AppointmentClaimTask  extends Task {
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        DataStorageModule.getFrontEnd().markAsNoShow(transaction);
+                        new MarkAppointmentAsNoShowQuery(transaction).executeQuery();
                     }})
                 .setNegativeButton(android.R.string.no, null).show();
     }

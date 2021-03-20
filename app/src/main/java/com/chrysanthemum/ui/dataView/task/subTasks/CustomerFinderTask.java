@@ -1,7 +1,7 @@
 package com.chrysanthemum.ui.dataView.task.subTasks;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -14,19 +14,25 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
-import com.chrysanthemum.appdata.DataStorageModule;
 import com.chrysanthemum.appdata.dataType.Customer;
+import com.chrysanthemum.appdata.dataType.parsing.PhoneNumberParser;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
-import com.chrysanthemum.ui.dataView.display.DataDisplay;
+import com.chrysanthemum.appdata.querries.Query;
+import com.chrysanthemum.appdata.querries.customers.CustomerByPhoneQuery;
+import com.chrysanthemum.appdata.querries.customers.NewCustomerQuery;
 import com.chrysanthemum.ui.dataView.display.DisplayBoard;
 import com.chrysanthemum.ui.dataView.display.Displayable;
 import com.chrysanthemum.ui.dataView.task.Task;
 import com.chrysanthemum.ui.dataView.task.TaskHostestActivity;
-import com.chrysanthemum.ui.dataView.task.TaskSelectionButtion;
 
 import java.util.Map;
 
 public class CustomerFinderTask extends Task {
+
+    public static final int STANDARD_BOX_WIDTH = 210;
+    public static final int STANDARD_BOX_HEIGHT = 66;
+
+    private static Customer lastCustomer = null;
 
     private DisplayBoard board;
     private Map<String, Customer> customerMap;
@@ -57,7 +63,7 @@ public class CustomerFinderTask extends Task {
         label.setText("Phone Number:");
 
         form.setText("");
-        form.setHint("19029992703");
+        form.setHint("1-902-999-2703 or leave blank for last customer searched");
 
         Button b = host.getFormButton();
         b.setText("Search");
@@ -70,26 +76,54 @@ public class CustomerFinderTask extends Task {
     }
 
     private void searchCustomer(){
-        long phoneNumber = checkPhoneNumber(form.getText().toString());
+
+        String searchQuery = form.getText().toString();
+
+        if(searchQuery.equals("")){
+            chooseLastCustomer();
+            return;
+        }
+
+        long phoneNumber = PhoneNumberParser.parse(searchQuery);
         if (phoneNumber < 0) {
-            form.setError("Example: 19029992703");
+            form.setError("Example: 1-902-999-2703");
         } else {
             selectedPhoneNumber = phoneNumber;
             loadBoard();
         }
     }
 
+    private void chooseLastCustomer(){
+        if(lastCustomer == null){
+            form.setError("We haven't serviced a Customer yet today");
+        } else {
+            host.createAlertBox()
+                    .setTitle("Last Customer Serviced was:")
+                    .setMessage(lastCustomer.getName() + "\n" + lastCustomer.getPhoneNumber())
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            purpose.retrievedData(lastCustomer);
+                        }})
+                    .setNegativeButton(android.R.string.no, null).show();
+        }
+    }
+
     private void loadBoard(){
         board = host.getBoard();
-        board.clear();
+        board.clear(host.getScale());
 
-        DataStorageModule.getFrontEnd().requestCustomerByPhone(selectedPhoneNumber, new DataRetriever<Map<String, Customer>>() {
+        DataRetriever<Map<String, Customer>> retriever = new DataRetriever<Map<String, Customer>>() {
             @Override
             public void retrievedData(Map<String, Customer> data) {
                 customerMap = data;
                 updateBoardDisplay();
             }
-        });
+        };
+
+        Query<Map<String, Customer>> query = new CustomerByPhoneQuery(selectedPhoneNumber, retriever);
+        query.executeQuery();
     }
 
     private void updateBoardDisplay(){
@@ -102,12 +136,13 @@ public class CustomerFinderTask extends Task {
                     new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+                            lastCustomer = c;
                             purpose.retrievedData(c);
                         }
                     },
                     null,
-                    (index % 4) * (DataDisplay.STANDARD_BOX_WIDTH + 1),
-                    (index / 4) * (DataDisplay.STANDARD_BOX_HEIGHT + 1)
+                    (index % 4) * (STANDARD_BOX_WIDTH + 1),
+                    (index / 4) * (STANDARD_BOX_HEIGHT + 1)
             ));
 
             index++;
@@ -120,8 +155,8 @@ public class CustomerFinderTask extends Task {
                         setupNewCustomerState();
                     }
                 },
-                (index % 4) * (DataDisplay.STANDARD_BOX_WIDTH + 5),
-                (index / 4) * (DataDisplay.STANDARD_BOX_HEIGHT + 5)
+                (index % 4) * (STANDARD_BOX_WIDTH + 5),
+                (index / 4) * (STANDARD_BOX_HEIGHT + 5)
         ));
 
     }
@@ -152,24 +187,13 @@ public class CustomerFinderTask extends Task {
         if(customerMap.containsKey(name)){
             customer = customerMap.get(name);
         } else {
-            customer = DataStorageModule.getFrontEnd()
-                    .createNewCustomerEntry(name, selectedPhoneNumber);
+            customer = new NewCustomerQuery(name, selectedPhoneNumber).executeQuery();
         }
 
+        lastCustomer = customer;
         purpose.retrievedData(customer);
     }
 
-    private long checkPhoneNumber(String s){
-        try {
-            long i = Long.parseLong(s);
-            if (i < 10000000000L || i > 19999999999L){
-                return -1;
-            }
-            return i;
-        } catch (NumberFormatException e) {
-            return -1;
-        }
-    }
 
     private class CustomerDisplay extends Displayable {
 
@@ -231,27 +255,13 @@ public class CustomerFinderTask extends Task {
 
         @Override
         public int getWidth() {
-            return DataDisplay.STANDARD_BOX_WIDTH;
+            return STANDARD_BOX_WIDTH;
         }
 
         @Override
         public int getHeight() {
-            return DataDisplay.STANDARD_BOX_HEIGHT;
+            return STANDARD_BOX_HEIGHT;
         }
 
-    }
-
-    public static TaskSelectionButtion getMenuButton(Context context, final TaskHostestActivity host, final DataRetriever<Customer> purpose){
-        return new TaskSelectionButtion(context){
-            @Override
-            public Task getTask() {
-                return new CustomerFinderTask(host, purpose);
-            }
-
-            @Override
-            public String getTaskName() {
-                return "Customer Finder";
-            }
-        };
     }
 }

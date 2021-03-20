@@ -1,15 +1,16 @@
-package com.chrysanthemum.appdata.queryHandlers;
+package com.chrysanthemum.appdata.querries.customers;
 
 import com.chrysanthemum.appdata.dataType.Customer;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
-import com.chrysanthemum.firebase.RemoteDataBase;
+import com.chrysanthemum.appdata.RemoteDataBase;
+import com.chrysanthemum.appdata.querries.Query;
 
 public class CustomerByIDQuery extends Query<Customer> {
 
     private final long id;
-    public CustomerByIDQuery(RemoteDataBase remote, long id,
+    public CustomerByIDQuery(long id,
                              DataRetriever<Customer> retriever) {
-        super(remote, retriever);
+        super(retriever);
         this.id = id;
     }
 

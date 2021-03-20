@@ -1,21 +1,21 @@
-package com.chrysanthemum.appdata.queryHandlers;
+package com.chrysanthemum.appdata.querries.customers;
 
 import com.chrysanthemum.appdata.dataType.Customer;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
-import com.chrysanthemum.firebase.RemoteDataBase;
+import com.chrysanthemum.appdata.querries.Query;
 
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class CustomerByPhoneQuery extends Query<Map<String, Customer>>{
+public class CustomerByPhoneQuery extends Query<Map<String, Customer>> {
     private final Map<String, Customer> data;
     private final long phoneNumber;
     private int entryCount;
 
-    public CustomerByPhoneQuery(RemoteDataBase remote, long phoneNumber,
+    public CustomerByPhoneQuery(long phoneNumber,
                                 DataRetriever<Map<String, Customer>> retriever) {
-        super(remote, retriever);
+        super(retriever);
         data = new TreeMap<>();
         this.phoneNumber = phoneNumber;
     }
@@ -39,12 +39,11 @@ public class CustomerByPhoneQuery extends Query<Map<String, Customer>>{
     }
 
     private void customerByIDSubQuery(long id){
-        CustomerByIDQuery q = new CustomerByIDQuery(getRemoteDB(), id, new DataRetriever<Customer>() {
+        CustomerByIDQuery q = new CustomerByIDQuery(id, new DataRetriever<Customer>() {
             @Override
-            public void retrievedData(Customer c) {
-                retrievedSubQueryData(c);
+            public void retrievedData(Customer customer) {
 
-                if(data.size() == entryCount){
+                if(retrievedSubQueryData(customer)){
                     complete(data);
                 }
             }
@@ -53,9 +52,13 @@ public class CustomerByPhoneQuery extends Query<Map<String, Customer>>{
         q.executeQuery();
     }
 
-    private synchronized void retrievedSubQueryData(Customer c){
+    private synchronized boolean retrievedSubQueryData(Customer c){
         if(data.size() < entryCount){
             data.put(c.getName(), c);
+
+            return data.size() == entryCount;
         }
+
+        return false;
     }
 }

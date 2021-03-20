@@ -2,6 +2,8 @@ package com.chrysanthemum.firebase;
 
 import androidx.annotation.NonNull;
 
+import com.chrysanthemum.appdata.DataStorageModule;
+import com.chrysanthemum.appdata.dataType.retreiver.NullRetriever;
 import com.chrysanthemum.appdata.security.LoginStatus;
 import com.chrysanthemum.appdata.security.SecurityModule;
 import com.chrysanthemum.appdata.dataType.Technician;
@@ -9,6 +11,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -83,13 +86,24 @@ public class LoginRepository extends SecurityModule {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            grantAccess();
+                            loadInitData();
                         } else {
                             releaseAccess();
                         }
 
                     }
                 });
+
+    }
+
+    private void loadInitData(){
+        DataStorageModule.getBackEnd().loadTechMap(new NullRetriever() {
+            @Override
+            public void retrieved() {
+                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                grantAccess(currentUser.getUid());
+            }
+        });
     }
 
     @Override

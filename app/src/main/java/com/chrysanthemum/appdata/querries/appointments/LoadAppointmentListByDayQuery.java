@@ -1,8 +1,9 @@
-package com.chrysanthemum.appdata.queryHandlers;
+package com.chrysanthemum.appdata.querries.appointments;
 
 import com.chrysanthemum.appdata.dataType.Transaction;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
-import com.chrysanthemum.firebase.RemoteDataBase;
+import com.chrysanthemum.appdata.querries.Query;
+import com.chrysanthemum.appdata.querries.transactions.TransactionByIDQuery;
 
 import java.util.LinkedList;
 
@@ -12,9 +13,9 @@ public class LoadAppointmentListByDayQuery extends Query<LinkedList<Transaction>
     private final LinkedList<Transaction> data;
     private int entryCount;
 
-    public LoadAppointmentListByDayQuery(RemoteDataBase remote, String date,
+    public LoadAppointmentListByDayQuery(String date,
                                          DataRetriever<LinkedList<Transaction>> retriever) {
-        super(remote, retriever);
+        super(retriever);
         data = new LinkedList<>();
         this.date = date;
     }
@@ -38,12 +39,11 @@ public class LoadAppointmentListByDayQuery extends Query<LinkedList<Transaction>
     }
 
     private void transactionByIDSubQuery(long id){
-        TransactionByIDQuery q = new TransactionByIDQuery(getRemoteDB(), id, new DataRetriever<Transaction>() {
+        TransactionByIDQuery q = new TransactionByIDQuery(id, new DataRetriever<Transaction>() {
             @Override
             public void retrievedData(Transaction transaction) {
-                retrievedSubQueryData(transaction);
 
-                if(data.size() == entryCount){
+                if(retrievedSubQueryData(transaction)){
                     complete(data);
                 }
             }
@@ -53,9 +53,13 @@ public class LoadAppointmentListByDayQuery extends Query<LinkedList<Transaction>
     }
 
 
-    private synchronized void retrievedSubQueryData(Transaction transaction){
+    private synchronized boolean retrievedSubQueryData(Transaction transaction){
         if(data.size() < entryCount){
             data.add(transaction);
+
+            return data.size() == entryCount;
         }
+
+        return false;
     }
 }

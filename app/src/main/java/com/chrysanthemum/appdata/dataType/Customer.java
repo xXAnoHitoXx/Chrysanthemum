@@ -26,4 +26,12 @@ public class Customer {
     public long getID(){
         return id;
     }
+
+    public void setName(String name){
+        this.name = name;
+    }
+
+    public void setPhoneNumber(long phoneNumber){
+        this.phoneNumber = phoneNumber;
+    }
 }

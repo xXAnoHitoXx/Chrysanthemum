@@ -1,18 +1,15 @@
 package com.chrysanthemum.ui.dataView.task;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.res.Resources;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.chrysanthemum.appdata.dataType.Technician;
+import com.chrysanthemum.appdata.Util.Scaler;
 import com.chrysanthemum.ui.dataView.display.DisplayBoard;
+import com.chrysanthemum.ui.dataView.task.display.MultiTechnicianSelectorPanel;
 import com.chrysanthemum.ui.technicianLogin.TechnicianSelectorPanel;
-
-import java.util.LinkedList;
 
 public interface TaskHostestActivity {
     void clearForm();
@@ -23,10 +20,14 @@ public interface TaskHostestActivity {
     TextView createFormLabel(int row);
     Button getFormButton();
     TechnicianSelectorPanel createTechPanel();
+    MultiTechnicianSelectorPanel createMultiTechPanel();
     AlertDialog.Builder createAlertBox();
     Resources getResources();
+    Scaler getScale();
+
     //-------------------------------------------------------------------
     void setBarText(String s);
     String getMainTaskTitle();
     String formatPhoneNumber(long phone);
+    void popMessage(String message);
 }

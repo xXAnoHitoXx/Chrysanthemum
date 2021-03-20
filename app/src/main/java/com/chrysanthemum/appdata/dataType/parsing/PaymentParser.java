@@ -23,30 +23,11 @@ public class PaymentParser {
             return null;
         }
 
-        int cent = scanner.nextInt();
-
-        if(cent > 100 || cent < 0 || !scanner.hasNextInt()){
-            return null;
-        }
-
-        pay *= 100;
-        pay += cent;
-
         int tip = scanner.nextInt();
 
-        if(tip < 0 || !scanner.hasNextInt()){
+        if(tip < 0){
             return null;
         }
-
-        cent = scanner.nextInt();
-
-
-        if(cent > 100 || cent < 0){
-            return null;
-        }
-
-        tip *= 100;
-        tip += cent;
 
         return new int [] {pay, tip};
     }

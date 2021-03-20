@@ -11,9 +11,6 @@ import android.util.AttributeSet;
  */
 public class DataDisplay extends androidx.appcompat.widget.AppCompatTextView {
 
-    public static final int STANDARD_BOX_WIDTH = 200;
-    public static final int STANDARD_BOX_HEIGHT = 100;
-
     private final Displayable data;
 
     public DataDisplay(Context context, Displayable data) {

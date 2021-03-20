@@ -74,6 +74,6 @@ public class TransactionFrame {
 
     public Transaction formTransaction(Customer c, Technician t){
         return new Transaction(date, Integer.parseInt(appointmentTime), Integer.parseInt(duration), c, id, t,
-                Integer.parseInt(amount), Integer.parseInt(amount), services);
+                Integer.parseInt(amount), Integer.parseInt(tip), services);
     }
 }

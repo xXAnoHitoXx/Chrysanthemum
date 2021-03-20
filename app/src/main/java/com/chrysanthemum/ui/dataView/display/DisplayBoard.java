@@ -5,6 +5,9 @@ import android.content.Context;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.core.view.ViewCompat;
+import androidx.core.widget.TextViewCompat;
+
+import com.chrysanthemum.appdata.Util.Scaler;
 
 import java.util.TreeMap;
 
@@ -16,9 +19,11 @@ import static com.chrysanthemum.appdata.Util.AppUtil.dpToPx;
  */
 public class DisplayBoard {
 
-    Context c;
-    ConstraintLayout layout;
-    TreeMap<Displayable, DataDisplay> subviews;
+    private Scaler scaler = new Scaler(1);
+
+    private final Context c;
+    private final ConstraintLayout layout;
+    private TreeMap<Displayable, DataDisplay> subviews;
 
     public DisplayBoard(Context c, ConstraintLayout layout){
         this.c = c;
@@ -32,15 +37,16 @@ public class DisplayBoard {
 
         DataDisplay display = new DataDisplay(c, d);
         display.setId(viewID);
+        TextViewCompat.setAutoSizeTextTypeWithDefaults(display, TextViewCompat.AUTO_SIZE_TEXT_TYPE_UNIFORM);
 
         subviews.put(d, display);
         layout.addView(display);
 
         ConstraintSet constraintSet = new ConstraintSet();
-        constraintSet.connect(viewID, ConstraintSet.LEFT, layoutID, ConstraintSet.LEFT, dpToPx(c, d.getX()));
-        constraintSet.connect(viewID, ConstraintSet.TOP, layoutID, ConstraintSet.TOP, dpToPx(c, d.getY()));
-        constraintSet.constrainWidth(viewID, dpToPx(c, d.getWidth()));
-        constraintSet.constrainHeight(viewID, dpToPx(c, d.getHeight()));
+        constraintSet.connect(viewID, ConstraintSet.LEFT, layoutID, ConstraintSet.LEFT, dpToPx(c, scaler.scaleValue(d.getX())));
+        constraintSet.connect(viewID, ConstraintSet.TOP, layoutID, ConstraintSet.TOP, dpToPx(c, scaler.scaleValue(d.getY())));
+        constraintSet.constrainWidth(viewID, dpToPx(c, scaler.scaleValue(d.getWidth())));
+        constraintSet.constrainHeight(viewID, dpToPx(c, scaler.scaleValue(d.getHeight())));
 
         constraintSet.applyTo(layout);
         display.invalidate();
@@ -60,8 +66,14 @@ public class DisplayBoard {
         layout.invalidate();
     }
 
-    public void clear(){
+    public void setDisplayScale(Scaler scale){
+        scaler = scale;
+        layout.invalidate();
+    }
+
+    public void clear(Scaler scale){
         subviews = new TreeMap<>();
         layout.removeAllViews();
+        setDisplayScale(scale);
     }
 }

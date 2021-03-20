@@ -6,19 +6,19 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.chrysanthemum.appdata.DataStorageModule;
 import com.chrysanthemum.appdata.dataType.Transaction;
 import com.chrysanthemum.appdata.dataType.parsing.PaymentParser;
-import com.chrysanthemum.appdata.dataType.retreiver.NullRetriever;
+import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
+import com.chrysanthemum.appdata.querries.appointments.CloseAppointmentQuery;
 import com.chrysanthemum.ui.dataView.task.Task;
 import com.chrysanthemum.ui.dataView.task.TaskHostestActivity;
 
 public class RecordPaymentTask extends Task {
 
-    private final NullRetriever retriever;
+    private final DataRetriever<Transaction> retriever;
     private final Transaction transaction;
 
-    public RecordPaymentTask(TaskHostestActivity host, Transaction transaction, NullRetriever retriever) {
+    public RecordPaymentTask(TaskHostestActivity host, Transaction transaction, DataRetriever<Transaction> retriever) {
         super(host);
 
         this.retriever = retriever;
@@ -50,8 +50,9 @@ public class RecordPaymentTask extends Task {
             public void onClick(View v) {
                 String money = payment.getText().toString();
 
-                money = money.replaceAll("\\.", " ");
-                money = money.replaceAll("[$()]", "");
+                money = money.replaceAll("\\(" , " ");
+                money = money.replaceAll("[$).]", "");
+                money = money.replaceAll("[ ]+", " ");
 
                 int[] pay = PaymentParser.parsePayment(money);
 
@@ -60,8 +61,9 @@ public class RecordPaymentTask extends Task {
                     return;
                 }
 
-                DataStorageModule.getFrontEnd().closeTransaction(transaction, pay[0], pay[1], service.getText().toString());
-                retriever.retrieved();
+                new CloseAppointmentQuery(transaction, pay[0], pay[1], service.getText().toString()).executeQuery();
+
+                retriever.retrievedData(transaction);
             }
         });
     }

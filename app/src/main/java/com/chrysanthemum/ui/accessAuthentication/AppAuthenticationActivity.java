@@ -23,7 +23,6 @@ import android.widget.Toast;
 import com.chrysanthemum.R;
 import com.chrysanthemum.appdata.DataStorageModule;
 import com.chrysanthemum.appdata.security.AccessState;
-import com.chrysanthemum.appdata.security.SecurityModule;
 import com.chrysanthemum.ui.technicianLogin.TechnicianLoginActivity;
 
 public class AppAuthenticationActivity extends AppCompatActivity {

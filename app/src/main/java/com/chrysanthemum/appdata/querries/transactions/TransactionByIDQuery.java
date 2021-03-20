@@ -1,4 +1,4 @@
-package com.chrysanthemum.appdata.queryHandlers;
+package com.chrysanthemum.appdata.querries.transactions;
 
 import com.chrysanthemum.appdata.DataStorageModule;
 import com.chrysanthemum.appdata.dataType.Customer;
@@ -6,7 +6,9 @@ import com.chrysanthemum.appdata.dataType.Technician;
 import com.chrysanthemum.appdata.dataType.Transaction;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
 import com.chrysanthemum.appdata.dataType.subType.TransactionFrame;
-import com.chrysanthemum.firebase.RemoteDataBase;
+import com.chrysanthemum.appdata.RemoteDataBase;
+import com.chrysanthemum.appdata.querries.Query;
+import com.chrysanthemum.appdata.querries.customers.CustomerByIDQuery;
 
 public class TransactionByIDQuery extends Query<Transaction> {
 
@@ -14,9 +16,9 @@ public class TransactionByIDQuery extends Query<Transaction> {
     private TransactionFrame frame;
     private Technician tech;
 
-    public TransactionByIDQuery(RemoteDataBase remote, long id,
+    public TransactionByIDQuery(long id,
                                 DataRetriever<Transaction> retriever) {
-        super(remote, retriever);
+        super(retriever);
 
         this.id = id;
     }
@@ -35,7 +37,7 @@ public class TransactionByIDQuery extends Query<Transaction> {
     }
 
     private void customerByIDSubQuery(long id){
-        CustomerByIDQuery q = new CustomerByIDQuery(getRemoteDB(), id,
+        CustomerByIDQuery q = new CustomerByIDQuery(id,
                 new DataRetriever<Customer>() {
                     @Override
                     public void retrievedData(Customer c) {

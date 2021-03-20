@@ -27,7 +27,7 @@ public class TechnicianSelectorPanel {
         }
     }
 
-    private LinearLayout.LayoutParams getParam(boolean vertical){
+    protected LinearLayout.LayoutParams getParam(boolean vertical){
         if(vertical){
             return new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
@@ -47,7 +47,7 @@ public class TechnicianSelectorPanel {
         return selected.getTech();
     }
 
-    void changeSelectedTech(TechnicianSelectorButton newTech){
+    public void changeSelectedTech(TechnicianSelectorButton newTech){
         if(!locked){
             if(selected != null){
                 selected.toggle();

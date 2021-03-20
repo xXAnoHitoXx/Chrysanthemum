@@ -13,12 +13,12 @@
         <activity
             android:name=".ui.dataView.DataDisplayActivity"
             android:label="@string/title_activity_data_display_avtivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".ui.technicianLogin.TechnicianLoginActivity"
             android:label="@string/title_activity_technician_login"
             android:screenOrientation="sensorLandscape"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".ui.accessAuthentication.AppAuthenticationActivity"
             android:label="@string/app_name"

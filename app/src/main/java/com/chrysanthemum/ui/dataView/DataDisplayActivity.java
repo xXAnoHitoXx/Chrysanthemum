@@ -5,14 +5,18 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.chrysanthemum.appdata.DataStorageModule;
-import com.chrysanthemum.appdata.dataType.Customer;
-import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
+import com.chrysanthemum.appdata.Util.Scaler;
+import com.chrysanthemum.appdata.dataType.Technician;
 import com.chrysanthemum.ui.dataView.display.DisplayBoard;
 import com.chrysanthemum.ui.dataView.task.AppointmentViewerTask;
-import com.chrysanthemum.ui.dataView.task.subTasks.CustomerFinderTask;
+import com.chrysanthemum.ui.dataView.task.CustomerManagerTask;
+import com.chrysanthemum.ui.dataView.task.GiftManager;
 import com.chrysanthemum.ui.dataView.task.Task;
 import com.chrysanthemum.ui.dataView.task.TaskHostestActivity;
 import com.chrysanthemum.ui.dataView.task.TaskSelectionButtion;
+import com.chrysanthemum.ui.dataView.task.accounting.Daily.DailyAccountingTask_Admin;
+import com.chrysanthemum.ui.dataView.task.accounting.Daily.DailyAccountingTask_Personal;
+import com.chrysanthemum.ui.dataView.task.display.MultiTechnicianSelectorPanel;
 import com.chrysanthemum.ui.technicianLogin.TechnicianLoginActivity;
 import com.chrysanthemum.ui.technicianLogin.TechnicianSelectorPanel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -29,6 +33,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.chrysanthemum.R;
 
@@ -39,7 +44,6 @@ import static com.chrysanthemum.appdata.Util.AppUtil.dpToPx;
 
 public class DataDisplayActivity extends AppCompatActivity implements TaskHostestActivity {
 
-    private final LinkedList<TaskSelectionButtion> taskPanel= new LinkedList<>();
     private DisplayBoard db;
 
     @Override
@@ -77,27 +81,58 @@ public class DataDisplayActivity extends AppCompatActivity implements TaskHostes
         TaskSelectionButtion appointmentViewer = AppointmentViewerTask.getMenuButton(this, this);
         addTaskPanelButton(appointmentViewer);
 
-        TaskSelectionButtion customerFinder = CustomerFinderTask.getMenuButton(this, this,
-                new DataRetriever<Customer>() {
-                    @Override
-                    public void retrievedData(Customer customer) {
-                        //TODO
-                    }
-                });
+        TaskSelectionButtion giftCardManager = GiftManager.getMenuButton(this, this);
+        addTaskPanelButton(giftCardManager);
 
-        addTaskPanelButton(customerFinder);
+        TaskSelectionButtion customerManager = CustomerManagerTask.getMenuButton(this, this);
+        addTaskPanelButton(customerManager);
+
+        TaskSelectionButtion personalAccounting = DailyAccountingTask_Personal.getMenuButton(this, this);
+        addTaskPanelButton(personalAccounting);
+
+        //------------------------------------------------------------------------------------------
+
+        Technician tech = DataStorageModule.getFrontEnd().getSecurityModule().getLoggedinTech();
+
+        if(tech.getRole().equals(Technician.ADMIN)){
+            addTaskPanelDivider();
+
+            TaskSelectionButtion dailyAccounting = DailyAccountingTask_Admin.getMenuButton(this, this);
+            addTaskPanelButton(dailyAccounting);
+        }
+
+        //------------------------------------------------------------------------------------------
 
         // starting default Task
         setTask(appointmentViewer.getTask(), appointmentViewer.getTaskName());
     }
 
+    private void addTaskPanelDivider() {
+        TaskSelectionButtion button = new TaskSelectionButtion(this) {
+            @Override
+            public Task getTask() {
+                return null;
+            }
+
+            @Override
+            public String getTaskName() {
+                return "--------------------------------";
+            }
+        };
+
+        addTaskPanelButton(button, null);
+    }
+
     private void addTaskPanelButton(TaskSelectionButtion button){
-        button.setOnClickListener(getTaskPanelButtonListener(button));
+        addTaskPanelButton(button, getTaskPanelButtonListener(button));
+    }
+
+    private void addTaskPanelButton(TaskSelectionButtion button, View.OnClickListener listener){
+        button.setOnClickListener(listener);
         button.setText(button.getTaskName());
         button.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT));
         button.setMinHeight(100);
-        taskPanel.add(button);
         LinearLayout l = findViewById(R.id.action_list);
         l.addView(button);
         button.invalidate();
@@ -147,6 +182,11 @@ public class DataDisplayActivity extends AppCompatActivity implements TaskHostes
         builder.insert(0, "+");
 
         return builder.toString();
+    }
+
+    @Override
+    public void popMessage(String message) {
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
     }
 
     public void setBarText(String s){
@@ -232,8 +272,19 @@ public class DataDisplayActivity extends AppCompatActivity implements TaskHostes
     }
 
     @Override
+    public MultiTechnicianSelectorPanel createMultiTechPanel() {
+        LinearLayout list = findViewById(R.id.TechList);
+        return new MultiTechnicianSelectorPanel(this, list);
+    }
+
+    @Override
     public AlertDialog.Builder createAlertBox() {
         return new AlertDialog.Builder(this);
+    }
+
+    @Override
+    public Scaler getScale() {
+        return new Scaler(1);
     }
 
 }

@@ -63,7 +63,7 @@ public class DaySelectorTask extends Task {
         month.setText(today.getMonthValue() + "");
 
         Button button = host.getFormButton();
-        button.setText("Search");
+        button.setText("Select Month");
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,7 +81,7 @@ public class DaySelectorTask extends Task {
 
     public void loadBoard(int year, int month) {
         DisplayBoard board = host.getBoard();
-        board.clear();
+        board.clear(host.getScale());
 
         LocalDate monthStart = LocalDate.of(year, month, 1);
         int daysInMonth = monthStart.lengthOfMonth();

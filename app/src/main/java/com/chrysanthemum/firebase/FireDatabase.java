@@ -2,10 +2,12 @@ package com.chrysanthemum.firebase;
 
 import androidx.annotation.NonNull;
 
-import com.chrysanthemum.appdata.DataStorageModule;
+import com.chrysanthemum.appdata.RemoteDataBase;
 import com.chrysanthemum.appdata.Util.AppUtil;
 import com.chrysanthemum.appdata.dataType.Customer;
+import com.chrysanthemum.appdata.dataType.Gift;
 import com.chrysanthemum.appdata.dataType.Transaction;
+import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
 import com.chrysanthemum.appdata.dataType.subType.TransactionFrame;
 import com.chrysanthemum.appdata.security.SecurityModule;
@@ -31,14 +33,13 @@ public class FireDatabase implements RemoteDataBase {
 
     public void initialization(){
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
-        observeTechnicianList();
     }
 
     public SecurityModule generateSecurityModule(){
         return new LoginRepository();
     }
 
-    private void observeTechnicianList(){
+    public void getTechnicianMap(final DataRetriever<Map<String, Technician>> retriever){
         getRef().child(DatabaseStructure.TechnicianBranch.BRANCH_NAME)
                 .child(DatabaseStructure.TechnicianBranch.LIST).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
@@ -53,11 +54,38 @@ public class FireDatabase implements RemoteDataBase {
                         m.put(i.getID()+ "", i);
                     }
 
-                    DataStorageModule.getBackEnd().storeTechMap(m);
+                    retriever.retrievedData(m);
                 }
             }
         });
 
+    }
+
+    @Override
+    public void changeCustomerName(Customer customer, String name) {
+        getRef().child(DatabaseStructure.CustomerBranch.BRANCH_NAME)
+                .child(DatabaseStructure.CustomerBranch.LIST)
+                .child("" + customer.getID()).child(DatabaseStructure.CustomerBranch.C_NAME).setValue(name);
+    }
+
+    @Override
+    public void changeCustomerPhoneNumber(Customer customer, long phone) {
+
+        //customer data
+        getRef().child(DatabaseStructure.CustomerBranch.BRANCH_NAME)
+                .child(DatabaseStructure.CustomerBranch.LIST)
+                .child("" + customer.getID()).child(DatabaseStructure.CustomerBranch.C_PHONE);
+
+
+        // index
+        // common ref
+        DatabaseReference ref = getRef().child(DatabaseStructure.CustomerBranch.BRANCH_NAME)
+                .child(DatabaseStructure.CustomerBranch.PHONE_NUMBER_INDEX);
+
+        // remove the index from old phone number
+        // add index from new phone number
+        ref.child(customer.getPhoneNumber() + "").removeValue();
+        ref.child(phone + "").child(customer.getID() + "").setValue(customer.getID());
     }
 
     public void findCustomerIDsByPhone(long phoneNumber, final DataRetriever<LinkedList<Long>> retriever){
@@ -143,6 +171,58 @@ public class FireDatabase implements RemoteDataBase {
     }
 
     @Override
+    public void findTransactionIDsByCustomerID(long customerID, final DataRetriever<LinkedList<Long>> retriever) {
+        getRef().child(DatabaseStructure.TransactionBranch.BRANCH_NAME)
+                .child(DatabaseStructure.TransactionBranch.CUSTOMER_ID_INDEX)
+                .child(customerID + "").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if(task.isSuccessful()){
+                    DataSnapshot snapshot = task.getResult();
+                    LinkedList<Long> IDList = new LinkedList<>();
+
+                    if(snapshot.exists()){
+                        for(DataSnapshot child : snapshot.getChildren()){
+                            long id = child.getValue(Long.class);
+                            IDList.add(id);
+                        }
+                    }
+
+                    retriever.retrievedData(IDList);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void findTransactionIDsByDateAndTechnicianID(String date, long technicianId, final DataRetriever<LinkedList<Long>> retriever) {
+        Scanner scanner = new Scanner(date);
+        String day = scanner.next();
+        String month = scanner.next();
+        String year = scanner.next();
+        scanner.close();
+
+        final LinkedList<Long> ids = new LinkedList<>();
+
+        getRef().child(DatabaseStructure.TransactionBranch.BRANCH_NAME)
+                .child(year).child(month).child(day)
+                .child("" + technicianId).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if(task.isSuccessful()){
+                    DataSnapshot snapshot = task.getResult();
+
+                    for(DataSnapshot child : snapshot.getChildren()){
+                        ids.add(child.getValue(Long.class));
+                    }
+                }
+
+                retriever.retrievedData(ids);
+            }
+        });
+    }
+
+    @Override
     public void findTransactionByID(final long id, final DataRetriever<TransactionFrame> retriever) {
         getRef().child(DatabaseStructure.TransactionBranch.BRANCH_NAME)
                 .child(DatabaseStructure.TransactionBranch.LIST)
@@ -153,6 +233,20 @@ public class FireDatabase implements RemoteDataBase {
                     TransactionFrame c = task.getResult().getValue(TransactionFrame.class);
                     c.setID(id);
                     retriever.retrievedData(c);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void findGiftCardByID(String id, final DataRetriever<Gift> retriever) {
+        getRef().child(DatabaseStructure.Gift.BRANCH_NAME)
+                .child(id).get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if(task.isSuccessful()){
+                    Gift g = task.getResult().getValue(Gift.class);
+                    retriever.retrievedData(g);
                 }
             }
         });
@@ -176,12 +270,31 @@ public class FireDatabase implements RemoteDataBase {
 
         commonRef.child(year).child(month).child(day)
                 .child(DatabaseStructure.TransactionBranch.OPEN_APPOINTMENT)
-        .child("" + transaction.getID()).setValue(transaction.getID());
+                .child("" + transaction.getID()).setValue(transaction.getID());
 
         // indexed by customer
         commonRef.child(DatabaseStructure.TransactionBranch.CUSTOMER_ID_INDEX)
                 .child("" + transaction.getCustomer().getID())
                 .child(transaction.getID() + "").setValue(transaction.getID());
+    }
+
+    @Override
+    public void uploadGiftCard(Gift gift) {
+
+        // store by id
+        getRef().child(DatabaseStructure.Gift.BRANCH_NAME).child(gift.getId()).setValue(gift);
+
+        //indexed by expire date
+        Scanner scanner = new Scanner(gift.getDateExpires());
+        String day = scanner.next();
+        String month = scanner.next();
+        String year = scanner.next();
+        scanner.close();
+
+        getRef().child(DatabaseStructure.TransactionBranch.BRANCH_NAME)
+                .child(year).child(month).child(day)
+                .child(DatabaseStructure.Gift.INDEX_BRANCH)
+                .child(gift.getId()).setValue(gift.getId());
     }
 
     @Override
@@ -207,32 +320,26 @@ public class FireDatabase implements RemoteDataBase {
 
         //update amount
         commonRef.child(DatabaseStructure.TransactionBranch.T_AMOUNT)
-                .setValue(transaction.getAmount());
+                .setValue(transaction.getAmount() + "");
         //update tip
-        commonRef.child(DatabaseStructure.TransactionBranch.T_TIP).setValue(transaction.getTip());
+        commonRef.child(DatabaseStructure.TransactionBranch.T_TIP).setValue(transaction.getTip() + "");
         //update services
         commonRef.child(DatabaseStructure.TransactionBranch.T_SERVICES).setValue(transaction.getServices());
 
         //-------------------------------------------------------------------------------------------------------------------------------------------------------------------
         // accounting
-        updateWeeklyAccountingData(transaction);
-        updateMonthlyAccountingData(transaction);
-    }
+        updateWeeklyAccountingData(transaction.getLocalDateAppointmentDate(), transaction.getTech().getID()+ "", transaction.getAmount(), transaction.getTip());
+        updateMonthlyAccountingData(transaction.getLocalDateAppointmentDate(), transaction.getTech().getID()+ "", transaction.getAmount(), transaction.getTip());
 
-    private void updateMonthlyAccountingData(Transaction transaction){
-        LocalDate date = transaction.getLocalDate();
+        //-------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        // close transaction
+        LocalDate date = transaction.getLocalDateAppointmentDate();
 
         // yearly accounting
-        DatabaseReference timeIndexRef = getRef().child(DatabaseStructure.TransactionBranch.BRANCH_NAME).child(date.getYear() + "");
-        updateStandardAccountingData(timeIndexRef, transaction);
-
-        // monthly accounting
-        timeIndexRef = timeIndexRef.child(date.getMonthValue() + "");
-        updateStandardAccountingData(timeIndexRef, transaction);
-
-        // daily accounting
-        timeIndexRef = timeIndexRef.child(date.getDayOfMonth() + "");
-        updateStandardAccountingData(timeIndexRef, transaction);
+        DatabaseReference timeIndexRef = getRef().child(DatabaseStructure.TransactionBranch.BRANCH_NAME)
+                .child(date.getYear() + "")
+                .child(date.getMonthValue() + "")
+                .child(date.getDayOfMonth() + "");
 
         //move from open appointment to closed
         timeIndexRef.child(DatabaseStructure.TransactionBranch.OPEN_APPOINTMENT)
@@ -242,31 +349,111 @@ public class FireDatabase implements RemoteDataBase {
                 .child("" + transaction.getID()).setValue(transaction.getID());
     }
 
-    private void updateWeeklyAccountingData(Transaction transaction){
+    @Override
+    public void editRecord(Transaction transaction, int amount, int tip, String service) {
+        int amountDif = amount - transaction.getAmount();
+        int tipDif = tip - transaction.getTip();
 
-        LocalDate startOfWeek = AppUtil.getMonday(transaction.getLocalDate());
+        DatabaseReference commonRef = getRef().child(DatabaseStructure.TransactionBranch.BRANCH_NAME)
+                .child(DatabaseStructure.TransactionBranch.LIST)
+                .child("" + transaction.getID());
+
+        //update amount
+        commonRef.child(DatabaseStructure.TransactionBranch.T_AMOUNT)
+                .setValue(amount + "");
+        //update tip
+        commonRef.child(DatabaseStructure.TransactionBranch.T_TIP).setValue(tip + "");
+        //update services
+        commonRef.child(DatabaseStructure.TransactionBranch.T_SERVICES).setValue(service);
+
+        // accounting
+        updateWeeklyAccountingData(transaction.getLocalDateAppointmentDate(), transaction.getTech().getID()+ "", amountDif, tipDif);
+        updateMonthlyAccountingData(transaction.getLocalDateAppointmentDate(), transaction.getTech().getID()+ "", amountDif, tipDif);
+    }
+
+    @Override
+    public void editGift(Gift gift, String amount, String dateExpire) {
+        if(!gift.getDateExpires().equalsIgnoreCase(dateExpire)){
+            //indexed by expire date
+            Scanner scanner = new Scanner(gift.getDateExpires());
+            String day = scanner.next();
+            String month = scanner.next();
+            String year = scanner.next();
+            scanner.close();
+
+            getRef().child(DatabaseStructure.TransactionBranch.BRANCH_NAME)
+                    .child(year).child(month).child(day)
+                    .child(DatabaseStructure.Gift.INDEX_BRANCH)
+                    .child(gift.getId()).removeValue();
+        }
+
+        gift.setAmount(amount);
+        gift.setDateExpires(dateExpire);
+
+        uploadGiftCard(gift);
+    }
+
+    /**
+     * update monthly accounting data for the average item
+     */
+    private void updateMonthlyAccountingData(LocalDate date, String subBranch, int pretax, int postTax){
+
+        // yearly accounting
+        DatabaseReference timeIndexRef = getRef().child(DatabaseStructure.TransactionBranch.BRANCH_NAME).child(date.getYear() + "");
+        updateStandardAccountingData(timeIndexRef, subBranch, pretax, postTax);
+
+        // monthly accounting
+        timeIndexRef = timeIndexRef.child(date.getMonthValue() + "");
+        updateStandardAccountingData(timeIndexRef, subBranch, pretax, postTax);
+
+        // daily accounting
+        timeIndexRef = timeIndexRef.child(date.getDayOfMonth() + "");
+        updateStandardAccountingData(timeIndexRef, subBranch, pretax, postTax);
+    }
+
+
+    /**
+     * update weekly accounting data
+     */
+    private void updateWeeklyAccountingData(LocalDate date, String subBranch, int pretax, int postTax){
+
+        LocalDate startOfWeek = AppUtil.getMonday(date);
 
         DatabaseReference weekRef = getRef().child(DatabaseStructure.TransactionBranch.BRANCH_NAME)
                 .child(startOfWeek.getYear() + "").child(startOfWeek.getMonthValue() + "").child(startOfWeek.getDayOfMonth() + "")
                 .child(DatabaseStructure.Accounting.BRANCH_NAME).child(DatabaseStructure.Accounting.WEEKLY_TOTALS);
 
-        updateAccountingData(weekRef, transaction);
+        updateSubAccountingData(weekRef, subBranch, pretax, postTax);
 
     }
 
-    private void updateStandardAccountingData(DatabaseReference timeIndexRef, Transaction transaction) {
-        updateAccountingData(timeIndexRef.child(DatabaseStructure.Accounting.BRANCH_NAME), transaction);
+    /**
+     * update accounting data under the Accounting branch name
+     */
+    private void updateStandardAccountingData(DatabaseReference timeIndexRef, String subBranch, int pretax, int postTax) {
+        updateSubAccountingData(timeIndexRef.child(DatabaseStructure.Accounting.BRANCH_NAME),
+                subBranch, pretax, postTax);
     }
 
-    private void updateAccountingData(DatabaseReference timeIndexRef, Transaction transaction){
+    /**
+     * update the shop total and a sub branch (tech id or sale)
+     */
+    private void updateSubAccountingData(DatabaseReference timeIndexRef, String subBranch, int pretax, int postTax){
         // shop total
-        timeIndexRef.child(DatabaseStructure.Accounting.SHOP_TOTAL)
-                .setValue(ServerValue.increment(transaction.getAmount()));
+        updateAccountingData(timeIndexRef.child(DatabaseStructure.Accounting.SHOP_TOTAL), pretax, postTax);
 
         // technician earnings
-        timeIndexRef.child("" + transaction.getTech().getID())
-                .setValue(ServerValue.increment(transaction.getAmount()));
+        updateAccountingData(timeIndexRef.child(subBranch), pretax, postTax);
     }
+
+    /**
+     * update the Account amount at a location
+     */
+    private void updateAccountingData(DatabaseReference location, int pretax, int postTax){
+        location.child(DatabaseStructure.Accounting.A_AMOUNT).setValue(ServerValue.increment(pretax));
+        location.child(DatabaseStructure.Accounting.A_NO_TAX).setValue(ServerValue.increment(postTax));
+    }
+
 
     static DatabaseReference getRef(){
         return FirebaseDatabase.getInstance().getReference();

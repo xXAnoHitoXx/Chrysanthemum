@@ -2,6 +2,7 @@ package com.chrysanthemum.appdata.dataType;
 
 import com.chrysanthemum.appdata.dataType.parsing.PaymentParser;
 import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
+import com.chrysanthemum.appdata.dataType.subType.AppointmentStatus;
 import com.chrysanthemum.appdata.dataType.subType.TransactionStatus;
 
 import java.time.LocalDate;
@@ -115,17 +116,48 @@ public class Transaction {
                 "\n" + services;
     }
 
-    public TransactionStatus getStatus(){
+    public String transactionAmountStatusDisplay(){
+        switch (getTransactionStatus()){
+            case Open:
+                return "Open";
+            case Noshow:
+                return "No Show!";
+            case Closed:
+                return PaymentParser.reverseParse(amount, tip);
+        }
+
+        return "N/A";
+    }
+
+    /**
+     * status of this transaction as an appointment
+     */
+    public AppointmentStatus getAppointmentStatus(){
         if(tech == null){
-            return TransactionStatus.Open;
+            return AppointmentStatus.Open;
         } else if(amount <= 0){
-            return TransactionStatus.Claimed;
+            return AppointmentStatus.Claimed;
         } else {
-            return TransactionStatus.Closed;
+            return AppointmentStatus.Closed;
         }
     }
 
-    public LocalDate getLocalDate(){
+    /**
+     * status of this transaction
+     */
+    public TransactionStatus getTransactionStatus(){
+        if(amount > 0){
+            return TransactionStatus.Closed;
+        }
+
+        if(amount < 0 || getLocalDateAppointmentDate().compareTo(LocalDate.now()) < 0){
+            return TransactionStatus.Noshow;
+        }
+
+        return TransactionStatus.Open;
+    }
+
+    public LocalDate getLocalDateAppointmentDate(){
         Scanner scanner = new Scanner(getDate());
         int day = scanner.nextInt();
         int month = scanner.nextInt();

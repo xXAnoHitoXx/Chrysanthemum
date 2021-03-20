@@ -6,12 +6,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.chrysanthemum.appdata.DataStorageModule;
-import com.chrysanthemum.appdata.Util.AppUtil;
 import com.chrysanthemum.appdata.dataType.Customer;
 import com.chrysanthemum.appdata.dataType.Transaction;
 import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
+import com.chrysanthemum.appdata.querries.appointments.NewAppointmentQuery;
 import com.chrysanthemum.ui.dataView.task.Task;
 import com.chrysanthemum.ui.dataView.task.TaskHostestActivity;
 
@@ -129,10 +128,8 @@ public class NewAppointmentTask extends Task {
     }
 
     private void stage_4_CreateAppointment(){
-        Transaction transaction =
-                DataStorageModule.getFrontEnd().createAppointment(selectedDate, appointmentTime,
-                        appointmentDuration, customer, service);
-
+        Transaction transaction = new NewAppointmentQuery(selectedDate, appointmentTime,
+                appointmentDuration, customer, service).executeQuery();
 
         purpose.retrievedData(transaction);
     }

@@ -6,8 +6,11 @@ import androidx.lifecycle.Observer;
 
 import com.chrysanthemum.appdata.DataStorageModule;
 import com.chrysanthemum.appdata.dataType.Technician;
+import com.chrysanthemum.appdata.dataType.retreiver.NullRetriever;
 
 public abstract class SecurityModule {
+
+    private String UserID;
 
     public SecurityModule(){
         this.observeAccessToken(null, new Observer<AccessState>() {
@@ -38,7 +41,8 @@ public abstract class SecurityModule {
         }
     }
 
-    protected void grantAccess(){
+    protected void grantAccess(String UserID){
+        this.UserID = UserID;
         accessToken.setValue(AccessState.hasAccess);
     }
 
@@ -76,4 +80,8 @@ public abstract class SecurityModule {
     }
 
     public abstract void registerPassword(Technician tech, int password);
+
+    public String getUserID(){
+        return UserID;
+    }
 }
