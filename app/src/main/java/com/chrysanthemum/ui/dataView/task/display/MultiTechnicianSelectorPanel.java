@@ -6,6 +6,7 @@ import android.widget.LinearLayout;
 
 import com.chrysanthemum.appdata.DataStorageModule;
 import com.chrysanthemum.appdata.dataType.Technician;
+import com.chrysanthemum.firebase.DatabaseStructure;
 import com.chrysanthemum.ui.technicianLogin.TechnicianSelectorButton;
 import com.chrysanthemum.ui.technicianLogin.TechnicianSelectorPanel;
 
@@ -23,12 +24,16 @@ public class MultiTechnicianSelectorPanel extends TechnicianSelectorPanel {
     public MultiTechnicianSelectorPanel(Context context, LinearLayout layout){
         super(context, layout, false);
 
-        TechnicianSelectorButton button =
+        TechnicianSelectorButton salesButton =
+                new TechnicianSelectorButton(context, DatabaseStructure.Accounting.SALE_TECH, this);
+        TechnicianSelectorButton selectALLButton =
                 new TechnicianSelectorButton(context, new Technician("", "", Color.BLACK, SELECT_ALL), this);
 
-        button.setLayoutParams(getParam(false));
+        salesButton.setLayoutParams(getParam(false));
+        selectALLButton.setLayoutParams(getParam(false));
 
-        layout.addView(button);
+        layout.addView(salesButton);
+        layout.addView(selectALLButton);
     }
 
     public void changeSelectedTech(TechnicianSelectorButton newTech){

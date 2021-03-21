@@ -32,6 +32,18 @@ public class PaymentParser {
         return new int [] {pay, tip};
     }
 
+    public static int parseSingleAmount(String amount){
+        Scanner scanner = new Scanner(amount);
+
+        if(!scanner.hasNextInt()){
+            return Integer.MIN_VALUE;
+        }
+
+        int pay = scanner.nextInt();
+
+        return pay;
+    }
+
     @SuppressLint("DefaultLocale")
     public static String reverseParse(int pay, int tip){
 

@@ -27,6 +27,8 @@ public interface RemoteDataBase {
      */
     void uploadGiftCard(Gift gift);
 
+    void uploadSaleRecord(Transaction transaction);
+
     // void uploadSale();
 
     //-Entries Search-------------------------------------------------------------------------------

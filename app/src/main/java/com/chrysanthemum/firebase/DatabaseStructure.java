@@ -1,5 +1,9 @@
 package com.chrysanthemum.firebase;
 
+import android.graphics.Color;
+
+import com.chrysanthemum.appdata.dataType.Technician;
+
 public class DatabaseStructure {
 
     public static final String CURRENTLY_ACTIVE_APP_INSTANCE = "app";
@@ -36,7 +40,7 @@ public class DatabaseStructure {
         public static final String SHOP_TOTAL = "ST";
         public static final String WEEKLY_TOTALS = "WTs";
 
-        public static final String Sales = "sls";
+        public static final Technician SALE_TECH= new Technician("Sales", "", Color.LTGRAY, -32098271938l);
 
         public static final String A_AMOUNT = "a";
         public static final String A_NO_TAX = "t";

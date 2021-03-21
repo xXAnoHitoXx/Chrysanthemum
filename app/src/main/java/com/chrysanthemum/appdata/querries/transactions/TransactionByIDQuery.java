@@ -9,6 +9,7 @@ import com.chrysanthemum.appdata.dataType.subType.TransactionFrame;
 import com.chrysanthemum.appdata.RemoteDataBase;
 import com.chrysanthemum.appdata.querries.Query;
 import com.chrysanthemum.appdata.querries.customers.CustomerByIDQuery;
+import com.chrysanthemum.firebase.DatabaseStructure;
 
 public class TransactionByIDQuery extends Query<Transaction> {
 
@@ -30,6 +31,9 @@ public class TransactionByIDQuery extends Query<Transaction> {
             public void retrievedData(TransactionFrame data) {
                 frame = data;
                 tech = (frame.getTechnicianID() > 0)? DataStorageModule.getFrontEnd().getTech(frame.getTechnicianID()) : null;
+                if(frame.getTechnicianID() == DatabaseStructure.Accounting.SALE_TECH.getID()){
+                    tech = DatabaseStructure.Accounting.SALE_TECH;
+                }
                 customerByIDSubQuery(frame.getCustomerID());
 
             }

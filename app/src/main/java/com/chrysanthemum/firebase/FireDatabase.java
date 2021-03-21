@@ -298,6 +298,35 @@ public class FireDatabase implements RemoteDataBase {
     }
 
     @Override
+    public void uploadSaleRecord(Transaction transaction) {
+        DatabaseReference commonRef = getRef().child(DatabaseStructure.TransactionBranch.BRANCH_NAME);
+
+        // store by id
+        TransactionFrame frame = new TransactionFrame(transaction);
+        commonRef.child(DatabaseStructure.TransactionBranch.LIST)
+                .child("" + transaction.getID()).setValue(frame);
+
+        //indexed by date
+        Scanner scanner = new Scanner(transaction.getDate());
+        String day = scanner.next();
+        String month = scanner.next();
+        String year = scanner.next();
+        scanner.close();
+
+        commonRef.child(year).child(month).child(day)
+                .child(transaction.getTech().getID() + "")
+                .child("" + transaction.getID()).setValue(transaction.getID());
+
+        // indexed by customer
+        commonRef.child(DatabaseStructure.TransactionBranch.CUSTOMER_ID_INDEX)
+                .child("" + transaction.getCustomer().getID())
+                .child(transaction.getID() + "").setValue(transaction.getID());
+
+        updateWeeklyAccountingData(transaction.getLocalDateAppointmentDate(), transaction.getTech().getID()+ "", transaction.getAmount(), transaction.getTip());
+        updateMonthlyAccountingData(transaction.getLocalDateAppointmentDate(), transaction.getTech().getID()+ "", transaction.getAmount(), transaction.getTip());
+    }
+
+    @Override
     public void markNoShow(Transaction transaction) {
         getRef().child(DatabaseStructure.TransactionBranch.BRANCH_NAME)
                 .child(DatabaseStructure.TransactionBranch.LIST)

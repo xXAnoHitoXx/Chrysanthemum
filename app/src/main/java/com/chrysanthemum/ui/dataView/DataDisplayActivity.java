@@ -11,6 +11,7 @@ import com.chrysanthemum.ui.dataView.display.DisplayBoard;
 import com.chrysanthemum.ui.dataView.task.AppointmentViewerTask;
 import com.chrysanthemum.ui.dataView.task.CustomerManagerTask;
 import com.chrysanthemum.ui.dataView.task.GiftManager;
+import com.chrysanthemum.ui.dataView.task.SaleTask;
 import com.chrysanthemum.ui.dataView.task.Task;
 import com.chrysanthemum.ui.dataView.task.TaskHostestActivity;
 import com.chrysanthemum.ui.dataView.task.TaskSelectionButtion;
@@ -80,6 +81,9 @@ public class DataDisplayActivity extends AppCompatActivity implements TaskHostes
 
         TaskSelectionButtion appointmentViewer = AppointmentViewerTask.getMenuButton(this, this);
         addTaskPanelButton(appointmentViewer);
+
+        TaskSelectionButtion sales = SaleTask.getMenuButton(this, this);
+        addTaskPanelButton(sales);
 
         TaskSelectionButtion giftCardManager = GiftManager.getMenuButton(this, this);
         addTaskPanelButton(giftCardManager);

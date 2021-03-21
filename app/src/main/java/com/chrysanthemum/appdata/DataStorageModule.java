@@ -4,8 +4,11 @@ import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
 import com.chrysanthemum.appdata.dataType.retreiver.NullRetriever;
 import com.chrysanthemum.appdata.security.SecurityModule;
 import com.chrysanthemum.appdata.dataType.Technician;
+import com.chrysanthemum.firebase.DatabaseStructure;
 import com.chrysanthemum.firebase.FireDatabase;
 
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.Map;
 
 /**
@@ -73,16 +76,29 @@ public class DataStorageModule implements DataStorageFrontEnd, DataStorageBackEn
             @Override
             public void retrievedData(Map<String, Technician> data) {
                 techMap = data;
+                Technician sale = DatabaseStructure.Accounting.SALE_TECH;
+                techMap.put(sale.getID() + "", sale);
                 retriever.retrieved();
             }
         });
     }
 
     public Iterable<Technician> getTechList(){
-        return techMap.values();
+        Collection<Technician> val = techMap.values();
+
+        LinkedList<Technician> list = new LinkedList<>();
+
+        for(Technician technician : val){
+            if(technician.getID() != DatabaseStructure.Accounting.SALE_TECH.getID()){
+                list.add(technician);
+            }
+        }
+
+        return list;
     }
 
     public Technician getTech(long id){
         return techMap.get(id + "");
     }
+
 }
