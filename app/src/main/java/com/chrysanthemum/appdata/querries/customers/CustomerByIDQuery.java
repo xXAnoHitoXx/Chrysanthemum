@@ -2,7 +2,6 @@ package com.chrysanthemum.appdata.querries.customers;
 
 import com.chrysanthemum.appdata.dataType.Customer;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
-import com.chrysanthemum.appdata.RemoteDataBase;
 import com.chrysanthemum.appdata.querries.Query;
 
 public class CustomerByIDQuery extends Query<Customer> {
@@ -16,11 +15,6 @@ public class CustomerByIDQuery extends Query<Customer> {
 
     @Override
     public void executeQuery() {
-        getRemoteDB().findCustomerByID(id, new DataRetriever<Customer>() {
-            @Override
-            public void retrievedData(Customer c) {
-                complete(c);
-            }
-        });
+        getRemoteDB().getCustomerManager().findCustomerByID(id, this::complete);
     }
 }

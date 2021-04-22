@@ -135,7 +135,7 @@ public class TimeParser {
             builder.append(hour);
         }
 
-        builder.append(":").append(min);
+        builder.append(":").append(String.format("%02d", min));
 
         if(hour < 12){
             builder.append(" am");

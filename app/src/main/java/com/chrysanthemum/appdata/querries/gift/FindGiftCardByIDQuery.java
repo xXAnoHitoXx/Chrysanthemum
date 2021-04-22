@@ -17,6 +17,6 @@ public class FindGiftCardByIDQuery extends Query<Gift> {
 
     @Override
     public void executeQuery() {
-        getRemoteDB().findGiftCardByID(id, retriever);
+        getRemoteDB().getGiftCardManager().findGiftCardByID(id, retriever);
     }
 }

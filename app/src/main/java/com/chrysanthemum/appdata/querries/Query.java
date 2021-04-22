@@ -2,7 +2,7 @@ package com.chrysanthemum.appdata.querries;
 
 import com.chrysanthemum.appdata.DataStorageModule;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
-import com.chrysanthemum.appdata.RemoteDataBase;
+import com.chrysanthemum.appdata.RemoteDataBase.RemoteDataBase;
 
 
 public abstract class Query<T> {

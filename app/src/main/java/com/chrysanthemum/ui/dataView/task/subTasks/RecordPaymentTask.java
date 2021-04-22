@@ -7,7 +7,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.chrysanthemum.appdata.dataType.Transaction;
-import com.chrysanthemum.appdata.dataType.parsing.PaymentParser;
+import com.chrysanthemum.appdata.dataType.parsing.MoneyParser;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
 import com.chrysanthemum.appdata.querries.appointments.CloseAppointmentQuery;
 import com.chrysanthemum.ui.dataView.task.Task;
@@ -34,7 +34,7 @@ public class RecordPaymentTask extends Task {
         final EditText payment = host.createEditableForm(1);
 
         paymentLabel.setText("Amount (Tip):");
-        payment.setHint(PaymentParser.reverseParse(5750, 500));
+        payment.setHint(MoneyParser.reverseParse(5750, 500));
 
         final TextView serviceLabel = host.createFormLabel(2);
         final EditText service = host.createEditableForm(2);
@@ -54,7 +54,7 @@ public class RecordPaymentTask extends Task {
                 money = money.replaceAll("[$).]", "");
                 money = money.replaceAll("[ ]+", " ");
 
-                int[] pay = PaymentParser.parsePayment(money);
+                int[] pay = MoneyParser.parsePayment(money);
 
                 if(pay == null){
                     payment.setError("example: $57.50 ($2.00)");
@@ -62,6 +62,8 @@ public class RecordPaymentTask extends Task {
                 }
 
                 new CloseAppointmentQuery(transaction, pay[0], pay[1], service.getText().toString()).executeQuery();
+
+                CustomerFinderTask.service(transaction.getCustomer());
 
                 retriever.retrievedData(transaction);
             }

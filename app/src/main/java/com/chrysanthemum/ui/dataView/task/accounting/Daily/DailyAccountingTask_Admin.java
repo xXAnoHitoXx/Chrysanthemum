@@ -11,11 +11,11 @@ import android.widget.TextView;
 import com.chrysanthemum.appdata.DataStorageModule;
 import com.chrysanthemum.appdata.dataType.Technician;
 import com.chrysanthemum.appdata.dataType.Transaction;
-import com.chrysanthemum.appdata.dataType.parsing.PaymentParser;
+import com.chrysanthemum.appdata.dataType.parsing.MoneyParser;
 import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
 import com.chrysanthemum.appdata.querries.accounting.LoadTransactionRecordsOfDateQuery;
-import com.chrysanthemum.appdata.querries.accounting.UpdateTransactionRecordQuery;
+import com.chrysanthemum.appdata.querries.transactions.UpdateTransactionRecordQuery;
 import com.chrysanthemum.ui.dataView.task.Task;
 import com.chrysanthemum.ui.dataView.task.TaskHostestActivity;
 import com.chrysanthemum.ui.dataView.task.TaskSelectionButtion;
@@ -84,7 +84,7 @@ public class DailyAccountingTask_Admin extends DailyAccountingTask {
                 if(date != null){
                     startTechSelectTask(date);
                 } else {
-                    daySelect.setError("Tinn Fucked Up! Ask her to fix her damn app OMG!");
+                    daySelect.setError("Tinn Fucked Up! Tell her to fix her damn app OMG!");
                 }
             }
         });
@@ -170,7 +170,7 @@ public class DailyAccountingTask_Admin extends DailyAccountingTask {
         TextView amL = host.createFormLabel(1);
         amL.setText("Amount (tip):");
         final EditText payment = host.createEditableForm(1);
-        payment.setText(PaymentParser.reverseParse(transaction.getAmount(), transaction.getTip()));
+        payment.setText(MoneyParser.reverseParse(transaction.getAmount(), transaction.getTip()));
 
         TextView svcL = host.createFormLabel(2);
         svcL.setText("Service:");
@@ -188,7 +188,7 @@ public class DailyAccountingTask_Admin extends DailyAccountingTask {
                 money = money.replaceAll("[$).]", "");
                 money = money.replaceAll("[ ]+", " ");
 
-                int[] pay = PaymentParser.parsePayment(money);
+                int[] pay = MoneyParser.parsePayment(money);
 
                 if(pay == null){
                     payment.setError("example: $57.50 ($2.00)");

@@ -1,6 +1,7 @@
 package com.chrysanthemum.ui.dataView;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -12,11 +13,13 @@ import com.chrysanthemum.ui.dataView.task.AppointmentViewerTask;
 import com.chrysanthemum.ui.dataView.task.CustomerManagerTask;
 import com.chrysanthemum.ui.dataView.task.GiftManager;
 import com.chrysanthemum.ui.dataView.task.SaleTask;
+import com.chrysanthemum.ui.dataView.task.accounting.Daily.TallyTask;
 import com.chrysanthemum.ui.dataView.task.Task;
 import com.chrysanthemum.ui.dataView.task.TaskHostestActivity;
 import com.chrysanthemum.ui.dataView.task.TaskSelectionButtion;
 import com.chrysanthemum.ui.dataView.task.accounting.Daily.DailyAccountingTask_Admin;
 import com.chrysanthemum.ui.dataView.task.accounting.Daily.DailyAccountingTask_Personal;
+import com.chrysanthemum.ui.dataView.task.accounting.Monthly.GenerateMonthlyTotalTask;
 import com.chrysanthemum.ui.dataView.task.display.MultiTechnicianSelectorPanel;
 import com.chrysanthemum.ui.technicianLogin.TechnicianLoginActivity;
 import com.chrysanthemum.ui.technicianLogin.TechnicianSelectorPanel;
@@ -70,6 +73,12 @@ public class DataDisplayActivity extends AppCompatActivity implements TaskHostes
 
     }
 
+    @Override
+    public void onBackPressed(){
+
+    }
+
+
     private void logout(){
         DataStorageModule.getFrontEnd().getSecurityModule().logout();
 
@@ -103,7 +112,18 @@ public class DataDisplayActivity extends AppCompatActivity implements TaskHostes
 
             TaskSelectionButtion dailyAccounting = DailyAccountingTask_Admin.getMenuButton(this, this);
             addTaskPanelButton(dailyAccounting);
+
+            TaskSelectionButtion dailyClosing = TallyTask.getMenuButton(this, this);
+            addTaskPanelButton(dailyClosing);
+
+            TaskSelectionButtion monthReport = GenerateMonthlyTotalTask.getMenuButton(this, this);
+            addTaskPanelButton(monthReport);
+
         }
+
+        Context c = this;
+
+        System.out.println(c.getFilesDir().getAbsolutePath());
 
         //------------------------------------------------------------------------------------------
 

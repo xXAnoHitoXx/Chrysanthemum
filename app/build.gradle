@@ -4,6 +4,10 @@ apply plugin: 'com.google.gms.google-services'
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
     defaultConfig {
         applicationId "com.chrysanthemum"
         minSdkVersion 28
@@ -42,6 +46,7 @@ dependencies {
     implementation files('libs/poi-scratchpad-5.0.0.jar')
     implementation files('libs/SparseBitSet-1.2.jar')
     implementation files('libs/javax.mail.jar')
+    implementation files('libs/activation.jar')
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

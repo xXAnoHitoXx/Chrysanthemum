@@ -6,8 +6,8 @@ import com.chrysanthemum.appdata.querries.InstantQuery;
 
 public class AttachTechnicianToAppointmentQuery extends InstantQuery<Transaction> {
 
-    private Transaction transaction;
-    private Technician technician;
+    private final Transaction transaction;
+    private final Technician technician;
 
     public AttachTechnicianToAppointmentQuery(Transaction transaction, Technician technician){
         this.technician = technician;
@@ -17,7 +17,7 @@ public class AttachTechnicianToAppointmentQuery extends InstantQuery<Transaction
     @Override
     public Transaction executeQuery() {
         transaction.setTech(technician);
-        getRemoteDB().attachTransactionTech(transaction);
+        getRemoteDB().getTransactionManager().attachTransactionTech(transaction);
 
         return transaction;
     }

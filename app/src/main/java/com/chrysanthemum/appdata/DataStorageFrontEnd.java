@@ -11,5 +11,4 @@ public interface DataStorageFrontEnd {
     SecurityModule getSecurityModule();
     Iterable<Technician> getTechList();
     Technician getTech(long id);
-
 }

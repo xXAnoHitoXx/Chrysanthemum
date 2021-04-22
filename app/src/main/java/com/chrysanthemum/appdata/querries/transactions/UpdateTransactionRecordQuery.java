@@ -1,4 +1,4 @@
-package com.chrysanthemum.appdata.querries.accounting;
+package com.chrysanthemum.appdata.querries.transactions;
 
 import com.chrysanthemum.appdata.dataType.Transaction;
 import com.chrysanthemum.appdata.querries.InstantQuery;
@@ -19,8 +19,7 @@ public class UpdateTransactionRecordQuery extends InstantQuery<Transaction> {
 
     @Override
     public Transaction executeQuery() {
-        getRemoteDB().editRecord(transaction, amount, tip, service);
-        transaction.setBill(amount, tip, service);
+        getRemoteDB().getTransactionManager().editRecord(transaction, amount, tip, service);
         return transaction;
     }
 }

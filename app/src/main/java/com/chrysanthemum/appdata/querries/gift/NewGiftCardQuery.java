@@ -14,7 +14,7 @@ public class NewGiftCardQuery extends Query<Gift> {
 
     @Override
     public void executeQuery() {
-        getRemoteDB().uploadGiftCard(gift);
+        getRemoteDB().getGiftCardManager().uploadGiftCard(gift);
         complete(gift);
     }
 }

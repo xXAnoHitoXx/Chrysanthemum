@@ -7,7 +7,7 @@ import com.chrysanthemum.appdata.querries.InstantQuery;
 
 public class NewAppointmentQuery extends InstantQuery<Transaction> {
 
-    Transaction transaction;
+    private final Transaction transaction;
 
     public NewAppointmentQuery(String date, int time, int duration, Customer c, String services){
         transaction = new Transaction(date, time, duration, c, DataStorageModule.generateID(), services);
@@ -15,7 +15,7 @@ public class NewAppointmentQuery extends InstantQuery<Transaction> {
 
     @Override
     public Transaction executeQuery() {
-        getRemoteDB().uploadTransaction(transaction);
+        getRemoteDB().getTransactionManager().uploadTransaction(transaction);
         return transaction;
     }
 }

@@ -18,7 +18,7 @@ public class EditGiftDataQuery extends InstantQuery<Gift> {
 
     @Override
     public Gift executeQuery() {
-        getRemoteDB().editGift(gift, amount, dateExpires);
+        getRemoteDB().getGiftCardManager().editGift(gift, amount, dateExpires);
         return gift;
     }
 }

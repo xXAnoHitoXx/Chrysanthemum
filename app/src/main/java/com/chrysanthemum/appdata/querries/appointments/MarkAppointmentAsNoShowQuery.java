@@ -5,7 +5,7 @@ import com.chrysanthemum.appdata.querries.InstantQuery;
 
 public class MarkAppointmentAsNoShowQuery extends InstantQuery<Transaction> {
 
-    private Transaction transaction;
+    private final Transaction transaction;
 
     public MarkAppointmentAsNoShowQuery(Transaction transaction){
         this.transaction = transaction;
@@ -14,7 +14,7 @@ public class MarkAppointmentAsNoShowQuery extends InstantQuery<Transaction> {
     @Override
     public Transaction executeQuery() {
         transaction.markNoShow();
-        getRemoteDB().markNoShow(transaction);
+        getRemoteDB().getTransactionManager().markNoShow(transaction);
 
         return transaction;
     }

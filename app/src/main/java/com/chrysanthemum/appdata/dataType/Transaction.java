@@ -1,7 +1,7 @@
 package com.chrysanthemum.appdata.dataType;
 
-import com.chrysanthemum.appdata.dataType.parsing.PaymentParser;
-import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
+import com.chrysanthemum.appdata.dataType.parsing.MoneyParser;
+import com.chrysanthemum.appdata.dataType.parsing.PhoneNumberParser;
 import com.chrysanthemum.appdata.dataType.subType.AppointmentStatus;
 import com.chrysanthemum.appdata.dataType.subType.TransactionStatus;
 
@@ -9,6 +9,8 @@ import java.time.LocalDate;
 import java.util.Scanner;
 
 public class Transaction {
+
+    public static final int NO_SHOW_AMOUNT = -100000000;
 
     private final String date; // dd mm yyyy
     private final int appointmentTime; // hour * 60 + min
@@ -48,10 +50,15 @@ public class Transaction {
         this.tech = tech;
     }
 
-    public void setBill (int amount, int tip, String services){
+    public Transaction setBill (int amount, int tip, String services){
+        Transaction diff = new Transaction(date, appointmentTime, duration, getCustomer(), id, tech,
+                amount - getAmount(), tip - getTip(), services);
+
         this.amount = amount;
         this.tip = tip;
         this.services = services;
+
+        return diff;
     }
 
     //------------------------------------------------------------------------------------
@@ -93,27 +100,20 @@ public class Transaction {
     }
 
     public boolean noShow(){
-        return amount < 0;
+        return amount == NO_SHOW_AMOUNT;
     }
 
     public void markNoShow(){
-        amount = -1000;
+        amount = NO_SHOW_AMOUNT;
     }
 
     public String getAppointmentDisplayData(){
 
-        return c.getName() + " - " +
-                TimeParser.reverseParse(appointmentTime) +
-                "\n" + services;
-    }
-
-    public String getTransactionDisplayData(){
-
         return c.getName() +
-                "\n" + c.getPhoneNumber() +
                 "\n" +
-                PaymentParser.reverseParse(amount, tip) +
-                "\n" + services;
+                PhoneNumberParser.revParse(c.getPhoneNumber()) +
+                "\n" +
+                services;
     }
 
     public String transactionAmountStatusDisplay(){
@@ -123,7 +123,7 @@ public class Transaction {
             case Noshow:
                 return "No Show!";
             case Closed:
-                return PaymentParser.reverseParse(amount, tip);
+                return MoneyParser.reverseParse(amount, tip);
         }
 
         return "N/A";
@@ -146,15 +146,17 @@ public class Transaction {
      * status of this transaction
      */
     public TransactionStatus getTransactionStatus(){
-        if(amount > 0){
-            return TransactionStatus.Closed;
-        }
 
-        if(amount < 0 || getLocalDateAppointmentDate().compareTo(LocalDate.now()) < 0){
+        if(amount != NO_SHOW_AMOUNT){
+            if(amount != 0 || tip != 0 || services.toLowerCase().contains("void")){
+                return TransactionStatus.Closed;
+            }
+
+            return TransactionStatus.Open;
+        } else {
             return TransactionStatus.Noshow;
         }
 
-        return TransactionStatus.Open;
     }
 
     public LocalDate getLocalDateAppointmentDate(){

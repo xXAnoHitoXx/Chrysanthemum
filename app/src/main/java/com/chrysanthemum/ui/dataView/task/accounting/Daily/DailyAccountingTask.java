@@ -4,7 +4,7 @@ import android.graphics.Color;
 import android.view.View;
 
 import com.chrysanthemum.appdata.dataType.Transaction;
-import com.chrysanthemum.appdata.dataType.parsing.PaymentParser;
+import com.chrysanthemum.appdata.dataType.parsing.MoneyParser;
 import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
 import com.chrysanthemum.ui.dataView.task.TaskHostestActivity;
 import com.chrysanthemum.ui.dataView.task.display.LineDisplayLayoutTask;
@@ -19,7 +19,7 @@ public abstract class DailyAccountingTask extends LineDisplayLayoutTask {
         String[] data = new String[] {
                 "Total:",
                 name,
-                PaymentParser.reverseParse(amount, tip)
+                MoneyParser.reverseParse(amount, tip)
         };
 
         displayLine(data, colour, row, null);
@@ -27,9 +27,9 @@ public abstract class DailyAccountingTask extends LineDisplayLayoutTask {
 
     protected void displayTransaction(Transaction transaction, int row, View.OnLongClickListener listener){
         String[] data = new String[] {
-                TimeParser.parseDateDisplayDay(transaction.getLocalDateAppointmentDate()),
                 TimeParser.reverseParse(transaction.getAppointmentTime()),
-                PaymentParser.reverseParse(transaction.getAmount(), transaction.getTip()),
+                transaction.getCustomer().getName(),
+                MoneyParser.reverseParse(transaction.getAmount(), transaction.getTip()),
                 transaction.getServices()
         };
 
@@ -38,7 +38,7 @@ public abstract class DailyAccountingTask extends LineDisplayLayoutTask {
 
     protected void displayLabel(){
         String[] data = new String[] {
-                "Date", "Time", "Amount (Tip)", "Services"
+                "Time", "Customer", "Amount (Tip)", "Services"
         };
 
         displayLine(data, Color.GRAY, 0, null);

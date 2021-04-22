@@ -4,7 +4,7 @@ import android.annotation.SuppressLint;
 
 import java.util.Scanner;
 
-public class PaymentParser {
+public class MoneyParser {
 
     /**
      * input in the form
@@ -33,6 +33,8 @@ public class PaymentParser {
     }
 
     public static int parseSingleAmount(String amount){
+        amount = amount.replace(".", "");
+        amount = amount.replace("$", "");
         Scanner scanner = new Scanner(amount);
 
         if(!scanner.hasNextInt()){
@@ -44,13 +46,32 @@ public class PaymentParser {
         return pay;
     }
 
+
+    public static String parseSingleAmount(long amount){
+
+        long dollars =  Math.abs(amount / 100);
+        long cents = Math.abs(amount % 100);
+
+        StringBuilder builder = new StringBuilder();
+        builder.append("$");
+
+        if(amount < 0){
+            builder.append("-");
+        }
+
+        builder.append(dollars).append(".").append(String.format("%02d", cents));
+
+
+        return builder.toString();
+    }
+
+
     @SuppressLint("DefaultLocale")
     public static String reverseParse(int pay, int tip){
 
-        return "$" +
-                pay / 100 + "." + String.format("%02d", pay % 100) +
-                " ($" +
-                tip / 100 + "." + String.format("%02d", tip % 100) +
-                ")";
+        return parseSingleAmount(pay)
+                + " ("
+                + parseSingleAmount(tip)
+                + ")";
     }
 }

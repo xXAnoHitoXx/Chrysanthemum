@@ -11,21 +11,19 @@ import java.time.LocalDate;
 
 public class NewSaleTransactionQuery extends InstantQuery<Transaction> {
 
-    Transaction transaction;
-    public NewSaleTransactionQuery(Customer c, String services, int postTax){
-        LocalDate today = LocalDate.now();
-
-        String date = today.getDayOfMonth() + " " + today.getMonthValue() + " " + today.getYear();
+    private final Transaction transaction;
+    public NewSaleTransactionQuery(LocalDate date, Customer c, String services, int pretax){
+        String dateValue = TimeParser.parseDateData(date);
 
         int time = TimeParser.currentTime();
 
-        transaction = new Transaction(date, time, 0, c, DataStorageModule.generateID(),
-                DatabaseStructure.Accounting.SALE_TECH, 0, postTax, services);
+        transaction = new Transaction(dateValue, time, 0, c, DataStorageModule.generateID(),
+                DatabaseStructure.Accounting.SALE_TECH, pretax, 0, services);
     }
 
     @Override
     public Transaction executeQuery() {
-        getRemoteDB().uploadSaleRecord(transaction);
+        getRemoteDB().getTransactionManager().uploadSaleRecord(transaction);
         return transaction;
     }
 }

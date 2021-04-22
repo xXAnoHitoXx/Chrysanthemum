@@ -18,13 +18,16 @@ import com.chrysanthemum.appdata.dataType.Customer;
 import com.chrysanthemum.appdata.dataType.parsing.PhoneNumberParser;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
 import com.chrysanthemum.appdata.querries.Query;
+import com.chrysanthemum.appdata.querries.customers.CustomerByNameQuery;
 import com.chrysanthemum.appdata.querries.customers.CustomerByPhoneQuery;
 import com.chrysanthemum.appdata.querries.customers.NewCustomerQuery;
 import com.chrysanthemum.ui.dataView.display.DisplayBoard;
 import com.chrysanthemum.ui.dataView.display.Displayable;
 import com.chrysanthemum.ui.dataView.task.Task;
 import com.chrysanthemum.ui.dataView.task.TaskHostestActivity;
+import com.chrysanthemum.ui.dataView.task.display.PhoneNumberBar;
 
+import java.util.Collection;
 import java.util.Map;
 
 public class CustomerFinderTask extends Task {
@@ -35,13 +38,12 @@ public class CustomerFinderTask extends Task {
     private static Customer lastCustomer = null;
 
     private DisplayBoard board;
-    private Map<String, Customer> customerMap;
+    private Collection<Customer> customerMap;
 
     private long selectedPhoneNumber;
-    private final DataRetriever<Customer> purpose;
+    private String selectedName = "";
 
-    private EditText form;
-    private TextView label;
+    private final DataRetriever<Customer> purpose;
 
     public CustomerFinderTask(TaskHostestActivity host, DataRetriever<Customer> purpose) {
         super(host);
@@ -57,57 +59,63 @@ public class CustomerFinderTask extends Task {
         host.clearForm();
         host.setBarText(host.getMainTaskTitle());
 
-        form = host.createEditableForm(1);
-        label = host.createFormLabel(1);
+        TextView label = host.createFormLabel(1);
+        final EditText form = host.createEditableForm(1);
+        final PhoneNumberBar phoneBar = new PhoneNumberBar(form);
 
-        label.setText("Phone Number:");
+        label.setText("Name / Phone Number:");
 
         form.setText("");
-        form.setHint("1-902-999-2703 or leave blank for last customer searched");
+        form.setHint("Sophia, 1-902-999-2703, or leave blank for last customer serviced");
 
         Button b = host.getFormButton();
         b.setText("Search");
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                searchCustomer();
+
+                String searchQuery = form.getText().toString();
+
+                if(searchQuery.equals("")){
+                    if(lastCustomer != null){
+                        chooseLastCustomer();
+                    } else {
+                        form.setError("We haven't serviced a Customer yet today");
+                    }
+                    return;
+                }
+
+                if(searchQuery.matches(".*\\d.*")){
+
+                    if(phoneBar.hasPhoneNumber()){
+                        selectedPhoneNumber = phoneBar.getPhoneNumber();
+                        selectedName = "";
+                        loadBoard();
+                    }
+                } else {
+
+                    if(searchQuery.length() > 1){
+                        selectedName = searchQuery;
+                        selectedPhoneNumber = 0;
+                        loadBoard();
+                    }
+                }
+
             }
         });
     }
 
-    private void searchCustomer(){
-
-        String searchQuery = form.getText().toString();
-
-        if(searchQuery.equals("")){
-            chooseLastCustomer();
-            return;
-        }
-
-        long phoneNumber = PhoneNumberParser.parse(searchQuery);
-        if (phoneNumber < 0) {
-            form.setError("Example: 1-902-999-2703");
-        } else {
-            selectedPhoneNumber = phoneNumber;
-            loadBoard();
-        }
-    }
-
     private void chooseLastCustomer(){
-        if(lastCustomer == null){
-            form.setError("We haven't serviced a Customer yet today");
-        } else {
-            host.createAlertBox()
-                    .setTitle("Last Customer Serviced was:")
-                    .setMessage(lastCustomer.getName() + "\n" + lastCustomer.getPhoneNumber())
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+        host.createAlertBox()
+                .setTitle("Last Customer Serviced was:")
+                .setMessage(lastCustomer.getName() + "\n" + lastCustomer.getPhoneNumber())
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            purpose.retrievedData(lastCustomer);
-                        }})
-                    .setNegativeButton(android.R.string.no, null).show();
-        }
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        purpose.retrievedData(lastCustomer);
+                    }})
+                .setNegativeButton(android.R.string.no, null).show();
     }
 
     private void loadBoard(){
@@ -117,20 +125,23 @@ public class CustomerFinderTask extends Task {
         DataRetriever<Map<String, Customer>> retriever = new DataRetriever<Map<String, Customer>>() {
             @Override
             public void retrievedData(Map<String, Customer> data) {
-                customerMap = data;
-                updateBoardDisplay();
+                updateBoardDisplay(data);
             }
         };
 
-        Query<Map<String, Customer>> query = new CustomerByPhoneQuery(selectedPhoneNumber, retriever);
+        Query<Map<String, Customer>> query = (selectedPhoneNumber > 0)?
+                new CustomerByPhoneQuery(selectedPhoneNumber, retriever)
+                : new CustomerByNameQuery(selectedName, retriever);
+
         query.executeQuery();
     }
 
-    private void updateBoardDisplay(){
+    private void updateBoardDisplay(Map<String, Customer> data){
+        customerMap = data.values();
+
         int index = 0;
 
-        for(String customerName : customerMap.keySet()){
-            final Customer c = customerMap.get(customerName);
+        for(Customer c : customerMap){
 
             board.displayData(new CustomerDisplay(c,
                     new View.OnClickListener() {
@@ -155,8 +166,8 @@ public class CustomerFinderTask extends Task {
                         setupNewCustomerState();
                     }
                 },
-                (index % 4) * (STANDARD_BOX_WIDTH + 5),
-                (index / 4) * (STANDARD_BOX_HEIGHT + 5)
+                (index % 4) * (STANDARD_BOX_WIDTH + 1),
+                (index / 4) * (STANDARD_BOX_HEIGHT + 1)
         ));
 
     }
@@ -164,36 +175,60 @@ public class CustomerFinderTask extends Task {
     @SuppressLint("SetTextI18n")
     private void setupNewCustomerState(){
         host.setBarText(host.getMainTaskTitle() + " >>> New Customer");
+        host.clearForm();
 
-        label.setText("Customer Name:");
+        final EditText nameForm = host.createEditableForm(1);
+        TextView nameLabel = host.createFormLabel(1);
 
-        form.setText("");
-        form.setHint("John Doe");
+        nameLabel.setText("Customer Name:");
+
+        nameForm.setText(selectedName);
+        nameForm.setHint("John Doe");
+
+        final EditText phoneForm = host.createEditableForm(2);
+        TextView phoneLabel = host.createFormLabel(2);
+
+        phoneLabel.setText("Phone Number:");
+
+        final PhoneNumberBar phoneBar = new PhoneNumberBar(phoneForm);
+
+        if(selectedPhoneNumber > 0){
+            phoneForm.setText(PhoneNumberParser.revParse(selectedPhoneNumber));
+        } else {
+            phoneForm.setText(PhoneNumberParser.revParse(19024054988L));
+        }
 
         Button b = host.getFormButton();
         b.setText("Create");
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                createCustomer();
+                if(phoneBar.hasPhoneNumber()){
+                    selectedPhoneNumber = phoneBar.getPhoneNumber();
+                    selectedName = nameForm.getText().toString();
+                    createCustomer();
+                }
             }
         });
     }
 
     private void createCustomer(){
-        String name = form.getText().toString();
-        Customer customer;
 
-        if(customerMap.containsKey(name)){
-            customer = customerMap.get(name);
-        } else {
-            customer = new NewCustomerQuery(name, selectedPhoneNumber).executeQuery();
+        for(Customer c : customerMap){
+            if(c.getPhoneNumber() == selectedPhoneNumber && c.getName() == selectedName){
+                purpose.retrievedData(c);
+            }
         }
+
+        Customer customer = new NewCustomerQuery(selectedName, selectedPhoneNumber).executeQuery();
 
         lastCustomer = customer;
         purpose.retrievedData(customer);
     }
 
+    public static void service(Customer customer){
+        lastCustomer = customer;
+    }
 
     private class CustomerDisplay extends Displayable {
 

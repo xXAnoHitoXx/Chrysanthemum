@@ -13,8 +13,7 @@ public class LoadAppointmentListByDayQuery extends Query<LinkedList<Transaction>
     private final LinkedList<Transaction> data;
     private int entryCount;
 
-    public LoadAppointmentListByDayQuery(String date,
-                                         DataRetriever<LinkedList<Transaction>> retriever) {
+    public LoadAppointmentListByDayQuery(String date, DataRetriever<LinkedList<Transaction>> retriever) {
         super(retriever);
         data = new LinkedList<>();
         this.date = date;
@@ -22,30 +21,24 @@ public class LoadAppointmentListByDayQuery extends Query<LinkedList<Transaction>
 
     @Override
     public void executeQuery() {
-        getRemoteDB().findOpenTransactionIDsByDate(date, new DataRetriever<LinkedList<Long>>() {
-            @Override
-            public void retrievedData(LinkedList<Long> ids) {
-                entryCount = ids.size();
+        getRemoteDB().getTransactionManager().findOpenTransactionIDsByDate(date, ids -> {
+            entryCount = ids.size();
 
-                if(entryCount > 0){
-                    for(long id : ids){
-                        transactionByIDSubQuery(id);
-                    }
-                } else {
-                    complete(data);
+            if(entryCount > 0){
+                for(long id : ids){
+                    transactionByIDSubQuery(id);
                 }
+            } else {
+                complete(data);
             }
         });
     }
 
     private void transactionByIDSubQuery(long id){
-        TransactionByIDQuery q = new TransactionByIDQuery(id, new DataRetriever<Transaction>() {
-            @Override
-            public void retrievedData(Transaction transaction) {
+        TransactionByIDQuery q = new TransactionByIDQuery(id, transaction -> {
 
-                if(retrievedSubQueryData(transaction)){
-                    complete(data);
-                }
+            if(retrievedSubQueryData(transaction)){
+                complete(data);
             }
         });
 

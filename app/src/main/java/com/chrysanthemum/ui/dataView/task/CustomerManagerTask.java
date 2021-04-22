@@ -21,6 +21,7 @@ import com.chrysanthemum.appdata.querries.Query;
 import com.chrysanthemum.appdata.querries.customers.UpdateCustomerInfoQuery;
 import com.chrysanthemum.appdata.querries.transactions.TransactionsByCustomerIDQuery;
 import com.chrysanthemum.ui.dataView.display.Displayable;
+import com.chrysanthemum.ui.dataView.task.display.PhoneNumberBar;
 import com.chrysanthemum.ui.dataView.task.subTasks.CustomerFinderTask;
 
 import java.util.Comparator;
@@ -57,13 +58,14 @@ public class CustomerManagerTask extends Task {
         host.setBarText(host.getMainTaskTitle());
         host.clearForm();
 
-        final TextView label1 = host.createFormLabel(1);
-        final EditText phone = host.createEditableForm(1);
+        TextView label1 = host.createFormLabel(1);
+        EditText phone = host.createEditableForm(1);
+        final PhoneNumberBar phoneBar = new PhoneNumberBar(phone);
 
         label1.setText("Phone:");
         phone.setText(PhoneNumberParser.revParse(customer.getPhoneNumber()));
 
-        final TextView label2 = host.createFormLabel(2);
+        TextView label2 = host.createFormLabel(2);
         final EditText name = host.createEditableForm(2);
 
         label2.setText("Customer Name:");
@@ -74,11 +76,8 @@ public class CustomerManagerTask extends Task {
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                long phoneNumber = PhoneNumberParser.parse(phone.getText().toString());
-                if (phoneNumber < 0) {
-                    phone.setError("Example: 1-902-999-2703");
-                } else {
-                    new UpdateCustomerInfoQuery(customer, name.getText().toString(), phoneNumber).executeQuery();
+                if (phoneBar.hasPhoneNumber()) {
+                    new UpdateCustomerInfoQuery(customer, name.getText().toString(), phoneBar.getPhoneNumber()).executeQuery();
                     host.popMessage("Updated Customer Info!");
                     setupCustomerInfoAdjustmentForm(customer);
                 }

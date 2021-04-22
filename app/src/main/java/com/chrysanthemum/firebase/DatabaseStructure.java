@@ -44,6 +44,7 @@ public class DatabaseStructure {
 
         public static final String A_AMOUNT = "a";
         public static final String A_NO_TAX = "t";
+        public static final String A_CLOSURE = "close";
     }
 
     public static class Gift {

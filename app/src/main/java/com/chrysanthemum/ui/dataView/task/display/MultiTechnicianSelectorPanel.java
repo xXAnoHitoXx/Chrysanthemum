@@ -56,6 +56,8 @@ public class MultiTechnicianSelectorPanel extends TechnicianSelectorPanel {
             for(Technician tech : DataStorageModule.getFrontEnd().getTechList()){
                 selected.put(tech.getID(), tech);
             }
+
+            selected.put(DatabaseStructure.Accounting.SALE_TECH.getID(), DatabaseStructure.Accounting.SALE_TECH);
         }
 
         return selected;

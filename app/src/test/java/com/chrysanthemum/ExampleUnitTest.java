@@ -1,5 +1,8 @@
 package com.chrysanthemum;
 
+import android.util.Log;
+
+import org.apache.commons.codec.language.Metaphone;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -12,6 +15,24 @@ import static org.junit.Assert.*;
 public class ExampleUnitTest {
     @Test
     public void addition_isCorrect() {
-        assertEquals(4, 2 + 2);
+        Metaphone mp = new Metaphone();
+
+        String a = mp.encode("Kris");
+        String b = mp.encode("Kristianna");
+
+        a = mp.encode("Kris");
+        b = mp.encode("Kristianna");
+
+        a = mp.encode("Ing");
+        b = mp.encode("Ingrid");
+
+        a = mp.encode("Dick");
+        b = mp.encode("Richard");
+
+        a = mp.encode("Hsao");
+        b = mp.encode("Xiao");
+
+        a = mp.encode("Susan");
+        b = mp.encode("Suzanne");
     }
 }

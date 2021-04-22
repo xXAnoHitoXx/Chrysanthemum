@@ -68,6 +68,7 @@ public class PasswordNumberPad {
                 setNumberButton(b);
             }
         }
+        
 
         observeAndDisplayStatus(owner);
     }

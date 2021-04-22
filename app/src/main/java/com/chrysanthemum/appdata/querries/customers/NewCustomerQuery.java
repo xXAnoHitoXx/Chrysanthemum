@@ -5,7 +5,7 @@ import com.chrysanthemum.appdata.dataType.Customer;
 import com.chrysanthemum.appdata.querries.InstantQuery;
 
 public class NewCustomerQuery extends InstantQuery<Customer> {
-    private Customer c;
+    private final Customer c;
 
     public NewCustomerQuery(String name, long phoneNumber) {
         c = new Customer(name, phoneNumber, DataStorageModule.generateID());
@@ -13,7 +13,7 @@ public class NewCustomerQuery extends InstantQuery<Customer> {
 
     @Override
     public Customer executeQuery() {
-        getRemoteDB().uploadCustomer(c);
+        getRemoteDB().getCustomerManager().uploadCustomer(c);
         return c;
     }
 }

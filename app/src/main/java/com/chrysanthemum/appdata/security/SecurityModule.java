@@ -47,7 +47,7 @@ public abstract class SecurityModule {
     }
 
     public void releaseAccess(){
-        accessToken.setValue(AccessState.noAccess);
+        accessToken.setValue(null);
     }
 
     protected void blockAccess(){

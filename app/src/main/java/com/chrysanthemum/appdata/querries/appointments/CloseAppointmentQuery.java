@@ -5,7 +5,7 @@ import com.chrysanthemum.appdata.querries.InstantQuery;
 
 public class CloseAppointmentQuery extends InstantQuery<Transaction> {
 
-    private Transaction transaction;
+    private final Transaction transaction;
 
     public CloseAppointmentQuery(Transaction transaction, int amount, int tip, String services){
         this.transaction = transaction;
@@ -14,7 +14,7 @@ public class CloseAppointmentQuery extends InstantQuery<Transaction> {
 
     @Override
     public Transaction executeQuery() {
-        getRemoteDB().closeTransaction(transaction);
+        getRemoteDB().getTransactionManager().closeTransaction(transaction);
         return transaction;
     }
 }

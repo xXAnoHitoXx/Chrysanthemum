@@ -4,7 +4,6 @@ import com.chrysanthemum.appdata.dataType.Customer;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
 import com.chrysanthemum.appdata.querries.Query;
 
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -21,31 +20,25 @@ public class CustomerByPhoneQuery extends Query<Map<String, Customer>> {
     }
 
     public void executeQuery(){
-        getRemoteDB().findCustomerIDsByPhone(phoneNumber,
-                new DataRetriever<LinkedList<Long>>() {
-                    @Override
-                    public void retrievedData(LinkedList<Long> ids) {
-                        entryCount = ids.size();
+        getRemoteDB().getCustomerManager().findCustomerIDsByPhone(phoneNumber,
+                ids -> {
+                    entryCount = ids.size();
 
-                        if(entryCount > 0){
-                            for(long id : ids){
-                                customerByIDSubQuery(id);
-                            }
-                        } else {
-                            complete(data);
+                    if(entryCount > 0){
+                        for(long id : ids){
+                            customerByIDSubQuery(id);
                         }
+                    } else {
+                        complete(data);
                     }
                 });
     }
 
     private void customerByIDSubQuery(long id){
-        CustomerByIDQuery q = new CustomerByIDQuery(id, new DataRetriever<Customer>() {
-            @Override
-            public void retrievedData(Customer customer) {
+        CustomerByIDQuery q = new CustomerByIDQuery(id, customer -> {
 
-                if(retrievedSubQueryData(customer)){
-                    complete(data);
-                }
+            if(retrievedSubQueryData(customer)){
+                complete(data);
             }
         });
 

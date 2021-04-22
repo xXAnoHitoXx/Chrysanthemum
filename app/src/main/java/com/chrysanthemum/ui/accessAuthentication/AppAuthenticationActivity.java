@@ -1,7 +1,5 @@
 package com.chrysanthemum.ui.accessAuthentication;
 
-import android.app.Activity;
-
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -67,8 +65,6 @@ public class AppAuthenticationActivity extends AppCompatActivity {
                 loadingProgressBar.setVisibility(View.GONE);
                 if (loginResult == AccessState.noAccess) {
                     showLoginFailed();
-                    setResult(Activity.RESULT_OK);
-                    finish();
                 }
 
                 if (loginResult == AccessState.hasAccess) {
@@ -116,6 +112,11 @@ public class AppAuthenticationActivity extends AppCompatActivity {
                         passwordEditText.getText().toString());
             }
         });
+
+    }
+
+    @Override
+    public void onBackPressed(){
 
     }
 

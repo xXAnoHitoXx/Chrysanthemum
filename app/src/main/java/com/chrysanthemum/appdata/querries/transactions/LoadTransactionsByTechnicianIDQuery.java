@@ -26,30 +26,24 @@ public class LoadTransactionsByTechnicianIDQuery  extends Query<LinkedList<Trans
 
     @Override
     public void executeQuery() {
-        getRemoteDB().findTransactionIDsByDateAndTechnicianID(date, technician.getID(), new DataRetriever<LinkedList<Long>>() {
-            @Override
-            public void retrievedData(LinkedList<Long> ids) {
-                entryCount = ids.size();
+        getRemoteDB().getTransactionManager().findTransactionIDsByDateAndTechnicianID(date, technician.getID(), ids -> {
+            entryCount = ids.size();
 
-                if(entryCount > 0){
-                    for(long id : ids){
-                        executeSubQuery(id);
-                    }
-                } else {
-                    complete(data);
+            if(entryCount > 0){
+                for(long id : ids){
+                    executeSubQuery(id);
                 }
+            } else {
+                complete(data);
             }
         });
     }
 
     private void executeSubQuery(long transactionID) {
-        TransactionByIDQuery subQuery = new TransactionByIDQuery(transactionID, new DataRetriever<Transaction>() {
-            @Override
-            public void retrievedData(Transaction transaction) {
+        TransactionByIDQuery subQuery = new TransactionByIDQuery(transactionID, transaction -> {
 
-                if(retrievedSubQueryData(transaction)){
-                    complete(data);
-                }
+            if(retrievedSubQueryData(transaction)){
+                complete(data);
             }
         });
 

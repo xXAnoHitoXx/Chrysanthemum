@@ -38,13 +38,10 @@ public class LoadTransactionRecordsOfDateQuery extends Query<LinkedList<Transact
     @Override
     public void executeQuery() {
         for(Technician tech : techs){
-            LoadTransactionsByTechnicianIDQuery LoadTransactionsByTechnicianIDQuery = new LoadTransactionsByTechnicianIDQuery(date, tech, new DataRetriever<LinkedList<Transaction>>() {
-                @Override
-                public void retrievedData(LinkedList<Transaction> transactions) {
+            LoadTransactionsByTechnicianIDQuery LoadTransactionsByTechnicianIDQuery = new LoadTransactionsByTechnicianIDQuery(date, tech, transactions -> {
 
-                    if(retrievedSubQueryData(transactions)){
-                        complete(data);
-                    }
+                if(retrievedSubQueryData(transactions)){
+                    complete(data);
                 }
             });
 

@@ -3,7 +3,6 @@ package com.chrysanthemum.appdata.querries.transactions;
 import com.chrysanthemum.appdata.dataType.Customer;
 import com.chrysanthemum.appdata.dataType.Transaction;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
-import com.chrysanthemum.appdata.RemoteDataBase;
 import com.chrysanthemum.appdata.querries.Query;
 
 import java.util.LinkedList;
@@ -28,30 +27,24 @@ public class TransactionsByCustomerIDQuery extends Query<LinkedList<Transaction>
 
     @Override
     public void executeQuery() {
-        getRemoteDB().findTransactionIDsByCustomerID(customer.getID(), new DataRetriever<LinkedList<Long>>() {
-            @Override
-            public void retrievedData(LinkedList<Long> ids) {
-                entryCount = ids.size();
+        getRemoteDB().getTransactionManager().findTransactionIDsByCustomerID(customer.getID(), ids -> {
+            entryCount = ids.size();
 
-                if(entryCount > 0){
-                    for(long id : ids){
-                        executeSubQuery(id);
-                    }
-                } else {
-                    complete(data);
+            if(entryCount > 0){
+                for(long id : ids){
+                    executeSubQuery(id);
                 }
+            } else {
+                complete(data);
             }
         });
     }
 
     private void executeSubQuery(long transactionID) {
-        TransactionByIDQuery subQuery = new TransactionByIDQuery(transactionID, new DataRetriever<Transaction>() {
-            @Override
-            public void retrievedData(Transaction transaction) {
+        TransactionByIDQuery subQuery = new TransactionByIDQuery(transactionID, transaction -> {
 
-                if(retrievedSubQueryData(transaction)){
-                    complete(data);
-                }
+            if(retrievedSubQueryData(transaction)){
+                complete(data);
             }
         });
 

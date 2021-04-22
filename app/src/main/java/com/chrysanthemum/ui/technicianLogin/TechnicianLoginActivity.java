@@ -72,6 +72,12 @@ public class TechnicianLoginActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onBackPressed(){
+
+    }
+
+
     private void onLoginSuccess(){
         Intent intent = new Intent(this, DataDisplayActivity.class);
         startActivity(intent);

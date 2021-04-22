@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
+import com.chrysanthemum.appdata.DataStorageModule;
 import com.chrysanthemum.appdata.Util.AppUtil;
 import com.chrysanthemum.appdata.dataType.Transaction;
 import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
@@ -273,11 +274,15 @@ public class AppointmentViewerTask extends Task {
         private void setupAppointmentClaimSubTask(){
             final Displayable display = this;
 
-            AppointmentClaimTask subTask  = new AppointmentClaimTask(host, t, new NullRetriever() {
+            AppointmentClaimTask subTask  = new AppointmentClaimTask(host, t, new DataRetriever<Boolean>() {
                 @Override
-                public void retrieved() {
+                public void retrievedData(Boolean status) {
                     setupDaySelectionForm();
-                    host.getBoard().invalidateData(display);
+                    if(status == AppointmentClaimTask.DELETED){
+                        host.getBoard().remove(display);
+                    } else {
+                        host.getBoard().invalidateData(display);
+                    }
                 }
             });
 
@@ -345,7 +350,11 @@ public class AppointmentViewerTask extends Task {
             return new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(selectedDate.compareTo(TimeParser.parseDateData(LocalDate.now())) >= 0){
+
+                    LocalDate sel = TimeParser.parseDate(selectedDate.replaceAll("/", " "));
+
+                    if(sel.compareTo(LocalDate.now()) >= 0 ||
+                            DataStorageModule.getFrontEnd().getSecurityModule().getLoggedinTech().getRole().equalsIgnoreCase("admin")){
                         NewAppointmentTask subTask = new NewAppointmentTask(host, hour, selectedDate.replaceAll("/", " "), new DataRetriever<Transaction>() {
                             @Override
                             public void retrievedData(Transaction data) {
