@@ -78,6 +78,14 @@ public class FireDatabase implements RemoteDataBase {
     }
 
     public static DatabaseReference getRef(){
-        return FirebaseDatabase.getInstance().getReference();
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+        return (LoginRepository.inTestMode())?
+                ref.child(DatabaseStructure.TEST) : ref;
+    }
+
+    public static void clearTestEnvironment(){
+        if(LoginRepository.inTestMode()){
+            getRef().removeValue();
+        }
     }
 }

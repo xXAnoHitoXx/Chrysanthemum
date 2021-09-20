@@ -3,6 +3,7 @@ package com.chrysanthemum.firebase;
 import androidx.annotation.NonNull;
 
 import com.chrysanthemum.appdata.DataStorageModule;
+import com.chrysanthemum.appdata.Util.BoolFlag;
 import com.chrysanthemum.appdata.dataType.retreiver.NullRetriever;
 import com.chrysanthemum.appdata.security.LoginStatus;
 import com.chrysanthemum.appdata.security.SecurityModule;
@@ -110,5 +111,91 @@ public class LoginRepository extends SecurityModule {
     public void releaseAccess() {
         super.releaseAccess();
         FirebaseAuth.getInstance().signOut();
+    }
+
+    public void enableTestMode(String uname, String pword){
+
+        BoolFlag step1 = new BoolFlag();
+
+        testModeAccess(uname, pword, step1);
+
+        while (step1.read() == false){
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        BoolFlag step2 = new BoolFlag();
+
+        DataStorageModule.getBackEnd().loadTechMap(new NullRetriever() {
+            @Override
+            public void retrieved() {
+                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                grantAccess(currentUser.getUid());
+
+                step2.set();
+            }
+        });
+
+        while (step2.read() == false){
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        BoolFlag step3 = new BoolFlag();
+
+        testModeLogin(step3);
+
+        while (step3.read() == false){
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        inTestMode = true;
+    }
+
+    private void testModeAccess(String uname, String pword, BoolFlag f){
+        FirebaseAuth.getInstance().signInWithEmailAndPassword(uname, pword)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            f.set();
+                        } else {
+                            releaseAccess();
+                        }
+
+                    }
+                });
+    }
+
+    private void testModeLogin(BoolFlag complete){
+        Technician admin = DataStorageModule.getFrontEnd().getTechList().iterator().next();
+
+        FireDatabase.getRef().child(DatabaseStructure.TechnicianBranch.BRANCH_NAME)
+                .child(DatabaseStructure.TechnicianBranch.PASSWORD_STORAGE)
+                .child("" + admin.getID()).get()
+                .addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+
+                    @Override
+                    @SuppressWarnings("ConstantConditions")
+                    public void onComplete(@NonNull Task<DataSnapshot> task) {
+                        if(task.isSuccessful()){
+                            LoginStatus.loggedIn.setTech(admin);
+                            updateLoginStatus(LoginStatus.loggedIn);
+                            complete.set();
+                        }
+                    }
+                });
     }
 }

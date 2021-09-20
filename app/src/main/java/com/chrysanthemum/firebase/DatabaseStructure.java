@@ -7,7 +7,7 @@ import com.chrysanthemum.appdata.dataType.Technician;
 public class DatabaseStructure {
 
     public static final String CURRENTLY_ACTIVE_APP_INSTANCE = "app";
-
+    public static final String TEST = "test";
     public static class TechnicianBranch {
         public static final String BRANCH_NAME = "technician";
         public static final String PASSWORD_STORAGE = "password";

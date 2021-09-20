@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
 import com.chrysanthemum.appdata.DataStorageModule;
+import com.chrysanthemum.appdata.Util.BoolFlag;
 import com.chrysanthemum.appdata.dataType.Technician;
 import com.chrysanthemum.appdata.dataType.retreiver.NullRetriever;
 
@@ -84,4 +85,14 @@ public abstract class SecurityModule {
     public String getUserID(){
         return UserID;
     }
+
+    //--------------------------------------------------------------------
+    public abstract void enableTestMode(String uname, String pword);
+
+    protected static boolean inTestMode = false;
+
+    public static boolean inTestMode() {
+        return inTestMode;
+    }
+
 }

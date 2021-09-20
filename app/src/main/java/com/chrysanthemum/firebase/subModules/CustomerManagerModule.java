@@ -44,19 +44,20 @@ public class CustomerManagerModule implements CustomerManager {
                 .child(DatabaseStructure.CustomerBranch.LIST)
                 .orderByChild(DatabaseStructure.CustomerBranch.C_NAME)
                 .startAt(name).endAt(name + " Z").get().addOnCompleteListener(task -> {
+
+                    LinkedList<Customer> IDList = new LinkedList<>();
+
                     if(task.isSuccessful()){
                         DataSnapshot snapshot = task.getResult();
-                        LinkedList<Customer> IDList = new LinkedList<>();
-
                         if(snapshot.exists()){
                             for(DataSnapshot child : snapshot.getChildren()){
                                 Customer c = child.getValue(Customer.class);
                                 IDList.add(c);
                             }
                         }
-
-                        retriever.retrievedData(IDList);
                     }
+
+                    retriever.retrievedData(IDList);
                 });
     }
 

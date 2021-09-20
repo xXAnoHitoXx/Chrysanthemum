@@ -3,7 +3,7 @@ package com.chrysanthemum;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 
 import com.chrysanthemum.appdata.DataStorageModule;
-import com.chrysanthemum.appdata.security.SecurityModule;
+import com.chrysanthemum.firebase.LoginRepository;
 import com.chrysanthemum.ui.accessAuthentication.AppAuthenticationActivity;
 
 import org.junit.Rule;
@@ -19,31 +19,19 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(JUnit4.class)
 public class LoginTest {
-
+    String uname = "chrysanthemumspa@gmail.com";
+    String pword = "Only4988";
 
     @Rule
     public ActivityScenarioRule<AppAuthenticationActivity> activityRule =
             new ActivityScenarioRule<>(AppAuthenticationActivity.class);
 
     @Test
-    public void testAccessPermissionCorrectPassword() throws InterruptedException {
-        SecurityModule sm = DataStorageModule.getFrontEnd().getSecurityModule();
+    public void testTestModeInit() throws InterruptedException {
+        DataStorageModule.getFrontEnd().getSecurityModule()
+                .enableTestMode(uname, pword);
 
-        sm.requestAccess("chrysanthemumspa@gmail.com", "Only4988");
-
-        Thread.sleep(2000);
-
-        assertTrue(sm.hasDBAccess());
+        assertTrue(LoginRepository.inTestMode());
     }
 
-    @Test
-    public void testAccessPermissionWrongPassword() throws InterruptedException {
-        SecurityModule sm = DataStorageModule.getFrontEnd().getSecurityModule();
-
-        sm.requestAccess("chrysanthemumspa@gmail.com", "On8");
-
-        Thread.sleep(2000);
-
-        assertFalse(sm.hasDBAccess());
-    }
 }
