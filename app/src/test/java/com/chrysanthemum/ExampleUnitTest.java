@@ -2,6 +2,8 @@ package com.chrysanthemum;
 
 import android.util.Log;
 
+import com.chrysanthemum.appdata.Util.DynamicLCSTable;
+
 import org.apache.commons.codec.language.Metaphone;
 import org.junit.Test;
 
@@ -15,24 +17,42 @@ import static org.junit.Assert.*;
 public class ExampleUnitTest {
     @Test
     public void addition_isCorrect() {
-        Metaphone mp = new Metaphone();
 
-        String a = mp.encode("Kris");
-        String b = mp.encode("Kristianna");
+        String a = "christine";
+        String b = "kristianna";
+        String c = "";
 
-        a = mp.encode("Kris");
-        b = mp.encode("Kristianna");
+        DynamicLCSTable t = new DynamicLCSTable(a, b);
+        c = t.getLCS();
+        c = t.getShortestCommonSuperString();
 
-        a = mp.encode("Ing");
-        b = mp.encode("Ingrid");
+        a = "ing";
+        b = "ingrid";
 
-        a = mp.encode("Dick");
-        b = mp.encode("Richard");
+        t = new DynamicLCSTable(a, b);
+        c = t.getLCS();
+        c = t.getShortestCommonSuperString();
 
-        a = mp.encode("Hsao");
-        b = mp.encode("Xiao");
+        a = "dick";
+        b = "richard";
 
-        a = mp.encode("Susan");
-        b = mp.encode("Suzanne");
+        t = new DynamicLCSTable(a, b);
+        c = t.getLCS();
+        c = t.getShortestCommonSuperString();
+
+        a = "hsao";
+        b = "xiao";
+
+        t = new DynamicLCSTable(a, b);
+        c = t.getLCS();
+        c = t.getShortestCommonSuperString();
+
+        a = "susan";
+        b = "suzanne";
+
+        t = new DynamicLCSTable(a, b);
+        c = t.getLCS();
+        c = t.getShortestCommonSuperString();
+
     }
 }

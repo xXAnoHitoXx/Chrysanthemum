@@ -31,15 +31,13 @@ public class DynamicLCSTable {
         int j = b.length() - 1;
 
         while (retrieveFromDynamicTable(i, j) > 0){
-            int comp = retrieveFromDynamicTable(i - 1, j) - retrieveFromDynamicTable(i, j - 1);
-
-            if(comp == 0){
+            if( retrieveFromDynamicTable(i - 1, j) == retrieveFromDynamicTable(i , j)){
+                i--;
+            } else if(retrieveFromDynamicTable(i, j - 1) == retrieveFromDynamicTable(i, j)) {
+                j--;
+            } else {
                 builder.insert(0, a.charAt(i));
                 i--;
-                j--;
-            } else if (comp > 1){
-                i--;
-            } else {
                 j--;
             }
         }
@@ -54,17 +52,15 @@ public class DynamicLCSTable {
         int j = b.length() - 1;
 
         while (retrieveFromDynamicTable(i, j) > 0){
-            int comp = retrieveFromDynamicTable(i - 1, j) - retrieveFromDynamicTable(i, j - 1);
-
-            if(comp == 0){
+            if( retrieveFromDynamicTable(i - 1, j) == retrieveFromDynamicTable(i , j)){
                 builder.insert(0, a.charAt(i));
                 i--;
-                j--;
-            } else if (comp > 1){
-                builder.insert(0, a.charAt(i));
-                i--;
-            } else {
+            } else if(retrieveFromDynamicTable(i, j - 1) == retrieveFromDynamicTable(i, j)) {
                 builder.insert(0, b.charAt(j));
+                j--;
+            } else {
+                builder.insert(0, a.charAt(i));
+                i--;
                 j--;
             }
         }

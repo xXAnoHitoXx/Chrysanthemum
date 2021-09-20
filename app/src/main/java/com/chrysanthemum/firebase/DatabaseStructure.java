@@ -20,6 +20,7 @@ public class DatabaseStructure {
         public static final String LIST = "id";
 
         public static final String C_NAME = "name";
+        public static final long C_NAME_ROOT = 1624890203050l;
         public static final String C_PHONE = "phoneNumber";
     }
 

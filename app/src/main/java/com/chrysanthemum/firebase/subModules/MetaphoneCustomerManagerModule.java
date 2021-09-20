@@ -9,7 +9,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 
 import org.apache.commons.codec.language.Metaphone;
-import org.apache.commons.codec.language.Soundex;
 
 import java.util.LinkedList;
 import java.util.Scanner;
