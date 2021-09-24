@@ -5,9 +5,13 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 
 import com.chrysanthemum.appdata.DataStorageModule;
-import com.chrysanthemum.appdata.dataType.TechnicianIdentifier;
+import com.chrysanthemum.appdata.Util.BoolFlag;
+import com.chrysanthemum.appdata.dataType.Technician;
+import com.chrysanthemum.appdata.dataType.retreiver.NullRetriever;
 
 public abstract class SecurityModule {
+
+    private String UserID;
 
     public SecurityModule(){
         this.observeAccessToken(null, new Observer<AccessState>() {
@@ -38,12 +42,13 @@ public abstract class SecurityModule {
         }
     }
 
-    protected void grantAccess(){
+    protected void grantAccess(String UserID){
+        this.UserID = UserID;
         accessToken.setValue(AccessState.hasAccess);
     }
 
     public void releaseAccess(){
-        accessToken.setValue(AccessState.noAccess);
+        accessToken.setValue(null);
     }
 
     protected void blockAccess(){
@@ -65,11 +70,29 @@ public abstract class SecurityModule {
         status.setValue(newStatus);
     }
 
-    public abstract void login(TechnicianIdentifier tech, int password);
+    public abstract void login(Technician tech, int password);
+
+    public Technician getLoggedinTech() {
+        return status.getValue().getTech();
+    }
 
     public void logout(){
         updateLoginStatus(LoginStatus.loggedOut);
     }
 
-    public abstract void registerPassword(TechnicianIdentifier tech, int password);
+    public abstract void registerPassword(Technician tech, int password);
+
+    public String getUserID(){
+        return UserID;
+    }
+
+    //--------------------------------------------------------------------
+    public abstract void enableTestMode(String uname, String pword);
+
+    protected static boolean inTestMode = false;
+
+    public static boolean inTestMode() {
+        return inTestMode;
+    }
+
 }

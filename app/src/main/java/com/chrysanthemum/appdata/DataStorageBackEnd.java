@@ -1,9 +1,12 @@
 package com.chrysanthemum.appdata;
 
-import com.chrysanthemum.appdata.dataType.TechnicianIdentifier;
-
-import java.util.Map;
+import com.chrysanthemum.appdata.dataType.retreiver.NullRetriever;
 
 public interface DataStorageBackEnd {
-    void storeTechMap(Map<String, TechnicianIdentifier> techMap);
+    /**
+     * the back end signify when it is ok to load in starting data
+     */
+    void loadTechMap(NullRetriever retriever);
+
+
 }

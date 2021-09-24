@@ -4,36 +4,50 @@ import android.content.Context;
 import android.widget.LinearLayout;
 
 import com.chrysanthemum.appdata.DataStorageModule;
-import com.chrysanthemum.appdata.dataType.TechnicianIdentifier;
+import com.chrysanthemum.appdata.dataType.Technician;
 
 public class TechnicianSelectorPanel {
 
     private TechnicianSelectorButton selected;
     private boolean locked = false;
 
-    protected TechnicianSelectorPanel(Context context, LinearLayout layout){
+    public TechnicianSelectorPanel(Context context, LinearLayout layout, boolean vertical){
         selected = null;
-        Iterable<TechnicianIdentifier> it = DataStorageModule.getFrontEnd().getTechList();
-        for(TechnicianIdentifier tech : it){
+        Iterable<Technician> it = DataStorageModule.getFrontEnd().getTechList();
+
+        for(Technician tech : it){
 
             final TechnicianSelectorButton button =
                     new TechnicianSelectorButton(context, tech, this);
 
-            button.setLayoutParams(
-                    new LinearLayout.LayoutParams(
-                            LinearLayout.LayoutParams.MATCH_PARENT,
-                            100));
+            button.setLayoutParams(getParam(vertical));
 
             layout.addView(button);
 
         }
     }
 
-    public TechnicianIdentifier getSelectedTech(){
+    protected LinearLayout.LayoutParams getParam(boolean vertical){
+        if(vertical){
+            return new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    100);
+        } else {
+            return new LinearLayout.LayoutParams(
+                    100,
+                    LinearLayout.LayoutParams.MATCH_PARENT);
+        }
+    }
+
+    public Technician getSelectedTech(){
+        if(selected == null){
+            return null;
+        }
+
         return selected.getTech();
     }
 
-    void changeSelectedTech(TechnicianSelectorButton newTech){
+    public void changeSelectedTech(TechnicianSelectorButton newTech){
         if(!locked){
             if(selected != null){
                 selected.toggle();

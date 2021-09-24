@@ -1,25 +1,38 @@
 package com.chrysanthemum.appdata;
 
-import android.content.Context;
-
+import com.chrysanthemum.appdata.RemoteDataBase.RemoteDataBase;
+import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
+import com.chrysanthemum.appdata.dataType.retreiver.NullRetriever;
 import com.chrysanthemum.appdata.security.SecurityModule;
-import com.chrysanthemum.appdata.dataType.TechnicianIdentifier;
+import com.chrysanthemum.appdata.dataType.Technician;
+import com.chrysanthemum.firebase.DatabaseStructure;
 import com.chrysanthemum.firebase.FireDatabase;
 
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.Map;
 
 /**
  * the database as percived by the system,
- * the central data storage unit
+ * the central data storage / interpretation unit
  */
 public class DataStorageModule implements DataStorageFrontEnd, DataStorageBackEnd {
 
     private static volatile DataStorageModule database;
+    private final RemoteDataBase remote;
 
     public static void init(){
         if(database == null){
             database = new DataStorageModule();
         }
+    }
+
+    public static synchronized long generateID(){
+        return System.currentTimeMillis();
+    }
+
+    public static RemoteDataBase getRemoteDataBaseModule(){
+        return database.remote;
     }
 
     public static DataStorageFrontEnd getFrontEnd() {
@@ -35,6 +48,7 @@ public class DataStorageModule implements DataStorageFrontEnd, DataStorageBackEn
         firebase.initialization();
 
         this.setSecurityModule(firebase.generateSecurityModule());
+        remote = firebase;
     }
 
     public void close(){
@@ -54,18 +68,38 @@ public class DataStorageModule implements DataStorageFrontEnd, DataStorageBackEn
         return logRepo;
     }
 
+
     //-----------------------------------------------------------------------------------------------
-    private Map<String, TechnicianIdentifier> techMap;
+    private Map<String, Technician> techMap;
 
-    public void storeTechMap(Map<String, TechnicianIdentifier> techMap){
-        this.techMap = techMap;
+    public void loadTechMap(final NullRetriever retriever) {
+        remote.getTechnicianMap(new DataRetriever<Map<String, Technician>>() {
+            @Override
+            public void retrievedData(Map<String, Technician> data) {
+                techMap = data;
+                Technician sale = DatabaseStructure.Accounting.SALE_TECH;
+                techMap.put(sale.getID() + "", sale);
+                retriever.retrieved();
+            }
+        });
     }
 
-    public Iterable<TechnicianIdentifier> getTechList(){
-        return techMap.values();
+    public Iterable<Technician> getTechList(){
+        Collection<Technician> val = techMap.values();
+
+        LinkedList<Technician> list = new LinkedList<>();
+
+        for(Technician technician : val){
+            if(technician.getID() != DatabaseStructure.Accounting.SALE_TECH.getID()){
+                list.add(technician);
+            }
+        }
+
+        return list;
     }
 
-    public TechnicianIdentifier getTech(int id){
+    public Technician getTech(long id){
         return techMap.get(id + "");
     }
+
 }

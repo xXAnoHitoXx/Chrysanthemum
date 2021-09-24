@@ -1,5 +1,10 @@
 package com.chrysanthemum;
 
+import android.util.Log;
+
+import com.chrysanthemum.appdata.Util.DynamicLCSTable;
+
+import org.apache.commons.codec.language.Metaphone;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -12,6 +17,42 @@ import static org.junit.Assert.*;
 public class ExampleUnitTest {
     @Test
     public void addition_isCorrect() {
-        assertEquals(4, 2 + 2);
+
+        String a = "christine";
+        String b = "kristianna";
+        String c = "";
+
+        DynamicLCSTable t = new DynamicLCSTable(a, b);
+        c = t.getLCS();
+        c = t.getShortestCommonSuperString();
+
+        a = "ing";
+        b = "ingrid";
+
+        t = new DynamicLCSTable(a, b);
+        c = t.getLCS();
+        c = t.getShortestCommonSuperString();
+
+        a = "dick";
+        b = "richard";
+
+        t = new DynamicLCSTable(a, b);
+        c = t.getLCS();
+        c = t.getShortestCommonSuperString();
+
+        a = "hsao";
+        b = "xiao";
+
+        t = new DynamicLCSTable(a, b);
+        c = t.getLCS();
+        c = t.getShortestCommonSuperString();
+
+        a = "susan";
+        b = "suzanne";
+
+        t = new DynamicLCSTable(a, b);
+        c = t.getLCS();
+        c = t.getShortestCommonSuperString();
+
     }
 }
