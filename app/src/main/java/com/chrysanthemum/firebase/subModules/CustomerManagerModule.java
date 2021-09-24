@@ -34,6 +34,8 @@ public class CustomerManagerModule implements CustomerManager {
                     if(task.isSuccessful()){
                         Customer c = task.getResult().getValue(Customer.class);
                         retriever.retrievedData(c);
+                    } else {
+                        retriever.retrievedData(null);
                     }
                 });
     }

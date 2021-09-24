@@ -4,8 +4,8 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
-    <dimen name="left_pannel_width">250dp</dimen>
-    <dimen name="data_view_form_height">200dp</dimen>
-    <dimen name="data_view_form_height_div">40dp</dimen>
-    <dimen name="data_view_form_height_text_align">120dp</dimen>
+    <dimen name="left_pannel_width">200dp</dimen>
+    <dimen name="data_view_form_height">152dp</dimen>
+    <dimen name="data_view_form_height_div">38dp</dimen>
+    <dimen name="data_view_form_height_text_align">72dp</dimen>
 </resources>

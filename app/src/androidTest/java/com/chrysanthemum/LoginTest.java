@@ -1,7 +1,5 @@
 package com.chrysanthemum;
 
-import androidx.test.ext.junit.rules.ActivityScenarioRule;
-
 import com.chrysanthemum.appdata.DataStorageModule;
 import com.chrysanthemum.firebase.LoginRepository;
 import com.chrysanthemum.ui.accessAuthentication.AppAuthenticationActivity;
@@ -11,7 +9,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import static org.junit.Assert.assertFalse;
+import androidx.test.ext.junit.rules.ActivityScenarioRule;
+
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -27,7 +26,7 @@ public class LoginTest {
             new ActivityScenarioRule<>(AppAuthenticationActivity.class);
 
     @Test
-    public void testTestModeInit() throws InterruptedException {
+    public void testTestModeInit() {
         DataStorageModule.getFrontEnd().getSecurityModule()
                 .enableTestMode(uname, pword);
 
