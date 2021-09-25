@@ -1,49 +1,38 @@
 package com.chrysanthemum.ui.dataView.task.accounting.Monthly;
 
-import android.content.ContentResolver;
-import android.content.ContentValues;
-import android.content.Context;
-import android.graphics.Color;
-import android.net.Uri;
-import android.os.Build;
+import android.Manifest;
+import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.os.Environment;
-import android.provider.MediaStore;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
 
-import com.chrysanthemum.appdata.DataStorageModule;
 import com.chrysanthemum.appdata.dataType.MonthTally;
 import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
-import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
 import com.chrysanthemum.appdata.querries.accounting.LoadMonthTallyQuery;
 import com.chrysanthemum.ui.dataView.task.Task;
 import com.chrysanthemum.ui.dataView.task.TaskHostestActivity;
 import com.chrysanthemum.ui.dataView.task.TaskSelectionButtion;
-import com.chrysanthemum.ui.dataView.task.accounting.Daily.DailyAccountingTask_Admin;
-import com.chrysanthemum.ui.dataView.task.display.LineDisplayLayoutTask;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.time.LocalDate;
-import java.util.LinkedList;
-import java.util.Map;
+
+import static androidx.core.app.ActivityCompat.requestPermissions;
 
 /***
  * admin task
  */
 public class GenerateMonthlyTotalTask extends Task {
 
-    Context context;
+    Activity context;
 
-    public GenerateMonthlyTotalTask(TaskHostestActivity host, Context context) {
+    public GenerateMonthlyTotalTask(TaskHostestActivity host, Activity context) {
         super(host);
         this.context = context;
     }
@@ -67,44 +56,42 @@ public class GenerateMonthlyTotalTask extends Task {
 
         Button button = host.getFormButton();
         button.setText("Select Month");
-        button.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.Q)
-            @Override
-            public void onClick(View v) {
-                int y = TimeParser.parseYear(year.getText().toString());
-                int m = TimeParser.parseMonth(month.getText().toString());
+        button.setOnClickListener(v -> {
+            int y = TimeParser.parseYear(year.getText().toString());
+            int m = TimeParser.parseMonth(month.getText().toString());
 
-                String title = m + "_" + y + "_Report";
+            String title = m + "_" + y + "_Report";
 
-                if(y < today.getYear() - 2 || y > today.getYear() || (y == today.getYear() && m > today.getMonthValue())){
+            if(y < today.getYear() - 2 || y > today.getYear() || (y == today.getYear() && m > today.getMonthValue())){
+                try {
+                    generateFile(new MonthTally(title));
+                } catch (IOException e) {
+                    //TODO
+                    e.printStackTrace();
+                }
+            } else {
+                LoadMonthTallyQuery q = new LoadMonthTallyQuery(title, y, m, data -> {
                     try {
-                        generateFile(new MonthTally(title));
-                    } catch (FileNotFoundException e) {
+                        generateFile(data);
+                    } catch (IOException e) {
                         //TODO
                         e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
                     }
-                } else {
-                    LoadMonthTallyQuery q = new LoadMonthTallyQuery(title, y, m, new DataRetriever<MonthTally>() {
-                        @RequiresApi(api = Build.VERSION_CODES.Q)
-                        @Override
-                        public void retrievedData(MonthTally data) {
-                            try {
-                                generateFile(data);
-                            } catch (FileNotFoundException e) {
-                                //TODO
-                                e.printStackTrace();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
+                });
 
-                    q.executeQuery();
-                }
+                q.executeQuery();
             }
         });
+
+        if (ContextCompat.checkSelfPermission(
+                context, Manifest.permission.WRITE_EXTERNAL_STORAGE) !=
+                PackageManager.PERMISSION_GRANTED) {
+
+            requestPermissions(context,
+                    new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE },
+                    1);
+
+        }
     }
 
     private void generateFile(MonthTally data) throws IOException {
@@ -135,7 +122,7 @@ public class GenerateMonthlyTotalTask extends Task {
     }
 
 
-    public static TaskSelectionButtion getMenuButton(Context context, final TaskHostestActivity host) {
+    public static TaskSelectionButtion getMenuButton(Activity context, final TaskHostestActivity host) {
         return new TaskSelectionButtion(context) {
             @Override
             public Task getTask() {
