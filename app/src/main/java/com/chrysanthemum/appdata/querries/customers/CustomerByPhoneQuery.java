@@ -2,15 +2,18 @@ package com.chrysanthemum.appdata.querries.customers;
 
 import com.chrysanthemum.appdata.dataType.Customer;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
+import com.chrysanthemum.appdata.dataType.retreiver.NullableDataRetriever;
+import com.chrysanthemum.appdata.querries.NullableSubQueryManager;
 import com.chrysanthemum.appdata.querries.Query;
 
 import java.util.Map;
 import java.util.TreeMap;
 
-public class CustomerByPhoneQuery extends Query<Map<String, Customer>> {
+public class CustomerByPhoneQuery extends Query<Map<String, Customer>>
+        implements NullableDataRetriever<Customer> {
     private final Map<String, Customer> data;
     private final long phoneNumber;
-    private int entryCount;
+    private NullableSubQueryManager<Customer> dom;
 
     public CustomerByPhoneQuery(long phoneNumber,
                                 DataRetriever<Map<String, Customer>> retriever) {
@@ -22,11 +25,12 @@ public class CustomerByPhoneQuery extends Query<Map<String, Customer>> {
     public void executeQuery(){
         getRemoteDB().getCustomerManager().findCustomerIDsByPhone(phoneNumber,
                 ids -> {
-                    entryCount = ids.size();
+                    dom = new NullableSubQueryManager<>(
+                            ids.size(), this);
 
-                    if(entryCount > 0){
+                    if(ids.size() > 0){
                         for(long id : ids){
-                            customerByIDSubQuery(id);
+                            new CustomerByIDQuery(id, dom).executeQuery();
                         }
                     } else {
                         complete(data);
@@ -34,24 +38,14 @@ public class CustomerByPhoneQuery extends Query<Map<String, Customer>> {
                 });
     }
 
-    private void customerByIDSubQuery(long id){
-        CustomerByIDQuery q = new CustomerByIDQuery(id, customer -> {
-
-            if(retrievedSubQueryData(customer)){
-                complete(data);
-            }
-        });
-
-        q.executeQuery();
-    }
-
-    private synchronized boolean retrievedSubQueryData(Customer c){
-        if(data.size() < entryCount){
+    @Override
+    public void retrievedData(Customer c) {
+        if(c != null){
             data.put(c.getName(), c);
-
-            return data.size() == entryCount;
         }
 
-        return false;
+        if(dom.isCompleted()){
+            complete(data);
+        }
     }
 }

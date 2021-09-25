@@ -266,17 +266,17 @@ public class DataDisplayActivity extends AppCompatActivity implements TaskHostes
 
         ConstraintSet constraintSet = new ConstraintSet();
         constraintSet.connect(viewID, ConstraintSet.LEFT, layoutID, ConstraintSet.LEFT,
-                dpToPx(this, 75));
+                (int) getResources().getDimension(R.dimen.data_view_form_height_div));
         constraintSet.connect(viewID, ConstraintSet.RIGHT, R.id.formButton, ConstraintSet.LEFT,
-                dpToPx(this, 75));
+                (int) getResources().getDimension(R.dimen.data_view_form_height_div));
 
-        int topMargin = row * 40;
-        int botMargin = (5 - row - 1) * 40;
+        int topMargin = row * (int) getResources().getDimension(R.dimen.data_view_form_height_div);
+        int botMargin = (4 - row - 1) * (int) getResources().getDimension(R.dimen.data_view_form_height_div);
 
         constraintSet.connect(viewID, ConstraintSet.TOP, layoutID, ConstraintSet.TOP,
-                dpToPx(this, topMargin));
+                topMargin);
         constraintSet.connect(viewID, ConstraintSet.BOTTOM, layoutID, ConstraintSet.BOTTOM,
-                dpToPx(this, botMargin));
+                botMargin);
 
         form.addView(v);
         constraintSet.applyTo(form);

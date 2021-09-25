@@ -6,26 +6,30 @@
     android:layout_height="match_parent"
     tools:context=".ui.technicianLogin.TechnicianLoginActivity">
 
-    <LinearLayout
-        android:id="@+id/colour_panel"
+    <ScrollView
+        android:id="@+id/scrollView3"
         android:layout_width="@dimen/left_pannel_width"
         android:layout_height="0dp"
-        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
-        app:layout_constraintVertical_bias="1.0"/>
+        app:layout_constraintVertical_bias="0.0">
+
+        <LinearLayout
+            android:id="@+id/colour_panel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </ScrollView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/number_pad"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/colour_panel"
-        app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintStart_toEndOf="@+id/scrollView3"
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout">
 
         <Button
             android:id="@+id/button5"
@@ -45,6 +49,7 @@
             android:text="@string/num4"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/button5"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
@@ -61,8 +66,8 @@
             android:id="@+id/button1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
+            android:layout_marginEnd="16dp"
             android:text="@string/num1"
             app:layout_constraintBottom_toTopOf="@+id/button4"
             app:layout_constraintEnd_toStartOf="@+id/button2" />
@@ -81,8 +86,8 @@
             android:id="@+id/button3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:layout_marginBottom="16dp"
+            android:layout_marginStart="16dp"
             android:text="@string/num3"
             app:layout_constraintBottom_toTopOf="@+id/button6"
             app:layout_constraintStart_toEndOf="@+id/button2" />
@@ -91,8 +96,8 @@
             android:id="@+id/button7"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
             android:layout_marginEnd="16dp"
+            android:layout_marginTop="16dp"
             android:text="@string/num7"
             app:layout_constraintEnd_toStartOf="@+id/button8"
             app:layout_constraintTop_toBottomOf="@+id/button4" />
@@ -131,10 +136,13 @@
             android:id="@+id/buttonDel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginBottom="92dp"
             android:layout_marginEnd="16dp"
+            android:layout_marginTop="16dp"
             android:text="@string/bkspc"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/button0"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/button7" />
 
         <Button
