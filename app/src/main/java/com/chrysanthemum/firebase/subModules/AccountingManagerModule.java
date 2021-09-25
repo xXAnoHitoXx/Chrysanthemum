@@ -75,7 +75,6 @@ public class AccountingManagerModule implements AccountingManager {
 
                             if(!key.equalsIgnoreCase(DatabaseStructure.Accounting.SHOP_TOTAL)){
 
-                                try{
                                     long techID = Long.parseLong(key);
 
                                     long[] techPays = new long[]{
@@ -85,10 +84,6 @@ public class AccountingManagerModule implements AccountingManager {
 
                                     entry.addPay(techID, techPays);
 
-                                } catch (Exception e) {
-                                    //Error in the internal Database Structure
-                                    retriever.retrievedData(null);
-                                }
                             }
                         }
 
