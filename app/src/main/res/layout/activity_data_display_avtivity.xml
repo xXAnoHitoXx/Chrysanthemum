@@ -55,19 +55,28 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/Form"
         android:layout_width="0dp"
-        android:layout_height="200dp"
+        android:layout_height="@dimen/data_view_form_height"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/scrollView2"
         app:layout_constraintTop_toBottomOf="@+id/appBarLayout2">
+
+        <Button
+            android:id="@+id/formButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="75dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <HorizontalScrollView
             android:id="@+id/horizontalScrollView2"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_marginBottom="@dimen/data_view_form_height_div"
+            android:layout_marginEnd="@dimen/data_view_form_height_div"
             android:layout_marginStart="@dimen/data_view_form_height_div"
             android:layout_marginTop="@dimen/data_view_form_height_div"
-            android:layout_marginEnd="@dimen/data_view_form_height_div"
-            android:layout_marginBottom="@dimen/data_view_form_height_div"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/formButton"
             app:layout_constraintHorizontal_bias="0.0"
@@ -81,15 +90,6 @@
                 android:layout_height="match_parent"
                 android:orientation="horizontal"></LinearLayout>
         </HorizontalScrollView>
-
-        <Button
-            android:id="@+id/formButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="75dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <HorizontalScrollView
