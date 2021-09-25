@@ -1,6 +1,7 @@
 package com.chrysanthemum.ui.dataView.task.accounting.Monthly;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Environment;
@@ -37,6 +38,7 @@ public class GenerateMonthlyTotalTask extends Task {
         this.context = context;
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void start() {
         LocalDate today = LocalDate.now();
