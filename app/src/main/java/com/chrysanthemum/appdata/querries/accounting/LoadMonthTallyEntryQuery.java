@@ -1,7 +1,5 @@
 package com.chrysanthemum.appdata.querries.accounting;
 
-import com.chrysanthemum.appdata.dataType.Exception.InternalDatabaseStructureErrorException;
-import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
 import com.chrysanthemum.appdata.dataType.subType.MonthTallyEntry;
 import com.chrysanthemum.appdata.querries.Query;
@@ -20,9 +18,7 @@ public class LoadMonthTallyEntryQuery extends Query<MonthTallyEntry> {
     public void executeQuery() {
         getRemoteDB().getAccountingManager().findClosurelessMonthTallyEntryByDate(date, monthTallyEntry -> {
 
-            if(monthTallyEntry == null){
-                //throw new InternalDatabaseStructureErrorException("Accounting Date: " + TimeParser.parseDateDisplayDay(date));
-            } else {
+            if(monthTallyEntry != null) {
                 getRemoteDB().getAccountingManager().findClosureByDate(date, dailyClosure -> {
 
                     monthTallyEntry.attachClosing(dailyClosure);
