@@ -303,7 +303,7 @@ public class AppointmentViewerTask extends Task {
             ShapeDrawable drawable =  new ShapeDrawable(new RectShape());
             if(date.getDayOfWeek().getValue() == 2 ||
                     hour < 10 || hour >= 19 ||
-                    (hour >= 17 && date.getDayOfWeek().getValue() < 2)){
+                    (hour >= 17 && (date.getDayOfWeek().getValue() % 7) < 2)){
 
                 if(hour % 2 != 0){
                     drawable.getPaint().setColor(0xFFB12C2C);
