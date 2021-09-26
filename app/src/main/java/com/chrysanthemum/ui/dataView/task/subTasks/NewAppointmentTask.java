@@ -1,7 +1,6 @@
 package com.chrysanthemum.ui.dataView.task.subTasks;
 
 import android.annotation.SuppressLint;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -64,18 +63,15 @@ public class NewAppointmentTask extends Task {
 
         Button button = host.getFormButton();
         button.setText("Create");
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                appointmentTime = TimeParser.parseTime(appTime.getText().toString().replace(":", " "));
+        button.setOnClickListener(v -> {
+            appointmentTime = TimeParser.parseTime(appTime.getText().toString().replace(":", " "));
 
-                if(appointmentTime < 0){
-                    appTime.setError("Appointment Time Example: 8:30 am");
-                    return;
-                }
-
-                stage_2_AppointmentDetails();
+            if(appointmentTime < 0){
+                appTime.setError("Appointment Time Example: 8:30 am");
+                return;
             }
+
+            stage_2_AppointmentDetails();
         });
     }
 
@@ -87,7 +83,7 @@ public class NewAppointmentTask extends Task {
         durationLabel.setText("Appointment Duration:");
 
         final EditText duration = host.createEditableForm(1);
-        duration.setText("0:30");
+        duration.setText("");
 
         final TextView servicesLabel = host.createFormLabel(2);
         servicesLabel.setText("Services:");
@@ -98,30 +94,41 @@ public class NewAppointmentTask extends Task {
 
         Button button = host.getFormButton();
         button.setText("Create");
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        button.setOnClickListener(v -> {
 
-                appointmentDuration = TimeParser.parseSimpleTime(duration.getText().toString().replace(":", " "));
+            String appointmentDurationText = duration.getText().toString().replace(":", " ");
+            appointmentDuration = TimeParser.parseSimpleTime(appointmentDurationText);
 
-                if(appointmentDuration < 0){
-                    duration.setError("Appointment Duration Example: 1:30");
-                    return;
+            if(appointmentDuration < 0){
+
+                switch (appointmentDurationText) {
+                    case "a":
+                    case "A":
+                        appointmentDuration = 30;
+                        break;
+                    case "b":
+                    case "B":
+                        appointmentDuration = 60;
+                        break;
+                    case "c":
+                    case "C":
+                        appointmentDuration = 90;
+                        break;
+                    default:
+                        duration.setError("Appointment Duration Example: 1:30");
+                        return;
                 }
-
-                service = services.getText().toString();
-                stage_3_FindCustomer();
             }
+
+            service = services.getText().toString();
+            stage_3_FindCustomer();
         });
     }
 
     private void stage_3_FindCustomer() {
-        CustomerFinderTask t = new CustomerFinderTask(host, new DataRetriever<Customer>() {
-            @Override
-            public void retrievedData(Customer c) {
-                customer = c;
-                stage_4_CreateAppointment();
-            }
+        CustomerFinderTask t = new CustomerFinderTask(host, c -> {
+            customer = c;
+            stage_4_CreateAppointment();
         });
 
         t.start();
