@@ -18,9 +18,7 @@ public class LoadMonthTallyEntryQuery extends Query<MonthTallyEntry> {
     public void executeQuery() {
         getRemoteDB().getAccountingManager().findClosurelessMonthTallyEntryByDate(date, monthTallyEntry -> {
 
-            if(monthTallyEntry == null){
-                //TODO throw new InternalDatabaseStructureErrorException("Accounting Date: " + TimeParser.parseDateDisplayDay(date));
-            } else {
+            if(monthTallyEntry != null) {
                 getRemoteDB().getAccountingManager().findClosureByDate(date, dailyClosure -> {
 
                     monthTallyEntry.attachClosing(dailyClosure);
