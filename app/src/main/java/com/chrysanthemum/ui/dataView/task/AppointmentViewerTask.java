@@ -12,14 +12,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
-
 import com.chrysanthemum.appdata.DataStorageModule;
 import com.chrysanthemum.appdata.Util.AppUtil;
 import com.chrysanthemum.appdata.dataType.Transaction;
 import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
-import com.chrysanthemum.appdata.dataType.retreiver.NullRetriever;
 import com.chrysanthemum.appdata.dataType.subType.AppointmentStatus;
 import com.chrysanthemum.appdata.querries.Query;
 import com.chrysanthemum.appdata.querries.appointments.LoadAppointmentListByDayQuery;
@@ -34,6 +31,8 @@ import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
+
+import androidx.annotation.Nullable;
 
 public class AppointmentViewerTask extends Task {
 
@@ -69,25 +68,17 @@ public class AppointmentViewerTask extends Task {
         dateForm.setText(selectedDate);
         dateForm.setFocusable(false);
 
-        dateForm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setupDaySelectorTask();
-            }
-        });
+        dateForm.setOnClickListener(v -> setupDaySelectorTask());
 
         Button button = host.getFormButton();
         button.setVisibility(View.INVISIBLE);
     }
 
     private void setupDaySelectorTask(){
-        DaySelectorTask task = new DaySelectorTask(host, new DataRetriever<LocalDate>() {
-            @Override
-            public void retrievedData(LocalDate date) {
-                selectedDate = TimeParser.parseDateDisplayDay(date);
-                setupDaySelectionForm();
-                loadAppointment();
-            }
+        DaySelectorTask task = new DaySelectorTask(host, date -> {
+            selectedDate = TimeParser.parseDateDisplayDay(date);
+            setupDaySelectionForm();
+            loadAppointment();
         });
 
         task.start();
@@ -98,19 +89,16 @@ public class AppointmentViewerTask extends Task {
      */
     private void loadAppointment(){
 
-        String date = selectedDate.replaceAll("/", " ");
+        final String date = selectedDate.replaceAll("/", " ");
 
-        DataRetriever<LinkedList<Transaction>> retriever = new DataRetriever<LinkedList<Transaction>>() {
-            @Override
-            public void retrievedData(LinkedList<Transaction> data) {
+        DataRetriever<LinkedList<Transaction>> retriever = data -> {
 
-                appointmentList = new TreeMap<>();
+            appointmentList = new TreeMap<>();
 
-                for(Transaction transaction : data){
-                    appointmentList.put(transaction.getID(), transaction);
-                }
-                displayTransactions();
+            for(Transaction transaction : data){
+                appointmentList.put(transaction.getID(), transaction);
             }
+            displayTransactions(date);
         };
 
         Query<LinkedList<Transaction>> query = new LoadAppointmentListByDayQuery(date, retriever);
@@ -120,7 +108,7 @@ public class AppointmentViewerTask extends Task {
     /**
      * display transactions as stored in local memory
      */
-    private void displayTransactions(){
+    private void displayTransactions(String date) {
         todayAppointments = new LinkedList<>();
 
         DisplayBoard board = host.getBoard();
@@ -128,7 +116,7 @@ public class AppointmentViewerTask extends Task {
 
         // add hour markers
         for(int hour = 8; hour < 21; hour ++){
-            board.displayData(new HourMarker(hour));
+            board.displayData(new HourMarker(hour, TimeParser.parseDate(date)));
         }
 
         for(long id : appointmentList.keySet()){
@@ -230,24 +218,18 @@ public class AppointmentViewerTask extends Task {
 
         @Override
         public View.OnClickListener getOnclickListener() {
-            return new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(t.getAppointmentStatus() == AppointmentStatus.Claimed){
-                        setupRecordPaymentSubTask();
-                    }
+            return v -> {
+                if(t.getAppointmentStatus() == AppointmentStatus.Claimed){
+                    setupRecordPaymentSubTask();
                 }
             };
         }
 
         @Override
         public View.OnLongClickListener getOnLongClickListener() {
-            return new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    setupAppointmentClaimSubTask();
-                    return true;
-                }
+            return v -> {
+                setupAppointmentClaimSubTask();
+                return true;
             };
         }
 
@@ -274,15 +256,12 @@ public class AppointmentViewerTask extends Task {
         private void setupAppointmentClaimSubTask(){
             final Displayable display = this;
 
-            AppointmentClaimTask subTask  = new AppointmentClaimTask(host, t, new DataRetriever<Boolean>() {
-                @Override
-                public void retrievedData(Boolean status) {
-                    setupDaySelectionForm();
-                    if(status == AppointmentClaimTask.DELETED){
-                        host.getBoard().remove(display);
-                    } else {
-                        host.getBoard().invalidateData(display);
-                    }
+            AppointmentClaimTask subTask  = new AppointmentClaimTask(host, t, status -> {
+                setupDaySelectionForm();
+                if(status == AppointmentClaimTask.DELETED){
+                    host.getBoard().remove(display);
+                } else {
+                    host.getBoard().invalidateData(display);
                 }
             });
 
@@ -292,13 +271,10 @@ public class AppointmentViewerTask extends Task {
         private void setupRecordPaymentSubTask(){
             final Displayable display = this;
 
-            RecordPaymentTask subTask  = new RecordPaymentTask(host, t, new DataRetriever<Transaction>() {
-                @Override
-                public void retrievedData(Transaction data) {
-                    setupDaySelectionForm();
-                    host.getBoard().remove(display);
-                    appointmentList.remove(data.getID());
-                }
+            RecordPaymentTask subTask  = new RecordPaymentTask(host, t, data -> {
+                setupDaySelectionForm();
+                host.getBoard().remove(display);
+                appointmentList.remove(data.getID());
             });
 
             subTask.start();
@@ -310,9 +286,11 @@ public class AppointmentViewerTask extends Task {
 
         private final Rect hitbox;
         private final int hour;
+        private final LocalDate date;
 
-        public HourMarker(int hour){
+        public HourMarker(int hour, LocalDate date){
             this.hour = hour;
+            this.date = date;
             int time = hour * 60;
             hitbox = new Rect(getTimeXpos(time), getRowYpos(0),
                     getTimeXpos(time + 60),
@@ -323,7 +301,17 @@ public class AppointmentViewerTask extends Task {
         @Override
         public Drawable getBGDrawable(Rect boundingBox) {
             ShapeDrawable drawable =  new ShapeDrawable(new RectShape());
-            if(hour % 2 == 0){
+            if(date.getDayOfWeek().getValue() == 2 ||
+                    hour < 10 || hour >= 19 ||
+                    (hour >= 17 && date.getDayOfWeek().getValue() < 2)){
+
+                if(hour % 2 != 0){
+                    drawable.getPaint().setColor(0xFFB12C2C);
+                } else {
+                    drawable.getPaint().setColor(0xFFFF7F7F);
+                }
+
+            } else if(hour % 2 == 0){
                 drawable.getPaint().setColor(Color.LTGRAY);
             } else {
                 drawable.getPaint().setColor(0xFFBBBBBB);
@@ -347,27 +335,23 @@ public class AppointmentViewerTask extends Task {
 
         @Override
         public View.OnClickListener getOnclickListener() {
-            return new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            return v -> {
 
-                    LocalDate sel = TimeParser.parseDate(selectedDate.replaceAll("/", " "));
+                final String date = selectedDate.replaceAll("/", " ");
+                LocalDate sel = TimeParser.parseDate(date);
 
-                    if(sel.compareTo(LocalDate.now()) >= 0 ||
-                            DataStorageModule.getFrontEnd().getSecurityModule().getLoggedinTech().getRole().equalsIgnoreCase("admin")){
-                        NewAppointmentTask subTask = new NewAppointmentTask(host, hour, selectedDate.replaceAll("/", " "), new DataRetriever<Transaction>() {
-                            @Override
-                            public void retrievedData(Transaction data) {
-                                host.setBarText(host.getMainTaskTitle());
-                                setupDaySelectionForm();
+                if((sel != null && sel.compareTo(LocalDate.now()) >= 0) ||
+                        DataStorageModule.getFrontEnd().getSecurityModule().getLoggedinTech().getRole().equalsIgnoreCase("admin")){
 
-                                appointmentList.put(data.getID(), data);
-                                displayTransactions();
-                            }
-                        });
+                    NewAppointmentTask subTask = new NewAppointmentTask(host, hour, date, data -> {
+                        host.setBarText(host.getMainTaskTitle());
+                        setupDaySelectionForm();
 
-                        subTask.start();
-                    }
+                        appointmentList.put(data.getID(), data);
+                        displayTransactions(date);
+                    });
+
+                    subTask.start();
                 }
             };
         }
