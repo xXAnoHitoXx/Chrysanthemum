@@ -73,8 +73,7 @@ public class AccountingManagerModule implements AccountingManager {
                         for (DataSnapshot child: result.getChildren()) {
                             String key = child.getKey();
 
-                            if(!key.equalsIgnoreCase(DatabaseStructure.Accounting.SHOP_TOTAL)){
-
+                            if(key.matches("-?\\d+(\\.\\d+)?")){
                                     long techID = Long.parseLong(key);
 
                                     long[] techPays = new long[]{
@@ -83,8 +82,8 @@ public class AccountingManagerModule implements AccountingManager {
                                     };
 
                                     entry.addPay(techID, techPays);
-
                             }
+
                         }
 
                         retriever.retrievedData(entry);
