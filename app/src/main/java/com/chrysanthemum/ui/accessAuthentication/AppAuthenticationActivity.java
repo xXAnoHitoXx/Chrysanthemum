@@ -1,21 +1,15 @@
 package com.chrysanthemum.ui.accessAuthentication;
 
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chrysanthemum.R;
@@ -23,10 +17,14 @@ import com.chrysanthemum.appdata.DataStorageModule;
 import com.chrysanthemum.appdata.security.AccessState;
 import com.chrysanthemum.ui.technicianLogin.TechnicianLoginActivity;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+
 public class AppAuthenticationActivity extends AppCompatActivity {
 
     private AccessAuthenticationViewModel loginViewModel;
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,35 +39,31 @@ public class AppAuthenticationActivity extends AppCompatActivity {
         final Button loginButton = findViewById(R.id.login);
         final ProgressBar loadingProgressBar = findViewById(R.id.loading);
 
-        loginViewModel.getLoginFormState().observe(this, new Observer<AuthenticationFormState>() {
-            @Override
-            public void onChanged(AuthenticationFormState loginFormState) {
-                if (loginFormState == null) {
-                    return;
-                }
-                loginButton.setEnabled(loginFormState.isDataValid());
-                if (loginFormState.getUsernameError() != null) {
-                    usernameEditText.setError(getString(loginFormState.getUsernameError()));
-                }
-                if (loginFormState.getPasswordError() != null) {
-                    passwordEditText.setError(getString(loginFormState.getPasswordError()));
-                }
+        usernameEditText.setText("chrysanthemumspa@gmail.com");
+
+        loginViewModel.getLoginFormState().observe(this, loginFormState -> {
+            if (loginFormState == null) {
+                return;
+            }
+            loginButton.setEnabled(loginFormState.isDataValid());
+            if (loginFormState.getUsernameError() != null) {
+                usernameEditText.setError(getString(loginFormState.getUsernameError()));
+            }
+            if (loginFormState.getPasswordError() != null) {
+                passwordEditText.setError(getString(loginFormState.getPasswordError()));
             }
         });
 
 
-        DataStorageModule.getFrontEnd().getSecurityModule().observeAccessToken(this, new Observer<AccessState>() {
-            @Override
-            public void onChanged(AccessState loginResult) {
+        DataStorageModule.getFrontEnd().getSecurityModule().observeAccessToken(this, loginResult -> {
 
-                loadingProgressBar.setVisibility(View.GONE);
-                if (loginResult == AccessState.noAccess) {
-                    showLoginFailed();
-                }
+            loadingProgressBar.setVisibility(View.GONE);
+            if (loginResult == AccessState.noAccess) {
+                showLoginFailed();
+            }
 
-                if (loginResult == AccessState.hasAccess) {
-                    updateUiWithUser();
-                }
+            if (loginResult == AccessState.hasAccess) {
+                updateUiWithUser();
             }
         });
 
@@ -92,25 +86,18 @@ public class AppAuthenticationActivity extends AppCompatActivity {
         };
         usernameEditText.addTextChangedListener(afterTextChangedListener);
         passwordEditText.addTextChangedListener(afterTextChangedListener);
-        passwordEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    loginViewModel.login(usernameEditText.getText().toString(),
-                            passwordEditText.getText().toString());
-                }
-                return false;
-            }
-        });
-
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadingProgressBar.setVisibility(View.VISIBLE);
+        passwordEditText.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
                 loginViewModel.login(usernameEditText.getText().toString(),
                         passwordEditText.getText().toString());
             }
+            return false;
+        });
+
+        loginButton.setOnClickListener(v -> {
+            loadingProgressBar.setVisibility(View.VISIBLE);
+            loginViewModel.login(usernameEditText.getText().toString(),
+                    passwordEditText.getText().toString());
         });
 
     }

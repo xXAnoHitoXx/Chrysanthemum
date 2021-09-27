@@ -1,7 +1,12 @@
 package com.chrysanthemum.ui.technicianLogin;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.chrysanthemum.R;
 import com.chrysanthemum.appdata.DataStorageModule;
@@ -12,12 +17,6 @@ import com.chrysanthemum.ui.dataView.DataDisplayActivity;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.Observer;
-
-import android.view.View;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 public class TechnicianLoginActivity extends AppCompatActivity {
 
@@ -54,20 +53,12 @@ public class TechnicianLoginActivity extends AppCompatActivity {
         new PasswordNumberPad(controls, selectorPanel, message, progress, this);
 
         View x = findViewById(R.id.fab);
-        x.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                endSession();
-            }
-        });
+        x.setOnClickListener(v -> logoutAlert());
 
         SecurityModule sm = DataStorageModule.getFrontEnd().getSecurityModule();
-        sm.observeLoginStatus(this, new Observer<LoginStatus>() {
-            @Override
-            public void onChanged(LoginStatus loginStatus) {
-                if(loginStatus == LoginStatus.loggedIn){
-                    onLoginSuccess();
-                }
+        sm.observeLoginStatus(this, loginStatus -> {
+            if(loginStatus == LoginStatus.loggedIn){
+                onLoginSuccess();
             }
         });
     }
@@ -81,6 +72,16 @@ public class TechnicianLoginActivity extends AppCompatActivity {
     private void onLoginSuccess(){
         Intent intent = new Intent(this, DataDisplayActivity.class);
         startActivity(intent);
+    }
+
+
+    private void logoutAlert(){
+        new AlertDialog.Builder(this)
+                .setTitle("Close App?")
+                .setMessage("If ur not Tinn, say no xD")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> endSession())
+                .setNegativeButton(android.R.string.no, null).show();
     }
 
     private void endSession() {
