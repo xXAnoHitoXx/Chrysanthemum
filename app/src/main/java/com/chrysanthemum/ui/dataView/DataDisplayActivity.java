@@ -4,33 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-
-import com.chrysanthemum.appdata.DataStorageModule;
-import com.chrysanthemum.appdata.Util.Scaler;
-import com.chrysanthemum.appdata.dataType.Technician;
-import com.chrysanthemum.ui.dataView.display.DisplayBoard;
-import com.chrysanthemum.ui.dataView.task.AppointmentViewerTask;
-import com.chrysanthemum.ui.dataView.task.CustomerManagerTask;
-import com.chrysanthemum.ui.dataView.task.GiftManager;
-import com.chrysanthemum.ui.dataView.task.SaleTask;
-import com.chrysanthemum.ui.dataView.task.accounting.Daily.TallyTask;
-import com.chrysanthemum.ui.dataView.task.Task;
-import com.chrysanthemum.ui.dataView.task.TaskHostestActivity;
-import com.chrysanthemum.ui.dataView.task.TaskSelectionButtion;
-import com.chrysanthemum.ui.dataView.task.accounting.Daily.DailyAccountingTask_Admin;
-import com.chrysanthemum.ui.dataView.task.accounting.Daily.DailyAccountingTask_Personal;
-import com.chrysanthemum.ui.dataView.task.accounting.Monthly.GenerateMonthlyTotalTask;
-import com.chrysanthemum.ui.dataView.task.display.MultiTechnicianSelectorPanel;
-import com.chrysanthemum.ui.technicianLogin.TechnicianLoginActivity;
-import com.chrysanthemum.ui.technicianLogin.TechnicianSelectorPanel;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
-import androidx.core.view.ViewCompat;
-
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -40,11 +13,34 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.chrysanthemum.R;
+import com.chrysanthemum.appdata.DataStorageModule;
+import com.chrysanthemum.appdata.Util.Scaler;
+import com.chrysanthemum.appdata.dataType.Technician;
+import com.chrysanthemum.ui.dataView.display.DisplayBoard;
+import com.chrysanthemum.ui.dataView.task.AppointmentViewerTask;
+import com.chrysanthemum.ui.dataView.task.CustomerManagerTask;
+import com.chrysanthemum.ui.dataView.task.GiftManager;
+import com.chrysanthemum.ui.dataView.task.SaleTask;
+import com.chrysanthemum.ui.dataView.task.Task;
+import com.chrysanthemum.ui.dataView.task.TaskHostestActivity;
+import com.chrysanthemum.ui.dataView.task.TaskSelectionButtion;
+import com.chrysanthemum.ui.dataView.task.accounting.Daily.DailyAccountingTask_Admin;
+import com.chrysanthemum.ui.dataView.task.accounting.Daily.DailyAccountingTask_Personal;
+import com.chrysanthemum.ui.dataView.task.accounting.Daily.TallyTask;
+import com.chrysanthemum.ui.dataView.task.accounting.Monthly.GenerateMonthlyTotalTask;
+import com.chrysanthemum.ui.dataView.task.display.MultiTechnicianSelectorPanel;
+import com.chrysanthemum.ui.technicianLogin.TechnicianLoginActivity;
+import com.chrysanthemum.ui.technicianLogin.TechnicianSelectorPanel;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.LinkedList;
 import java.util.Objects;
 
-import static com.chrysanthemum.appdata.Util.AppUtil.dpToPx;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.core.view.ViewCompat;
 
 public class DataDisplayActivity extends AppCompatActivity implements TaskHostestActivity {
 
@@ -64,12 +60,7 @@ public class DataDisplayActivity extends AppCompatActivity implements TaskHostes
         db = new DisplayBoard(this, layout);
 
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                logout();
-            }
-        });
+        fab.setOnClickListener(view -> logout());
 
     }
 
@@ -100,15 +91,18 @@ public class DataDisplayActivity extends AppCompatActivity implements TaskHostes
         TaskSelectionButtion customerManager = CustomerManagerTask.getMenuButton(this, this);
         addTaskPanelButton(customerManager);
 
-        TaskSelectionButtion personalAccounting = DailyAccountingTask_Personal.getMenuButton(this, this);
-        addTaskPanelButton(personalAccounting);
-
         //------------------------------------------------------------------------------------------
 
         Technician tech = DataStorageModule.getFrontEnd().getSecurityModule().getLoggedinTech();
 
-        if(tech.getRole().equals(Technician.ADMIN)){
+        if(!tech.getRole().equals(Technician.Dummy)){
             addTaskPanelDivider();
+
+            TaskSelectionButtion personalAccounting = DailyAccountingTask_Personal.getMenuButton(this, this);
+            addTaskPanelButton(personalAccounting);
+        }
+
+        if(tech.getRole().equals(Technician.ADMIN)){
 
             TaskSelectionButtion dailyAccounting = DailyAccountingTask_Admin.getMenuButton(this, this);
             addTaskPanelButton(dailyAccounting);
@@ -163,12 +157,7 @@ public class DataDisplayActivity extends AppCompatActivity implements TaskHostes
     }
 
     private View.OnClickListener getTaskPanelButtonListener(final TaskSelectionButtion button){
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setTask(button.getTask(), button.getTaskName());
-            }
-        };
+        return v -> setTask(button.getTask(), button.getTaskName());
     }
 
     //----------------------------------------------------------------------------------------------

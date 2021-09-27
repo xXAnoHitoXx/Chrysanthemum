@@ -1,17 +1,14 @@
 package com.chrysanthemum.ui.technicianLogin;
 
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
-
 import com.chrysanthemum.R;
 import com.chrysanthemum.appdata.DataStorageModule;
-import com.chrysanthemum.appdata.security.LoginStatus;
-import com.chrysanthemum.appdata.security.SecurityModule;
 import com.chrysanthemum.appdata.dataType.Technician;
+import com.chrysanthemum.appdata.security.SecurityModule;
+
+import androidx.lifecycle.LifecycleOwner;
 
 public class PasswordNumberPad {
 
@@ -74,56 +71,56 @@ public class PasswordNumberPad {
     }
 
     private void setNumberButton(final Button b){
-        b.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!locked){
-                    int i = Integer.parseInt(b.getText() + "");
-                    enter(i);
-                }
+        b.setOnClickListener(v -> {
+            if(!locked){
+                int i = Integer.parseInt(b.getText() + "");
+                enter(i);
             }
         });
     }
 
     private void setBkspcButton(final Button b){
-        b.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!locked) {
-                    bkspc();
-                }
+        b.setOnClickListener(v -> {
+            if(!locked) {
+                bkspc();
             }
         });
     }
 
     private void setGoButton(final Button b){
-        b.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!locked) {
-                    Technician tech = panel.getSelectedTech();
+        b.setOnClickListener(v -> {
+            if(!locked) {
+                Technician tech = panel.getSelectedTech();
 
-                    if (tech == null) {
-                        setMessage("Please chose a colour!");
-                    } else if (mode == Mode.Login) {
+                if (mode == Mode.Login) {
+
+                    if(tech == null){
+                        if(digitCount == 0) {
+                            SecurityModule sm = DataStorageModule.getFrontEnd().getSecurityModule();
+                            sm.dummyLogin();
+                        } else {
+                            setMessage("Please chose a colour!");
+                        }
+                    } else {
                         lock();
                         SecurityModule sm = DataStorageModule.getFrontEnd().getSecurityModule();
                         sm.login(panel.getSelectedTech(), value);
-                    } else {
-                        mode = Mode.Login;
-
-                        if (value == savedValue) {
-                            DataStorageModule.getFrontEnd().getSecurityModule()
-                                    .registerPassword(panel.getSelectedTech(), value);
-                            setMessage("New password registered!");
-                            clear();
-                        } else {
-                            setMessage("Passwords did not match!");
-                            clear();
-                        }
-
-                        panel.unlock();
                     }
+
+                }else if (tech != null) {
+                    mode = Mode.Login;
+
+                    if (value == savedValue) {
+                        DataStorageModule.getFrontEnd().getSecurityModule()
+                                .registerPassword(panel.getSelectedTech(), value);
+                        setMessage("New password registered!");
+                        clear();
+                    } else {
+                        setMessage("Passwords did not match!");
+                        clear();
+                    }
+
+                    panel.unlock();
                 }
             }
         });
@@ -142,24 +139,21 @@ public class PasswordNumberPad {
 
     private void observeAndDisplayStatus(LifecycleOwner owner) {
         SecurityModule sm = DataStorageModule.getFrontEnd().getSecurityModule();
-        sm.observeLoginStatus(owner, new Observer<LoginStatus>() {
-            @Override
-            public void onChanged(LoginStatus loginStatus) {
-                unlock();
-                switch(loginStatus){
-                    case noPass: {
-                        panel.lock();
-                        setMessage("Enter again to verify new password!!!");
-                        savedValue = value;
-                        clear();
-                        mode = Mode.CreatePassword;
-                        break;
-                    }
-                    case loggedOut: {
-                        setMessage("Wrong password!");
-                        clear();
-                        break;
-                    }
+        sm.observeLoginStatus(owner, loginStatus -> {
+            unlock();
+            switch(loginStatus){
+                case noPass: {
+                    panel.lock();
+                    setMessage("Enter again to verify new password!!!");
+                    savedValue = value;
+                    clear();
+                    mode = Mode.CreatePassword;
+                    break;
+                }
+                case loggedOut: {
+                    setMessage("Wrong password!");
+                    clear();
+                    break;
                 }
             }
         });

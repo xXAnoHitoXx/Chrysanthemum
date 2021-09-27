@@ -1,21 +1,17 @@
 package com.chrysanthemum.firebase;
 
-import androidx.annotation.NonNull;
-
 import com.chrysanthemum.appdata.DataStorageModule;
 import com.chrysanthemum.appdata.Util.BoolFlag;
-import com.chrysanthemum.appdata.dataType.retreiver.NullRetriever;
+import com.chrysanthemum.appdata.dataType.Technician;
 import com.chrysanthemum.appdata.security.LoginStatus;
 import com.chrysanthemum.appdata.security.SecurityModule;
-import com.chrysanthemum.appdata.dataType.Technician;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+
+import androidx.annotation.NonNull;
 
 /**
  * Class that requests authentication and user information from the remote data source and
@@ -47,27 +43,32 @@ public class LoginRepository extends SecurityModule {
         FireDatabase.getRef().child(DatabaseStructure.TechnicianBranch.BRANCH_NAME)
                 .child(DatabaseStructure.TechnicianBranch.PASSWORD_STORAGE)
                 .child("" + tech.getID()).get()
-                .addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                .addOnCompleteListener(task -> {
+                    if(task.isSuccessful()){
+                        int correctPass = Integer.parseInt(task.getResult().getValue(String.class));
 
-            @Override
-            @SuppressWarnings("ConstantConditions")
-            public void onComplete(@NonNull Task<DataSnapshot> task) {
-                if(task.isSuccessful()){
-                    int correctPass = Integer.parseInt(task.getResult().getValue(String.class));
-
-                    if(correctPass < 0 || correctPass > 9999){
-                        LoginStatus.noPass.setTech(tech);
-                        updateLoginStatus(LoginStatus.noPass);
-                    } else if(correctPass == password) {
-                        LoginStatus.loggedIn.setTech(tech);
-                        updateLoginStatus(LoginStatus.loggedIn);
-                    } else {
-                        LoginStatus.loggedOut.setTech(tech);
-                        updateLoginStatus(LoginStatus.loggedOut);
+                        if(correctPass < 0 || correctPass > 9999){
+                            LoginStatus.noPass.setTech(tech);
+                            updateLoginStatus(LoginStatus.noPass);
+                        } else if(correctPass == password) {
+                            LoginStatus.loggedIn.setTech(tech);
+                            updateLoginStatus(LoginStatus.loggedIn);
+                        } else {
+                            LoginStatus.loggedOut.setTech(tech);
+                            updateLoginStatus(LoginStatus.loggedOut);
+                        }
                     }
-                }
-            }
-        });
+                });
+    }
+
+    @Override
+    public void dummyLogin() {
+        Technician dummy = new Technician(
+                Technician.Dummy, Technician.Dummy, 0,
+                DataStorageModule.generateID());
+
+        LoginStatus.loggedIn.setTech(dummy);
+        updateLoginStatus(LoginStatus.loggedIn);
     }
 
     @Override
@@ -81,29 +82,21 @@ public class LoginRepository extends SecurityModule {
     public void requestAccess(String username, String password) {
 
         FirebaseAuth.getInstance().signInWithEmailAndPassword(username, password)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-
-
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            loadInitData();
-                        } else {
-                            releaseAccess();
-                        }
-
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        loadInitData();
+                    } else {
+                        releaseAccess();
                     }
+
                 });
 
     }
 
     private void loadInitData(){
-        DataStorageModule.getBackEnd().loadTechMap(new NullRetriever() {
-            @Override
-            public void retrieved() {
-                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                grantAccess(currentUser.getUid());
-            }
+        DataStorageModule.getBackEnd().loadTechMap(() -> {
+            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+            grantAccess(currentUser.getUid());
         });
     }
 
@@ -119,7 +112,7 @@ public class LoginRepository extends SecurityModule {
 
         testModeAccess(uname, pword, step1);
 
-        while (step1.read() == false){
+        while (!step1.read()){
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -129,17 +122,14 @@ public class LoginRepository extends SecurityModule {
 
         BoolFlag step2 = new BoolFlag();
 
-        DataStorageModule.getBackEnd().loadTechMap(new NullRetriever() {
-            @Override
-            public void retrieved() {
-                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                grantAccess(currentUser.getUid());
+        DataStorageModule.getBackEnd().loadTechMap(() -> {
+            FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+            grantAccess(currentUser.getUid());
 
-                step2.set();
-            }
+            step2.set();
         });
 
-        while (step2.read() == false){
+        while (!step2.read()){
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -151,7 +141,7 @@ public class LoginRepository extends SecurityModule {
 
         testModeLogin(step3);
 
-        while (step3.read() == false){
+        while (!step3.read()){
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -165,17 +155,13 @@ public class LoginRepository extends SecurityModule {
 
     private void testModeAccess(String uname, String pword, BoolFlag f){
         FirebaseAuth.getInstance().signInWithEmailAndPassword(uname, pword)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            f.set();
-                        } else {
-                            releaseAccess();
-                        }
-
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        f.set();
+                    } else {
+                        releaseAccess();
                     }
+
                 });
     }
 
@@ -185,16 +171,11 @@ public class LoginRepository extends SecurityModule {
         FireDatabase.getRef().child(DatabaseStructure.TechnicianBranch.BRANCH_NAME)
                 .child(DatabaseStructure.TechnicianBranch.PASSWORD_STORAGE)
                 .child("" + admin.getID()).get()
-                .addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
-
-                    @Override
-                    @SuppressWarnings("ConstantConditions")
-                    public void onComplete(@NonNull Task<DataSnapshot> task) {
-                        if(task.isSuccessful()){
-                            LoginStatus.loggedIn.setTech(admin);
-                            updateLoginStatus(LoginStatus.loggedIn);
-                            complete.set();
-                        }
+                .addOnCompleteListener(task -> {
+                    if(task.isSuccessful()){
+                        LoginStatus.loggedIn.setTech(admin);
+                        updateLoginStatus(LoginStatus.loggedIn);
+                        complete.set();
                     }
                 });
     }

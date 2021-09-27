@@ -1,27 +1,21 @@
 package com.chrysanthemum.appdata.security;
 
+import com.chrysanthemum.appdata.DataStorageModule;
+import com.chrysanthemum.appdata.dataType.Technician;
+
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
-
-import com.chrysanthemum.appdata.DataStorageModule;
-import com.chrysanthemum.appdata.Util.BoolFlag;
-import com.chrysanthemum.appdata.dataType.Technician;
-import com.chrysanthemum.appdata.dataType.retreiver.NullRetriever;
 
 public abstract class SecurityModule {
 
     private String UserID;
 
     public SecurityModule(){
-        this.observeAccessToken(null, new Observer<AccessState>() {
-
-            @Override
-            public void onChanged(AccessState accessState) {
-                if(accessState == AccessState.blocked){
-                    DataStorageModule.getFrontEnd().close();
-                    System.exit(0);
-                }
+        this.observeAccessToken(null, accessState -> {
+            if(accessState == AccessState.blocked){
+                DataStorageModule.getFrontEnd().close();
+                System.exit(0);
             }
         });
     }
@@ -71,6 +65,7 @@ public abstract class SecurityModule {
     }
 
     public abstract void login(Technician tech, int password);
+    public abstract void dummyLogin();
 
     public Technician getLoggedinTech() {
         return status.getValue().getTech();

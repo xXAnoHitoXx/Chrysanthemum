@@ -3,6 +3,7 @@ package com.chrysanthemum.appdata.dataType;
 public class Technician {
 
     public static final String ADMIN = "Admin";
+    public static final String Dummy = "Dummy";
 
     private String name;
     private String role;

@@ -1,14 +1,11 @@
 package com.chrysanthemum.ui.dataView.task.subTasks;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
-import android.view.View;
 import android.widget.Button;
 
 import com.chrysanthemum.appdata.dataType.Technician;
 import com.chrysanthemum.appdata.dataType.Transaction;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
-import com.chrysanthemum.appdata.dataType.retreiver.NullRetriever;
 import com.chrysanthemum.appdata.dataType.subType.AppointmentStatus;
 import com.chrysanthemum.appdata.dataType.subType.TransactionStatus;
 import com.chrysanthemum.appdata.querries.appointments.AttachTechnicianToAppointmentQuery;
@@ -43,35 +40,31 @@ public class AppointmentClaimTask  extends Task {
 
         Button button = host.getFormButton();
         button.setText("Select");
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Technician t = panel.getSelectedTech();
+        button.setOnClickListener(v -> {
+            Technician t = panel.getSelectedTech();
 
-                if(t == null){
-                    if(transaction.getTransactionStatus() == TransactionStatus.Noshow){
-                        removeAppointmentAlert();
-                    } else {
-                        noShowAlert();
-                    }
-                } else if(transaction.getAppointmentStatus() == AppointmentStatus.Open) {
-                    new AttachTechnicianToAppointmentQuery(transaction, t).executeQuery();
-                } else if(transaction.getAppointmentStatus() == AppointmentStatus.Claimed){
-
-                    if(t.getID() == transaction.getTech().getID()){
-                        // deselect
-                        new AttachTechnicianToAppointmentQuery(transaction, null).executeQuery();
-                    } else {
-                        //change Tech
-                        new AttachTechnicianToAppointmentQuery(transaction, t).executeQuery();
-                    }
+            if(t == null){
+                if(transaction.getTransactionStatus() == TransactionStatus.Noshow){
+                    removeAppointmentAlert();
+                } else {
+                    noShowAlert();
                 }
+            } else if(transaction.getAppointmentStatus() == AppointmentStatus.Open) {
+                new AttachTechnicianToAppointmentQuery(transaction, t).executeQuery();
+            } else if(transaction.getAppointmentStatus() == AppointmentStatus.Claimed){
 
-                retriever.retrievedData(!DELETED);
+                if(t.getID() == transaction.getTech().getID()){
+                    // deselect
+                    new AttachTechnicianToAppointmentQuery(transaction, null).executeQuery();
+                } else {
+                    //change Tech
+                    new AttachTechnicianToAppointmentQuery(transaction, t).executeQuery();
+                }
             }
+
+            retriever.retrievedData(!DELETED);
         });
     }
-
 
     private void noShowAlert(){
         host.createAlertBox()
@@ -79,11 +72,7 @@ public class AppointmentClaimTask  extends Task {
                 .setMessage("Mark the appointment with " + transaction.getCustomer().getName()
                         + " as \"No Show\"")
                 .setIcon(android.R.drawable.ic_dialog_alert)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        new MarkAppointmentAsNoShowQuery(transaction).executeQuery();
-                    }})
+                .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> new MarkAppointmentAsNoShowQuery(transaction).executeQuery())
                 .setNegativeButton(android.R.string.no, null).show();
     }
 
@@ -92,12 +81,10 @@ public class AppointmentClaimTask  extends Task {
                 .setTitle("Delete this Appointment")
                 .setMessage("Delete the appointment with " + transaction.getCustomer().getName())
                 .setIcon(android.R.drawable.ic_dialog_alert)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        new DeleteNoshowAppointmentQuery(transaction).executeQuery();
-                        retriever.retrievedData(DELETED);
-                    }})
+                .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
+                    new DeleteNoshowAppointmentQuery(transaction).executeQuery();
+                    retriever.retrievedData(DELETED);
+                })
                 .setNegativeButton(android.R.string.no, null).show();
     }
 }
