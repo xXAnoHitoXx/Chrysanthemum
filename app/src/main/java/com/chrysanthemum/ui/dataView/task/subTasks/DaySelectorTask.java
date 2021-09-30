@@ -37,6 +37,9 @@ public class DaySelectorTask extends Task {
     private final DataRetriever<LocalDate> retriever;
     private DayDisplay selected;
 
+    private int selY = -1;
+    private int selM = -1;
+
     public DaySelectorTask(TaskHostestActivity host, DataRetriever<LocalDate> retriever) {
         super(host);
         this.retriever = retriever;
@@ -64,18 +67,22 @@ public class DaySelectorTask extends Task {
 
         Button button = host.getFormButton();
         button.setText("Select Month");
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int y = TimeParser.parseYear(year.getText().toString());
-                int m = TimeParser.parseMonth(month.getText().toString());
+        button.setOnClickListener(v -> {
+            int y = TimeParser.parseYear(year.getText().toString());
+            int m = TimeParser.parseMonth(month.getText().toString());
 
-                if(y < 0 || m < 0){
-                    return;
-                }
-
-                loadBoard(y, m);
+            if(y < 0 || m < 0){
+                return;
             }
+
+            if(y != selY || m != selM){
+                selY = y; selM = m;
+            } else {
+                selM = ++m;
+                month.setText(m + "");
+            }
+
+            loadBoard(y, m);
         });
     }
 
@@ -146,12 +153,7 @@ public class DaySelectorTask extends Task {
 
         @Override
         public View.OnClickListener getOnclickListener() {
-            return new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    makeSelected();
-                }
-            };
+            return v -> makeSelected();
         }
 
         @Override
