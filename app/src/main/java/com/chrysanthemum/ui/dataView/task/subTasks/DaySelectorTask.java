@@ -78,7 +78,14 @@ public class DaySelectorTask extends Task {
             if(y != selY || m != selM){
                 selY = y; selM = m;
             } else {
-                selM = ++m;
+
+                if(++m > 12){
+                    selY = ++y;
+                    m = 1;
+                    year.setText(y + "");
+                }
+
+                selM = m;
                 month.setText(m + "");
             }
 
