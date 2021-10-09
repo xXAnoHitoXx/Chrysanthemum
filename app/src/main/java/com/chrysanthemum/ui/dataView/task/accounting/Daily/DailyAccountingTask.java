@@ -14,7 +14,6 @@ public abstract class DailyAccountingTask extends LineDisplayLayoutTask {
         super(host);
     }
 
-
     protected void displayTotal(String name, int amount, int tip, int colour, int row){
         String[] data = new String[] {
                 "Total:",

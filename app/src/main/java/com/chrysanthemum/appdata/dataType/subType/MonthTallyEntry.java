@@ -1,5 +1,6 @@
 package com.chrysanthemum.appdata.dataType.subType;
 
+import com.chrysanthemum.appdata.Tax;
 import com.chrysanthemum.appdata.dataType.DailyTally;
 import com.chrysanthemum.appdata.dataType.parsing.MoneyParser;
 import com.chrysanthemum.firebase.DatabaseStructure;
@@ -26,7 +27,7 @@ public class MonthTallyEntry {
         techsPay.put(id, techPay);
         if(id == DatabaseStructure.Accounting.SALE_TECH.getID()){
 
-            long saleAmount = (techPay[1] * 100) / 115;
+            long saleAmount = Tax.getPreTax(techPay[1]);
             saleAmount += techPay[0];
 
             long[] salesFix = new long[]{saleAmount, 0};

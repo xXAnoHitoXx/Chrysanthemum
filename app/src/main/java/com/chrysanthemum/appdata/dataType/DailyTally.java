@@ -1,16 +1,12 @@
 package com.chrysanthemum.appdata.dataType;
 
+import com.chrysanthemum.appdata.Tax;
 import com.chrysanthemum.appdata.dataType.parsing.MoneyParser;
 import com.chrysanthemum.appdata.dataType.subType.DailyClosure;
 
 public class DailyTally {
     private DailyClosure close;
     private final long[] records;
-
-    public DailyTally(){
-        close = new DailyClosure();
-        records = new long[]{0, 0};
-    }
 
     public DailyTally(DailyClosure close, long[] records){
         this.close = close;
@@ -33,7 +29,7 @@ public class DailyTally {
     }
 
     private long getTx(){
-        return (records[0] * 15) / 100;
+        return Tax.getTax(records[0]);
     }
 
     public String getAmount(){

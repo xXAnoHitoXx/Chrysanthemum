@@ -22,4 +22,9 @@ public class Amount {
     public int getTip(){
         return tip;
     }
+
+    public void add(Amount a) {
+        amount += a.amount;
+        tip += a.tip;
+    }
 }
