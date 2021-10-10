@@ -9,6 +9,7 @@ import com.chrysanthemum.appdata.dataType.subType.DailyClosure;
 import com.chrysanthemum.appdata.dataType.subType.MonthTallyEntry;
 import com.chrysanthemum.firebase.DatabaseStructure;
 import com.chrysanthemum.firebase.FireDatabase;
+import com.chrysanthemum.ui.dataView.task.accounting.Cal.Amount;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ServerValue;
@@ -89,6 +90,28 @@ public class AccountingManagerModule implements AccountingManager {
                         retriever.retrievedData(entry);
                     }
                 });
+    }
+
+    @Override
+    public void findTechTally(LocalDate date, long techID, DataRetriever<Amount> retriever) {
+        FireDatabase.getRef().child(DatabaseStructure.TransactionBranch.BRANCH_NAME)
+                .child(date.getYear() + "").child(date.getMonthValue() + "").child(date.getDayOfMonth() + "")
+                .child(DatabaseStructure.Accounting.BRANCH_NAME).child("" + techID).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DataSnapshot result = task.getResult();
+
+                Amount a = new Amount();
+                assert result != null;
+                if(result.exists()){
+                    a.add(result.child(DatabaseStructure.Accounting.A_AMOUNT).getValue(Integer.class),
+                            result.child(DatabaseStructure.Accounting.A_NO_TAX).getValue(Integer.class));
+                }
+                retriever.retrievedData(a);
+            } else {
+                retriever.retrievedData(null);
+            }
+        });
+
     }
 
     /**

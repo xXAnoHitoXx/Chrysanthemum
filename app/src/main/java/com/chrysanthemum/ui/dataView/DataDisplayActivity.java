@@ -28,6 +28,7 @@ import com.chrysanthemum.ui.dataView.task.accounting.Daily.DailyAccountingTask_A
 import com.chrysanthemum.ui.dataView.task.accounting.Daily.DailyAccountingTask_Personal;
 import com.chrysanthemum.ui.dataView.task.accounting.Daily.TallyTask;
 import com.chrysanthemum.ui.dataView.task.accounting.Monthly.GenerateMonthlyTotalTask;
+import com.chrysanthemum.ui.dataView.task.accounting.Weekly.WeeklyAccountingTask;
 import com.chrysanthemum.ui.dataView.task.display.MultiTechnicianSelectorPanel;
 import com.chrysanthemum.ui.technicianLogin.TechnicianLoginActivity;
 import com.chrysanthemum.ui.technicianLogin.TechnicianSelectorPanel;
@@ -100,6 +101,10 @@ public class DataDisplayActivity extends AppCompatActivity implements TaskHostes
 
             TaskSelectionButtion personalAccounting = DailyAccountingTask_Personal.getMenuButton(this, this);
             addTaskPanelButton(personalAccounting);
+
+
+            TaskSelectionButtion periodAccounting = WeeklyAccountingTask.getMenuButton(this, this, tech);
+            addTaskPanelButton(periodAccounting);
         }
 
         if(tech.getRole().equals(Technician.ADMIN)){

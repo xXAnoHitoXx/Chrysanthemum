@@ -57,46 +57,33 @@ public class DailyAccountingTask_Admin extends DailyAccountingTask {
         daySelect.setFocusable(false);
         daySelect.setText(selectedDate);
 
-        daySelect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Task sub = new DaySelectorTask(host, new DataRetriever<LocalDate>() {
-                    @Override
-                    public void retrievedData(LocalDate date) {
-                        selectedDate = TimeParser.parseDateDisplayDay(date);
-                        setUpDaySelectorForm();
-                        host.getBoard().clear(host.getScale().scale(TASK_SCALE));
-                    }
+        daySelect.setOnClickListener(v -> {
+            Task sub = new DaySelectorTask(host, date -> {
+                selectedDate = TimeParser.parseDateDisplayDay(date);
+                setUpDaySelectorForm();
+                host.getBoard().clear(host.getScale().scale(TASK_SCALE));
+            });
 
-                });
-
-                sub.start();
-            }
+            sub.start();
         });
 
         Button button = host.getFormButton();
         button.setText("Select");
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String date = selectedDate.replaceAll("/", " ");
+        button.setOnClickListener(v -> {
+            String date = selectedDate.replaceAll("/", " ");
 
-                if(date != null){
-                    startTechSelectTask(date);
-                } else {
-                    daySelect.setError("Tinn Fucked Up! Tell her to fix her damn app OMG!");
-                }
+            if(date != null){
+                startTechSelectTask(date);
+            } else {
+                daySelect.setError("Tinn Fucked Up! Tell her to fix her damn app OMG!");
             }
         });
     }
 
     private void startTechSelectTask(final String date){
-        MultiTechSelectionTask task = new MultiTechSelectionTask(host, new DataRetriever<LinkedList<Technician>>() {
-            @Override
-            public void retrievedData(LinkedList<Technician> techs) {
-                setUpDaySelectorForm();
-                loadBoard(date, techs);
-            }
+        MultiTechSelectionTask task = new MultiTechSelectionTask(host, techs -> {
+            setUpDaySelectorForm();
+            loadBoard(date, techs);
         });
         task.start();
     }
@@ -106,12 +93,9 @@ public class DailyAccountingTask_Admin extends DailyAccountingTask {
         host.getBoard().clear(host.getScale().scale(TASK_SCALE));
         displayLabel();
 
-        LoadTransactionRecordsOfDateQuery query = new LoadTransactionRecordsOfDateQuery(date, techs, new DataRetriever<LinkedList<Transaction>>() {
-            @Override
-            public void retrievedData(LinkedList<Transaction> transactionList) {
-                setTransactionList(transactionList);
-                displayTransactions();
-            }
+        LoadTransactionRecordsOfDateQuery query = new LoadTransactionRecordsOfDateQuery(date, techs, transactionList -> {
+            setTransactionList(transactionList);
+            displayTransactions();
         });
 
         query.executeQuery();
@@ -134,12 +118,9 @@ public class DailyAccountingTask_Admin extends DailyAccountingTask {
         Map<Long, Amount> techTotals = new TreeMap<>();
 
         for(final Transaction transaction : transactionList){
-            displayTransaction(transaction, row++, new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    setUpTransactionEditForm(transaction);
-                    return true;
-                }
+            displayTransaction(transaction, row++, v -> {
+                setUpTransactionEditForm(transaction);
+                return true;
             });
 
             shopTotal.add(transaction.getAmount(), transaction.getTip());
@@ -179,25 +160,22 @@ public class DailyAccountingTask_Admin extends DailyAccountingTask {
 
         Button button = host.getFormButton();
         button.setText("Update Record");
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String money = payment.getText().toString();
+        button.setOnClickListener(v -> {
+            String money = payment.getText().toString();
 
-                money = money.replaceAll("\\(" , " ");
-                money = money.replaceAll("[$).]", "");
-                money = money.replaceAll("[ ]+", " ");
+            money = money.replaceAll("\\(" , " ");
+            money = money.replaceAll("[$).]", "");
+            money = money.replaceAll("[ ]+", " ");
 
-                int[] pay = MoneyParser.parsePayment(money);
+            int[] pay = MoneyParser.parsePayment(money);
 
-                if(pay == null){
-                    payment.setError("example: $57.50 ($2.00)");
-                    return;
-                }
-
-                new UpdateTransactionRecordQuery(transaction, pay[0], pay[1], svc.getText().toString()).executeQuery();
-                displayTransactions();
+            if(pay == null){
+                payment.setError("example: $57.50 ($2.00)");
+                return;
             }
+
+            new UpdateTransactionRecordQuery(transaction, pay[0], pay[1], svc.getText().toString()).executeQuery();
+            displayTransactions();
         });
     }
 
