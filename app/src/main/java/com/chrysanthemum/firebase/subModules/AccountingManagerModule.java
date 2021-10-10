@@ -2,7 +2,6 @@ package com.chrysanthemum.firebase.subModules;
 
 import com.chrysanthemum.appdata.RemoteDataBase.AccountingManager;
 import com.chrysanthemum.appdata.Util.AppUtil;
-import com.chrysanthemum.appdata.dataType.Technician;
 import com.chrysanthemum.appdata.dataType.Transaction;
 import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
@@ -102,9 +101,11 @@ public class AccountingManagerModule implements AccountingManager {
                 DataSnapshot result = task.getResult();
 
                 Amount a = new Amount();
-                a.add(result.child(DatabaseStructure.Accounting.A_AMOUNT).getValue(Integer.class),
-                        result.child(DatabaseStructure.Accounting.A_NO_TAX).getValue(Integer.class));
-
+                assert result != null;
+                if(result.exists()){
+                    a.add(result.child(DatabaseStructure.Accounting.A_AMOUNT).getValue(Integer.class),
+                            result.child(DatabaseStructure.Accounting.A_NO_TAX).getValue(Integer.class));
+                }
                 retriever.retrievedData(a);
             } else {
                 retriever.retrievedData(null);

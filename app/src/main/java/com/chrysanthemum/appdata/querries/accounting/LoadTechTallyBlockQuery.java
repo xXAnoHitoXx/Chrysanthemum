@@ -39,16 +39,18 @@ public class LoadTechTallyBlockQuery extends Query<TechTallyBlock> {
 
             DataStorageModule.getRemoteDataBaseModule()
                     .getAccountingManager().findTechTally(date, tech.getID(), data -> {
-                if(data != null){
-                    block.add(fini, data);
-                }
+                        if(data != null){
+                            synchronized(block){
+                                block.add(fini, data);
+                            }
+                        }
 
-                dom.retrievedData(data);
+                        dom.retrievedData(data);
 
-                if(dom.isCompleted()){
-                    complete(block);
-                }
-            });
+                        if(dom.isCompleted()){
+                            complete(block);
+                        }
+                    });
         }
     }
 }

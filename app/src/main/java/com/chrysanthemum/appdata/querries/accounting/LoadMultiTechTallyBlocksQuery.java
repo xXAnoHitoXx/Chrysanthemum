@@ -10,13 +10,13 @@ import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.TreeMap;
 
-public class LoadMultiTechTallyBlocks extends Query<TreeMap<Long, TechTallyBlock>> {
+public class LoadMultiTechTallyBlocksQuery extends Query<TreeMap<Long, TechTallyBlock>> {
 
     final LocalDate Start;
     final LocalDate End;
     final LinkedList<Technician> techs;
 
-    public LoadMultiTechTallyBlocks(LocalDate dayA, LocalDate dayB, LinkedList<Technician> techs, DataRetriever<TreeMap<Long, TechTallyBlock>> retriever) {
+    public LoadMultiTechTallyBlocksQuery(LocalDate dayA, LocalDate dayB, LinkedList<Technician> techs, DataRetriever<TreeMap<Long, TechTallyBlock>> retriever) {
         super(retriever);
 
         this.Start = (dayA.compareTo(dayB) < 0)? dayA : dayB;
@@ -33,11 +33,17 @@ public class LoadMultiTechTallyBlocks extends Query<TreeMap<Long, TechTallyBlock
 
         for(Technician tech : techs){
             Query<TechTallyBlock> sub = new LoadTechTallyBlockQuery(Start, End,
-                    tech, data -> {
-                m.put(tech.getID(), data);
-                dom.retrievedData(data);
-                if(dom.isCompleted()){
-                    complete(m);
+                    tech, new DataRetriever<TechTallyBlock>() {
+                @Override
+                public synchronized void retrievedData(TechTallyBlock data) {
+                    synchronized(m){
+                        m.put(tech.getID(), data);
+                    }
+
+                    dom.retrievedData(data);
+                    if(dom.isCompleted()){
+                        complete(m);
+                    }
                 }
             });
 
