@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.chrysanthemum.appdata.Util.Scaler;
 import com.chrysanthemum.appdata.dataType.Gift;
+import com.chrysanthemum.appdata.dataType.parsing.MoneyParser;
 import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
 import com.chrysanthemum.appdata.querries.gift.EditGiftDataQuery;
@@ -101,7 +102,13 @@ public class GiftManager extends LineDisplayLayoutTask {
             public void onClick(View v) {
                 String dateIssued = TimeParser.parseDateData(LocalDate.now());
 
-                NewGiftCardQuery q = new NewGiftCardQuery(code, formatAmount(amount.getText().toString()),
+                int amt = MoneyParser.parseSingleAmount(amount.getText().toString());
+                if(amt == Integer.MIN_VALUE){
+                    amount.setError("Amount Isn't Recognizable!");
+                    return;
+                }
+
+                NewGiftCardQuery q = new NewGiftCardQuery(code, formatAmount(amt),
                         dateIssued, expireDate.getText().toString().replaceAll("/", " "),
                         new DataRetriever<Gift>() {
                             @Override
