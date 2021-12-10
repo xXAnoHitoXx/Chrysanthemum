@@ -8,6 +8,7 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
+import com.chrysanthemum.appdata.dataType.subType.Colour;
 import com.chrysanthemum.ui.dataView.display.Displayable;
 
 public class DisplayUnit extends Displayable {
@@ -48,6 +49,11 @@ public class DisplayUnit extends Displayable {
         bgDrawable.setBounds(boundingBox);
 
         return bgDrawable;
+    }
+
+    @Override
+    public Colour getBGColour() {
+        return new Colour(colour);
     }
 
     @Override

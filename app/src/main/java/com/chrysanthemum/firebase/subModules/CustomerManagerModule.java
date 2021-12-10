@@ -51,7 +51,7 @@ public class CustomerManagerModule implements CustomerManager {
 
                     if(task.isSuccessful()){
                         DataSnapshot snapshot = task.getResult();
-                        if(snapshot.exists()){
+                        if(snapshot != null){
                             for(DataSnapshot child : snapshot.getChildren()){
                                 Customer c = child.getValue(Customer.class);
                                 IDList.add(c);
@@ -72,7 +72,7 @@ public class CustomerManagerModule implements CustomerManager {
                         DataSnapshot snapshot = task.getResult();
                         LinkedList<Long> IDList = new LinkedList<>();
 
-                        if(snapshot.exists()){
+                        if(snapshot != null){
                             for(DataSnapshot child : snapshot.getChildren()){
                                 long id = child.getValue(Long.class);
                                 IDList.add(id);

@@ -84,9 +84,15 @@ public class TransactionManagerModule implements TransactionManager {
                 .child(DatabaseStructure.TransactionBranch.LIST)
                 .child("" + id).get().addOnCompleteListener(task -> {
                     if(task.isSuccessful()){
-                        TransactionFrame c = task.getResult().getValue(TransactionFrame.class);
-                        c.setID(id);
-                        retriever.retrievedData(c);
+
+                        DataSnapshot snap = task.getResult();
+
+                        if(snap != null){
+                            TransactionFrame c = snap.getValue(TransactionFrame.class);
+                            assert c != null;
+                            c.setID(id);
+                            retriever.retrievedData(c);
+                        }
                     }
                 });
     }
@@ -107,6 +113,7 @@ public class TransactionManagerModule implements TransactionManager {
                         DataSnapshot snapshot = task.getResult();
                         LinkedList<Long> IDList = new LinkedList<>();
 
+                        assert snapshot != null;
                         if(snapshot.exists()){
                             for(DataSnapshot child : snapshot.getChildren()){
                                 long id = child.getValue(Long.class);
@@ -128,6 +135,7 @@ public class TransactionManagerModule implements TransactionManager {
                         DataSnapshot snapshot = task.getResult();
                         LinkedList<Long> IDList = new LinkedList<>();
 
+                        assert snapshot != null;
                         if(snapshot.exists()){
                             for(DataSnapshot child : snapshot.getChildren()){
                                 long id = child.getValue(Long.class);

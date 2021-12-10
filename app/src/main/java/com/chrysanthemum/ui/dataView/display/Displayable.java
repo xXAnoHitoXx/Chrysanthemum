@@ -6,6 +6,8 @@ import android.view.View;
 
 import androidx.annotation.Nullable;
 
+import com.chrysanthemum.appdata.dataType.subType.Colour;
+
 /**
  * implements this interface to be displayed by the board
  */
@@ -19,6 +21,7 @@ public abstract class Displayable implements Comparable<Displayable> {
 
     @Nullable
     public abstract Drawable getBGDrawable(Rect boundingBox);
+    public abstract Colour getBGColour();
     public abstract String getDisplayData();
     public abstract View.OnClickListener getOnclickListener();
     public abstract View.OnLongClickListener getOnLongClickListener();
