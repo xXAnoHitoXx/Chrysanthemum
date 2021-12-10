@@ -41,12 +41,11 @@ public class MoneyParser {
             return Integer.MIN_VALUE;
         }
 
-        int pay = scanner.nextInt();
-
-        return pay;
+        return scanner.nextInt();
     }
 
 
+    @SuppressLint("DefaultLocale")
     public static String parseSingleAmount(long amount){
 
         long dollars =  Math.abs(amount / 100);

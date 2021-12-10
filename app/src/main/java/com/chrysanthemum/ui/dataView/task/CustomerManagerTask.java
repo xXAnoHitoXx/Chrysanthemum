@@ -17,6 +17,7 @@ import com.chrysanthemum.appdata.dataType.Transaction;
 import com.chrysanthemum.appdata.dataType.parsing.PhoneNumberParser;
 import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
+import com.chrysanthemum.appdata.dataType.subType.Colour;
 import com.chrysanthemum.appdata.querries.Query;
 import com.chrysanthemum.appdata.querries.customers.UpdateCustomerInfoQuery;
 import com.chrysanthemum.appdata.querries.transactions.TransactionsByCustomerIDQuery;
@@ -24,7 +25,6 @@ import com.chrysanthemum.ui.dataView.display.Displayable;
 import com.chrysanthemum.ui.dataView.task.display.PhoneNumberBar;
 import com.chrysanthemum.ui.dataView.task.subTasks.CustomerFinderTask;
 
-import java.util.Comparator;
 import java.util.LinkedList;
 
 public class CustomerManagerTask extends Task {
@@ -42,12 +42,9 @@ public class CustomerManagerTask extends Task {
     public void start() {
         host.getBoard().clear(host.getScale());
 
-        CustomerFinderTask t = new CustomerFinderTask(host, new DataRetriever<Customer>() {
-            @Override
-            public void retrievedData(Customer customer) {
-                setupCustomerInfoAdjustmentForm(customer);
-                loadTransactions(customer);
-            }
+        CustomerFinderTask t = new CustomerFinderTask(host, customer -> {
+            setupCustomerInfoAdjustmentForm(customer);
+            loadTransactions(customer);
         });
 
         t.start();
@@ -73,14 +70,11 @@ public class CustomerManagerTask extends Task {
 
         Button b = host.getFormButton();
         b.setText("Update Customer Info");
-        b.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (phoneBar.hasPhoneNumber()) {
-                    new UpdateCustomerInfoQuery(customer, name.getText().toString(), phoneBar.getPhoneNumber()).executeQuery();
-                    host.popMessage("Updated Customer Info!");
-                    setupCustomerInfoAdjustmentForm(customer);
-                }
+        b.setOnClickListener(v -> {
+            if (phoneBar.hasPhoneNumber()) {
+                new UpdateCustomerInfoQuery(customer, name.getText().toString(), phoneBar.getPhoneNumber()).executeQuery();
+                host.popMessage("Updated Customer Info!");
+                setupCustomerInfoAdjustmentForm(customer);
             }
         });
     }
@@ -88,30 +82,24 @@ public class CustomerManagerTask extends Task {
     private void loadTransactions(Customer customer){
         host.getBoard().clear(host.getScale());
 
-        DataRetriever<LinkedList<Transaction>> retriever = new DataRetriever<LinkedList<Transaction>>() {
-            @Override
-            public void retrievedData(LinkedList<Transaction> data) {
+        DataRetriever<LinkedList<Transaction>> retriever = data -> {
 
-                // sort data by appointment time then by id
-                data.sort(new Comparator<Transaction>() {
-                    @Override
-                    public int compare(Transaction o1, Transaction o2) {
-                        long comp = o1.getLocalDateAppointmentDate().compareTo(o2.getLocalDateAppointmentDate());
+            // sort data by appointment time then by id
+            data.sort((o1, o2) -> {
+                long comp = o1.getLocalDateAppointmentDate().compareTo(o2.getLocalDateAppointmentDate());
 
-                        if(comp == 0){
-                            comp = o1.getID() - o2.getID();
-                        }
-
-                        return (comp == 0)? 0 : (int) (comp / Math.abs(comp));
-                    }
-                });
-
-                // display each transaction in a row
-                int row = 0;
-
-                for(Transaction transaction : data){
-                    displayTransaction(row++, transaction);
+                if(comp == 0){
+                    comp = o1.getID() - o2.getID();
                 }
+
+                return (comp == 0)? 0 : (int) (comp / Math.abs(comp));
+            });
+
+            // display each transaction in a row
+            int row = 0;
+
+            for(Transaction transaction : data){
+                displayTransaction(row++, transaction);
             }
         };
 
@@ -172,6 +160,11 @@ public class CustomerManagerTask extends Task {
                 drawable.getPaint().setColor(colour);
                 drawable.setBounds(boundingBox);
                 return drawable;
+            }
+
+            @Override
+            public Colour getBGColour() {
+                return new Colour(colour);
             }
 
             @Override

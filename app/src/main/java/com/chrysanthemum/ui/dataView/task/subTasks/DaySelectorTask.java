@@ -18,6 +18,7 @@ import androidx.core.content.res.ResourcesCompat;
 import com.chrysanthemum.R;
 import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
+import com.chrysanthemum.appdata.dataType.subType.Colour;
 import com.chrysanthemum.ui.dataView.display.DisplayBoard;
 import com.chrysanthemum.ui.dataView.display.Displayable;
 import com.chrysanthemum.ui.dataView.task.Task;
@@ -143,6 +144,11 @@ public class DaySelectorTask extends Task {
                     bgDrawable,
                     checkMark
             });
+        }
+
+        @Override
+        public Colour getBGColour() {
+            return new Colour(Color.LTGRAY);
         }
 
         @Override

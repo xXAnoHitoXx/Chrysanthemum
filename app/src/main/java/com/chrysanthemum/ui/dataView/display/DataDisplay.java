@@ -6,6 +6,8 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 
+import com.chrysanthemum.appdata.dataType.subType.Colour;
+
 /**
  * a slot on  the board that could be used to display a displayable
  */
@@ -35,6 +37,12 @@ public class DataDisplay extends androidx.appcompat.widget.AppCompatTextView {
             if(bg != null){
                 bg.draw(canvas);
                 bg.invalidateSelf();
+            }
+
+            if(data.getBGColour().isDark()){
+                this.setTextColor(0xffefefef);
+            } else {
+                this.setTextColor(0xff000000);
             }
 
             this.setText(data.getDisplayData());

@@ -72,8 +72,22 @@ public class TransactionFrame {
         return services;
     }
 
-    public Transaction formTransaction(Customer c, Technician t){
-        return new Transaction(date, Integer.parseInt(appointmentTime), Integer.parseInt(duration), c, id, t,
-                Integer.parseInt(amount), Integer.parseInt(tip), services);
+    public Transaction formTransaction(Customer c, Technician tech){
+
+        int aptime, dur, amt, t;
+
+        try {
+            aptime = Integer.parseInt(appointmentTime);
+            dur =  Integer.parseInt(duration);
+            amt = Integer.parseInt(amount);
+            t = Integer.parseInt(tip);
+
+            return new Transaction(date, aptime, dur, c, id, tech,
+                    amt, t, services);
+        }catch (NumberFormatException e) {
+            return null;
+        }
+
+
     }
 }

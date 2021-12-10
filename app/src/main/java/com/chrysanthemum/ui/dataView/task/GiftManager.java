@@ -3,15 +3,14 @@ package com.chrysanthemum.ui.dataView.task;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.chrysanthemum.appdata.Util.Scaler;
 import com.chrysanthemum.appdata.dataType.Gift;
+import com.chrysanthemum.appdata.dataType.parsing.MoneyParser;
 import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
-import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
 import com.chrysanthemum.appdata.querries.gift.EditGiftDataQuery;
 import com.chrysanthemum.appdata.querries.gift.FindGiftCardByIDQuery;
 import com.chrysanthemum.appdata.querries.gift.NewGiftCardQuery;
@@ -45,23 +44,17 @@ public class GiftManager extends LineDisplayLayoutTask {
 
         Button button = host.getFormButton();
         button.setText("Search");
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FindGiftCardByIDQuery q = new FindGiftCardByIDQuery(code.getText().toString(), new DataRetriever<Gift>() {
-                    @Override
-                    public void retrievedData(Gift data) {
-                        if(data == null){
-                            LocalDate expire = LocalDate.now().plusYears(3);
-                            createGift(code.getText().toString(), TimeParser.parseDateDisplayDay(expire));
-                        } else {
-                            displayGiftData(data);
-                        }
-                    }
-                });
+        button.setOnClickListener(v -> {
+            FindGiftCardByIDQuery q = new FindGiftCardByIDQuery(code.getText().toString(), data -> {
+                if(data == null){
+                    LocalDate expire = LocalDate.now().plusYears(3);
+                    createGift(code.getText().toString(), TimeParser.parseDateDisplayDay(expire));
+                } else {
+                    displayGiftData(data);
+                }
+            });
 
-                q.executeQuery();
-            }
+            q.executeQuery();
         });
     }
 
@@ -81,38 +74,30 @@ public class GiftManager extends LineDisplayLayoutTask {
         expireDateLbl.setText("Expires Date");
         expireDate.setText(expire);
         expireDate.setFocusable(false);
-        expireDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new DaySelectorTask(host, new DataRetriever<LocalDate>() {
-                    @Override
-                    public void retrievedData(LocalDate data) {
-                        host.getBoard().clear(new Scaler(TASK_SCALE));
-                        createGift(code, TimeParser.parseDateDisplayDay(data));
-                    }
-                }).start();
-            }
-        });
+        expireDate.setOnClickListener(v -> new DaySelectorTask(host, data -> {
+            host.getBoard().clear(new Scaler(TASK_SCALE));
+            createGift(code, TimeParser.parseDateDisplayDay(data));
+        }).start());
 
         Button button = host.getFormButton();
         button.setText("Create Gift");
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String dateIssued = TimeParser.parseDateData(LocalDate.now());
+        button.setOnClickListener(v -> {
+            String dateIssued = TimeParser.parseDateData(LocalDate.now());
 
-                NewGiftCardQuery q = new NewGiftCardQuery(code, formatAmount(amount.getText().toString()),
-                        dateIssued, expireDate.getText().toString().replaceAll("/", " "),
-                        new DataRetriever<Gift>() {
-                            @Override
-                            public void retrievedData(Gift data) {
-                                giftSearch();
-                                displayGiftData(data);
-                            }
-                        });
-
-                q.executeQuery();
+            int amt = MoneyParser.parseSingleAmount(amount.getText().toString());
+            if(amt == Integer.MIN_VALUE){
+                amount.setError("Amount Isn't Recognizable!");
+                return;
             }
+
+            NewGiftCardQuery q = new NewGiftCardQuery(code, MoneyParser.parseSingleAmount(amt),
+                    dateIssued, expireDate.getText().toString().replaceAll("/", " "),
+                    data -> {
+                        giftSearch();
+                        displayGiftData(data);
+                    });
+
+            q.executeQuery();
         });
     }
 
@@ -132,47 +117,26 @@ public class GiftManager extends LineDisplayLayoutTask {
         expireDateLbl.setText("Expires Date");
         expireDate.setText(expDate);
         expireDate.setFocusable(false);
-        expireDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new DaySelectorTask(host, new DataRetriever<LocalDate>() {
-                    @Override
-                    public void retrievedData(LocalDate data) {
-                        editGift(gift, TimeParser.parseDateDisplayDay(data));
-                        displayGiftData(gift);
-                    }
-                }).start();
-            }
-        });
+        expireDate.setOnClickListener(v -> new DaySelectorTask(host, data -> {
+            editGift(gift, TimeParser.parseDateDisplayDay(data));
+            displayGiftData(gift);
+        }).start());
 
         Button button = host.getFormButton();
         button.setText("Edit Gift");
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                EditGiftDataQuery q = new EditGiftDataQuery(gift, formatAmount(amount.getText().toString()),
-                        expireDate.getText().toString().replaceAll("/", " "));
-                displayGiftData(q.executeQuery());
+        button.setOnClickListener(v -> {
+
+
+            int amt = MoneyParser.parseSingleAmount(amount.getText().toString());
+            if(amt == Integer.MIN_VALUE){
+                amount.setError("Amount Isn't Recognizable!");
+                return;
             }
+
+            EditGiftDataQuery q = new EditGiftDataQuery(gift, MoneyParser.parseSingleAmount(amt),
+                    expireDate.getText().toString().replaceAll("/", " "));
+            displayGiftData(q.executeQuery());
         });
-    }
-
-    private String formatAmount(String amount){
-        StringBuilder builder = new StringBuilder();
-
-        if(!amount.substring(0, 1).equalsIgnoreCase("$")){
-            builder.append("$");
-        }
-
-        if(!amount.contains(".")){
-            builder.append(amount.substring(0, amount.length() - 2));
-            builder.append(".");
-            builder.append(amount.substring(amount.length() - 2));
-        } else {
-            builder.append(amount);
-        }
-
-        return builder.toString();
     }
 
     private void displayGiftData(final Gift gift){
@@ -188,12 +152,9 @@ public class GiftManager extends LineDisplayLayoutTask {
                 gift.getId(), gift.getAmount(), gift.getDateIssued().replaceAll(" ", "/"), gift.getDateExpires().replaceAll(" ", "/")
         };
 
-        displayLine(data, Color.LTGRAY, 1, new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                editGift(gift, gift.getDateExpires().replaceAll(" ", "/"));
-                return true;
-            }
+        displayLine(data, Color.LTGRAY, 1, v -> {
+            editGift(gift, gift.getDateExpires().replaceAll(" ", "/"));
+            return true;
         });
 
     }

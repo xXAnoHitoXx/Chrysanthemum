@@ -18,6 +18,7 @@ import com.chrysanthemum.appdata.dataType.Transaction;
 import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
 import com.chrysanthemum.appdata.dataType.subType.AppointmentStatus;
+import com.chrysanthemum.appdata.dataType.subType.Colour;
 import com.chrysanthemum.appdata.querries.Query;
 import com.chrysanthemum.appdata.querries.appointments.LoadAppointmentListByDayQuery;
 import com.chrysanthemum.ui.dataView.display.DisplayBoard;
@@ -185,6 +186,7 @@ public class AppointmentViewerTask extends Task {
 
         private final Rect hitbox;
         private final Transaction t;
+        private int colour;
 
         public TransactionDisplay(Rect hitbox, Transaction t){
             this.hitbox = hitbox;
@@ -194,9 +196,6 @@ public class AppointmentViewerTask extends Task {
         @Nullable
         @Override
         public Drawable getBGDrawable(Rect boundingBox) {
-            ShapeDrawable drawable =  new ShapeDrawable(new RectShape());
-
-            int colour;
 
             if(t.noShow()){
                 colour = 0xFF8C8C8C;
@@ -206,9 +205,15 @@ public class AppointmentViewerTask extends Task {
                 colour = t.getTech().getColour();
             }
 
+            ShapeDrawable drawable =  new ShapeDrawable(new RectShape());
             drawable.getPaint().setColor(colour);
             drawable.setBounds(boundingBox);
             return drawable;
+        }
+
+        @Override
+        public Colour getBGColour() {
+            return new Colour(colour);
         }
 
         @Override
@@ -287,6 +292,7 @@ public class AppointmentViewerTask extends Task {
         private final Rect hitbox;
         private final int hour;
         private final LocalDate date;
+        private final int colour;
 
         public HourMarker(int hour, LocalDate date){
             this.hour = hour;
@@ -295,29 +301,36 @@ public class AppointmentViewerTask extends Task {
             hitbox = new Rect(getTimeXpos(time), getRowYpos(0),
                     getTimeXpos(time + 60),
                     getRowYpos(0) + SLOT_HEIGHT);
+
+            if(date.getDayOfWeek().getValue() == 2 ||
+                    hour < 10 || hour >= 19 ||
+                    (hour >= 17 && (date.getDayOfWeek().getValue() % 7) < 2)){
+
+                if(hour % 2 != 0){
+                    colour = 0xFFB12C2C;
+                } else {
+                    colour = 0xFFFF7F7F;
+                }
+
+            } else if(hour % 2 == 0){
+                colour = Color.LTGRAY;
+            } else {
+                colour = 0xFFBBBBBB;
+            }
         }
 
         @Nullable
         @Override
         public Drawable getBGDrawable(Rect boundingBox) {
             ShapeDrawable drawable =  new ShapeDrawable(new RectShape());
-            if(date.getDayOfWeek().getValue() == 2 ||
-                    hour < 10 || hour >= 19 ||
-                    (hour >= 17 && (date.getDayOfWeek().getValue() % 7) < 2)){
-
-                if(hour % 2 != 0){
-                    drawable.getPaint().setColor(0xFFB12C2C);
-                } else {
-                    drawable.getPaint().setColor(0xFFFF7F7F);
-                }
-
-            } else if(hour % 2 == 0){
-                drawable.getPaint().setColor(Color.LTGRAY);
-            } else {
-                drawable.getPaint().setColor(0xFFBBBBBB);
-            }
+            drawable.getPaint().setColor(colour);
             drawable.setBounds(boundingBox);
             return drawable;
+        }
+
+        @Override
+        public Colour getBGColour() {
+            return new Colour(colour);
         }
 
         @Override
