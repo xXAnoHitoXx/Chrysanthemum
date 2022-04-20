@@ -83,8 +83,10 @@ public class AppointmentClaimTask  extends Task {
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
                     new DeleteNoshowAppointmentQuery(transaction).executeQuery();
+                    CustomerFinderTask.service(transaction.getCustomer());
                     retriever.retrievedData(DELETED);
                 })
                 .setNegativeButton(android.R.string.no, null).show();
+
     }
 }

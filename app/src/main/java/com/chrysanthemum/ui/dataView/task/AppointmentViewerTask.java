@@ -26,7 +26,7 @@ import com.chrysanthemum.ui.dataView.display.Displayable;
 import com.chrysanthemum.ui.dataView.task.subTasks.AppointmentClaimTask;
 import com.chrysanthemum.ui.dataView.task.subTasks.DaySelectorTask;
 import com.chrysanthemum.ui.dataView.task.subTasks.NewAppointmentTask;
-import com.chrysanthemum.ui.dataView.task.subTasks.RecordPaymentTask;
+import com.chrysanthemum.ui.dataView.task.subTasks.UpdateAppointmentTask;
 
 import java.time.LocalDate;
 import java.util.LinkedList;
@@ -265,6 +265,7 @@ public class AppointmentViewerTask extends Task {
                 setupDaySelectionForm();
                 if(status == AppointmentClaimTask.DELETED){
                     host.getBoard().remove(display);
+                    loadAppointment();
                 } else {
                     host.getBoard().invalidateData(display);
                 }
@@ -276,10 +277,9 @@ public class AppointmentViewerTask extends Task {
         private void setupRecordPaymentSubTask(){
             final Displayable display = this;
 
-            RecordPaymentTask subTask  = new RecordPaymentTask(host, t, data -> {
+            UpdateAppointmentTask subTask  = new UpdateAppointmentTask(host, t, data -> {
                 setupDaySelectionForm();
-                host.getBoard().remove(display);
-                appointmentList.remove(data.getID());
+                loadAppointment();
             });
 
             subTask.start();

@@ -101,22 +101,22 @@ public class NewAppointmentTask extends Task {
 
             if(appointmentDuration < 0){
 
-                switch (appointmentDurationText) {
-                    case "a":
-                    case "A":
-                        appointmentDuration = 30;
-                        break;
-                    case "b":
-                    case "B":
-                        appointmentDuration = 60;
-                        break;
-                    case "c":
-                    case "C":
-                        appointmentDuration = 90;
-                        break;
-                    default:
-                        duration.setError("Appointment Duration Example: 1:30");
-                        return;
+                if(appointmentDurationText.equalsIgnoreCase("a")){
+                    appointmentDuration = 30;
+                } else if(appointmentDurationText.equalsIgnoreCase("aa")){
+                    appointmentDuration = 45;
+                } else if(appointmentDurationText.equalsIgnoreCase("b")){
+                    appointmentDuration = 60;
+                } else if(appointmentDurationText.equalsIgnoreCase("bb")){
+                    appointmentDuration = 75;
+                } else if(appointmentDurationText.equalsIgnoreCase("c")){
+                    appointmentDuration = 90;
+                } else if(appointmentDurationText.equalsIgnoreCase("cc")){
+                    appointmentDuration = 105;
+                } else if(appointmentDurationText.equalsIgnoreCase("d")){
+                    appointmentDuration = 120;
+                } else {
+                    duration.setError("Appointment Duration Example: 1:30");
                 }
             }
 
