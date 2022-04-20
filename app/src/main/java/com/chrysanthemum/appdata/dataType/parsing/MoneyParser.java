@@ -19,15 +19,11 @@ public class MoneyParser {
 
         int pay = scanner.nextInt();
 
-        if(pay < 0 || !scanner.hasNextInt()){
+        if(!scanner.hasNextInt()){
             return null;
         }
 
         int tip = scanner.nextInt();
-
-        if(tip < 0){
-            return null;
-        }
 
         return new int [] {pay, tip};
     }

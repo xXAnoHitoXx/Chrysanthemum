@@ -10,15 +10,16 @@ import com.chrysanthemum.appdata.dataType.Transaction;
 import com.chrysanthemum.appdata.dataType.parsing.MoneyParser;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
 import com.chrysanthemum.appdata.querries.appointments.CloseAppointmentQuery;
+import com.chrysanthemum.appdata.querries.transactions.UpdateTransactionNoteQuery;
 import com.chrysanthemum.ui.dataView.task.Task;
 import com.chrysanthemum.ui.dataView.task.TaskHostestActivity;
 
-public class RecordPaymentTask extends Task {
+public class UpdateAppointmentTask extends Task {
 
     private final DataRetriever<Transaction> retriever;
     private final Transaction transaction;
 
-    public RecordPaymentTask(TaskHostestActivity host, Transaction transaction, DataRetriever<Transaction> retriever) {
+    public UpdateAppointmentTask(TaskHostestActivity host, Transaction transaction, DataRetriever<Transaction> retriever) {
         super(host);
 
         this.retriever = retriever;
@@ -57,14 +58,12 @@ public class RecordPaymentTask extends Task {
                 int[] pay = MoneyParser.parsePayment(money);
 
                 if(pay == null){
-                    payment.setError("example: $57.50 ($2.00)");
-                    return;
+                    new UpdateTransactionNoteQuery(transaction, service.getText().toString()).executeQuery();
+                } else {
+                    new CloseAppointmentQuery(transaction, pay[0], pay[1], service.getText().toString()).executeQuery();
                 }
 
-                new CloseAppointmentQuery(transaction, pay[0], pay[1], service.getText().toString()).executeQuery();
-
                 CustomerFinderTask.service(transaction.getCustomer());
-
                 retriever.retrievedData(transaction);
             }
         });
