@@ -9,7 +9,7 @@ import com.chrysanthemum.appdata.dataType.Technician;
 public class TechnicianSelectorPanel {
 
     private TechnicianSelectorButton selected;
-    private boolean locked = false;
+    protected boolean locked = false;
 
     public TechnicianSelectorPanel(Context context, LinearLayout layout, boolean vertical){
         selected = null;

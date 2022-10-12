@@ -1,10 +1,9 @@
 package com.chrysanthemum.appdata;
 
 import com.chrysanthemum.appdata.RemoteDataBase.RemoteDataBase;
-import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
+import com.chrysanthemum.appdata.dataType.Technician;
 import com.chrysanthemum.appdata.dataType.retreiver.NullRetriever;
 import com.chrysanthemum.appdata.security.SecurityModule;
-import com.chrysanthemum.appdata.dataType.Technician;
 import com.chrysanthemum.firebase.DatabaseStructure;
 import com.chrysanthemum.firebase.FireDatabase;
 
@@ -88,7 +87,7 @@ public class DataStorageModule implements DataStorageFrontEnd, DataStorageBackEn
         LinkedList<Technician> list = new LinkedList<>();
 
         for(Technician technician : val){
-            if(technician.getID() != DatabaseStructure.Accounting.SALE_TECH.getID()){
+            if(technician.getID() != DatabaseStructure.Accounting.SALE_TECH.getID() && !technician.getRole().equals(Technician.Inactive)){
                 list.add(technician);
             }
         }
