@@ -73,16 +73,14 @@ public class DataStorageModule implements DataStorageFrontEnd, DataStorageBackEn
     private Map<String, Technician> techMap;
 
     public void loadTechMap(final NullRetriever retriever) {
-        remote.getTechnicianMap(new DataRetriever<Map<String, Technician>>() {
-            @Override
-            public void retrievedData(Map<String, Technician> data) {
-                techMap = data;
-                Technician sale = DatabaseStructure.Accounting.SALE_TECH;
-                techMap.put(sale.getID() + "", sale);
-                retriever.retrieved();
-            }
+        remote.getTechnicianMap(data -> {
+            techMap = data;
+            Technician sale = DatabaseStructure.Accounting.SALE_TECH;
+            techMap.put(sale.getID() + "", sale);
+            retriever.retrieved();
         });
     }
+
 
     public Iterable<Technician> getTechList(){
         Collection<Technician> val = techMap.values();

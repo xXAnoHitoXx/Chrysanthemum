@@ -53,8 +53,13 @@ public class TechnicianSelectorPanel {
                 selected.toggle();
             }
 
-            selected = newTech;
-            selected.toggle();
+            if(selected == newTech){
+                selected = null;
+            } else {
+                selected = newTech;
+                selected.toggle();
+            }
+
         }
     }
 
