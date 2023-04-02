@@ -17,9 +17,7 @@ public class MultiTechnicianSelectorPanel extends TechnicianSelectorPanel {
 
     private static final long SELECT_ALL = -1;
 
-    private Map<Long, Technician> selected = new TreeMap<>();
-
-    private boolean locked = false;
+    private final Map<Long, Technician> selected = new TreeMap<>();
 
     public MultiTechnicianSelectorPanel(Context context, LinearLayout layout){
         super(context, layout, false);

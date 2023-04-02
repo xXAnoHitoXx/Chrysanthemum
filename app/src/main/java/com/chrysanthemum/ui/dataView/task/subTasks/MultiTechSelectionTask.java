@@ -1,7 +1,6 @@
 package com.chrysanthemum.ui.dataView.task.subTasks;
 
 import android.annotation.SuppressLint;
-import android.view.View;
 import android.widget.Button;
 
 import com.chrysanthemum.appdata.dataType.Technician;
@@ -33,15 +32,12 @@ public class MultiTechSelectionTask extends Task {
         Button button = host.getFormButton();
         button.setText("Select");
 
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        button.setOnClickListener(v -> {
 
-                LinkedList<Technician> data = new LinkedList<>(panel.getSelectedTechs().values());
+            LinkedList<Technician> data = new LinkedList<>(panel.getSelectedTechs().values());
 
-                if(!data.isEmpty()){
-                    retriever.retrievedData(data);
-                }
+            if(!data.isEmpty()){
+                retriever.retrievedData(data);
             }
         });
     }

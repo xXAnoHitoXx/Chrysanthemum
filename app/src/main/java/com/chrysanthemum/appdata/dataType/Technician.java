@@ -4,6 +4,7 @@ public class Technician {
 
     public static final String ADMIN = "Admin";
     public static final String Dummy = "Dummy";
+    public static final String Inactive = "Inactive";
 
     private String name;
     private String role;

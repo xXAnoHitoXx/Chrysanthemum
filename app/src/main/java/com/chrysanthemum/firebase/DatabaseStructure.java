@@ -20,7 +20,6 @@ public class DatabaseStructure {
         public static final String LIST = "id";
 
         public static final String C_NAME = "name";
-        public static final long C_NAME_ROOT = 1624890203050l;
         public static final String C_PHONE = "phoneNumber";
     }
 
@@ -41,7 +40,7 @@ public class DatabaseStructure {
         public static final String SHOP_TOTAL = "ST";
         public static final String WEEKLY_TOTALS = "WTs";
 
-        public static final Technician SALE_TECH= new Technician("Sales", "", Color.LTGRAY, -32098271938l);
+        public static final Technician SALE_TECH= new Technician("Sales", "", Color.LTGRAY, -32098271938L);
 
         public static final String A_AMOUNT = "a";
         public static final String A_NO_TAX = "t";

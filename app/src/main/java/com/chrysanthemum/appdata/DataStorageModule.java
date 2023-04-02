@@ -1,10 +1,9 @@
 package com.chrysanthemum.appdata;
 
 import com.chrysanthemum.appdata.RemoteDataBase.RemoteDataBase;
-import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
+import com.chrysanthemum.appdata.dataType.Technician;
 import com.chrysanthemum.appdata.dataType.retreiver.NullRetriever;
 import com.chrysanthemum.appdata.security.SecurityModule;
-import com.chrysanthemum.appdata.dataType.Technician;
 import com.chrysanthemum.firebase.DatabaseStructure;
 import com.chrysanthemum.firebase.FireDatabase;
 
@@ -73,16 +72,14 @@ public class DataStorageModule implements DataStorageFrontEnd, DataStorageBackEn
     private Map<String, Technician> techMap;
 
     public void loadTechMap(final NullRetriever retriever) {
-        remote.getTechnicianMap(new DataRetriever<Map<String, Technician>>() {
-            @Override
-            public void retrievedData(Map<String, Technician> data) {
-                techMap = data;
-                Technician sale = DatabaseStructure.Accounting.SALE_TECH;
-                techMap.put(sale.getID() + "", sale);
-                retriever.retrieved();
-            }
+        remote.getTechnicianMap(data -> {
+            techMap = data;
+            Technician sale = DatabaseStructure.Accounting.SALE_TECH;
+            techMap.put(sale.getID() + "", sale);
+            retriever.retrieved();
         });
     }
+
 
     public Iterable<Technician> getTechList(){
         Collection<Technician> val = techMap.values();
@@ -90,7 +87,7 @@ public class DataStorageModule implements DataStorageFrontEnd, DataStorageBackEn
         LinkedList<Technician> list = new LinkedList<>();
 
         for(Technician technician : val){
-            if(technician.getID() != DatabaseStructure.Accounting.SALE_TECH.getID()){
+            if(technician.getID() != DatabaseStructure.Accounting.SALE_TECH.getID() && !technician.getRole().equals(Technician.Inactive)){
                 list.add(technician);
             }
         }

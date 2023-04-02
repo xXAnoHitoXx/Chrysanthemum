@@ -9,7 +9,7 @@ import com.chrysanthemum.appdata.dataType.Technician;
 public class TechnicianSelectorPanel {
 
     private TechnicianSelectorButton selected;
-    private boolean locked = false;
+    protected boolean locked = false;
 
     public TechnicianSelectorPanel(Context context, LinearLayout layout, boolean vertical){
         selected = null;
@@ -53,8 +53,13 @@ public class TechnicianSelectorPanel {
                 selected.toggle();
             }
 
-            selected = newTech;
-            selected.toggle();
+            if(selected == newTech){
+                selected = null;
+            } else {
+                selected = newTech;
+                selected.toggle();
+            }
+
         }
     }
 
