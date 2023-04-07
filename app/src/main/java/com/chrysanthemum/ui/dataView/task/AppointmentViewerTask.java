@@ -304,7 +304,7 @@ public class AppointmentViewerTask extends Task {
 
             if(date.getDayOfWeek().getValue() == 2 ||
                     hour < 10 || hour >= 19 ||
-                    (hour >= 17 && (date.getDayOfWeek().getValue() % 7) < 2)){
+                    (hour >= 17 && ((date.getDayOfWeek().getValue() + 1) % 7) < 2)){
 
                 if(hour % 2 != 0){
                     colour = 0xFFB12C2C;

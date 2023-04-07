@@ -86,7 +86,7 @@ public class CustomerManagerTask extends Task {
 
             // sort data by appointment time then by id
             data.sort((o1, o2) -> {
-                long comp = o1.getLocalDateAppointmentDate().compareTo(o2.getLocalDateAppointmentDate());
+                long comp = o2.getLocalDateAppointmentDate().compareTo(o1.getLocalDateAppointmentDate());
 
                 if(comp == 0){
                     comp = o1.getID() - o2.getID();
