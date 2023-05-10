@@ -142,21 +142,28 @@ public class TallyTask  extends LineDisplayLayoutTask {
 
                 boolean errorDetected = false;
 
-                long cash = MoneyParser.parseSingleAmount(scanner.next());
+                long cash =  scanner.hasNext() ? MoneyParser.parseSingleAmount(scanner.next()) : 0;
 
                 if(cash == Integer.MIN_VALUE){
                     form.setError("Invalid Amount");
                     errorDetected = true;
                 }
 
-                long machine = MoneyParser.parseSingleAmount(scanner.next());
+                long machine = scanner.hasNext() ? MoneyParser.parseSingleAmount(scanner.next()) : 0;
 
                 if(machine == Integer.MIN_VALUE){
                     form.setError("Invalid Amount");
                     errorDetected = true;
                 }
 
-                long gift = MoneyParser.parseSingleAmount(scanner.next());
+                long gift = scanner.hasNext() ? MoneyParser.parseSingleAmount(scanner.next()) : 0;
+
+                if(gift == Integer.MIN_VALUE){
+                    form.setError("Invalid Amount");
+                    errorDetected = true;
+                }
+
+                long discount = scanner.hasNext() ? MoneyParser.parseSingleAmount(scanner.next()) : 0;
 
                 if(gift == Integer.MIN_VALUE){
                     form.setError("Invalid Amount");
@@ -167,7 +174,7 @@ public class TallyTask  extends LineDisplayLayoutTask {
                     return;
                 }
 
-                UpdateClosingDataQuery q = new UpdateClosingDataQuery(cash, machine, gift, selectedDate, tally);
+                UpdateClosingDataQuery q = new UpdateClosingDataQuery(cash, machine, gift, discount, selectedDate, tally);
                 q.executeQuery();
 
                 displayTally(tally);

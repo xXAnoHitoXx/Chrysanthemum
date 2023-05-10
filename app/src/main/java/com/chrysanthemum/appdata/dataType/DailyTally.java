@@ -65,12 +65,19 @@ public class DailyTally {
         return MoneyParser.parseSingleAmount(close.getGift());
     }
 
+    public String getDiscount(){
+        if(close == null){
+            return "";
+        }
+        return MoneyParser.parseSingleAmount(close.getDiscount());
+    }
+
     public String getDiff(){
         if(close == null){
             return "";
         }
 
-        long diff = close.getCash() + close.getMachine() + close.getGift();
+        long diff = close.getCash() + close.getMachine() + close.getGift() + close.getDiscount();
         diff = diff - getAmt() - getTp() - getTx();
 
         return MoneyParser.parseSingleAmount(diff);

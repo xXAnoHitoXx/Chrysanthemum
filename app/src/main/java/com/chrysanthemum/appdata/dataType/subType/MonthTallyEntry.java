@@ -16,7 +16,7 @@ public class MonthTallyEntry {
     public MonthTallyEntry(String label) {
         this.label = label;
         techsPay = new TreeMap<>();
-        tally = new DailyTally(new DailyClosure(0, 0, 0), new long[]{0, 0});
+        tally = new DailyTally(new DailyClosure(0, 0, 0, 0), new long[]{0, 0});
     }
 
     public boolean hasData(){
