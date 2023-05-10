@@ -45,7 +45,7 @@ public class CustomerManagerModule implements CustomerManager {
         FireDatabase.getRef().child(DatabaseStructure.CustomerBranch.BRANCH_NAME)
                 .child(DatabaseStructure.CustomerBranch.LIST)
                 .orderByChild(DatabaseStructure.CustomerBranch.C_NAME)
-                .startAt(name).endAt(name + " Z").get().addOnCompleteListener(task -> {
+                .startAt(name).endAt(name + " zzz").get().addOnCompleteListener(task -> {
 
                     LinkedList<Customer> IDList = new LinkedList<>();
 
