@@ -131,10 +131,10 @@ public class TallyTask  extends LineDisplayLayoutTask {
         host.clearForm();
 
         final TextView label = host.createFormLabel(1);
-        label.setText("Cash Machine Gift:");
+        label.setText("Cash Machine Gift Discount:");
 
         final EditText form = host.createEditableForm(1);
-        form.setText(tally.getCash() + " " + tally.getMachine() + " " + tally.getGift());
+        form.setText(tally.getCash() + " " + tally.getMachine() + " " + tally.getGift() + " " + tally.getDiscount());
 
         Button button = host.getFormButton();
         button.setText("Update!");
