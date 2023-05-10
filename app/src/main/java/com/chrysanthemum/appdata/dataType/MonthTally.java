@@ -38,10 +38,6 @@ public class MonthTally {
         return title;
     }
 
-    public int size(){
-        return month.size();
-    }
-
     public String generateFileData(){
         Map<Long, Integer> techPos = allocateTechPos();
 
@@ -65,6 +61,7 @@ public class MonthTally {
         csv.append("Cash");
         csv.append("Machine");
         csv.append("Gift");
+        csv.append("Discount");
         csv.append("Diff");
 
         csv.newLine();

@@ -76,22 +76,23 @@ public class MonthTallyEntry {
     }
 
     public String[] getData(Map<Long, Integer> techPos){
-        String[] data = new String[2 * techPos.size() + 9];
+        String[] data = new String[2 * techPos.size() + 10];
 
         data[0] = label;
         data[data.length - 1] = tally.getDiff();
-        data[data.length - 2] = tally.getGift();
-        data[data.length - 3] = tally.getMachine();
-        data[data.length - 4] = tally.getCash();
-        data[data.length - 5] = tally.getTax();
-        data[data.length - 6] = tally.getTip();
-        data[data.length - 7] = tally.getAmount();
+        data[data.length - 2] = tally.getDiscount();
+        data[data.length - 3] = tally.getGift();
+        data[data.length - 4] = tally.getMachine();
+        data[data.length - 5] = tally.getCash();
+        data[data.length - 6] = tally.getTax();
+        data[data.length - 7] = tally.getTip();
+        data[data.length - 8] = tally.getAmount();
 
         if(techsPay.containsKey(DatabaseStructure.Accounting.SALE_TECH.getID())) {
             long[] sales = techsPay.get(DatabaseStructure.Accounting.SALE_TECH.getID());
-            data[data.length - 8] = (sales[0] + sales[1]) + "";
+            data[data.length - 9] = (sales[0] + sales[1]) + "";
         } else {
-            data[data.length - 8] = "0";
+            data[data.length - 9] = "0";
         }
 
         for(long id : techPos.keySet()){
