@@ -11,9 +11,11 @@ import java.util.Scanner;
 public class Transaction {
 
     public static final int NO_SHOW_AMOUNT = -100000000;
-
+    /** dd mm yy */
     private final String date; // dd mm yyyy
-    private final int appointmentTime; // hour * 60 + min
+    /** hour * 60 + min */
+    private final int appointmentTime;
+    /** in minutes */
     private final int duration;
     private final Customer c;
     private final long id;
