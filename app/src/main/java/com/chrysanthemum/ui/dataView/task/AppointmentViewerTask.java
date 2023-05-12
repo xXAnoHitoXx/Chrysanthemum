@@ -166,7 +166,7 @@ public class AppointmentViewerTask extends Task {
     private Rect allocateSpace(int rowNum, Transaction transaction){
         int left = getTimeXpos(transaction.getAppointmentTime());
         int right = getTimeXpos(transaction.getAppointmentTime()
-                + transaction.getDuration());
+                + Math.min(transaction.getDuration(), 15));
         int top = getRowYpos(rowNum + 1); // shift down by 1 row
         int bottom = top + SLOT_HEIGHT;
 
