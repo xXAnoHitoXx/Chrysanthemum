@@ -3,9 +3,9 @@ package com.chrysanthemum;
 import com.chrysanthemum.appdata.DataStorageModule;
 import com.chrysanthemum.appdata.Util.BoolFlag;
 import com.chrysanthemum.appdata.dataType.Customer;
-import com.chrysanthemum.appdata.querries.customers.CustomerByNameQuery;
-import com.chrysanthemum.appdata.querries.customers.CustomerByPhoneQuery;
-import com.chrysanthemum.appdata.querries.customers.NewCustomerQuery;
+import com.chrysanthemum.appdata.querries._old.customers.CustomerByNameQuery;
+import com.chrysanthemum.appdata.querries._old.customers.CustomerByPhoneQuery;
+import com.chrysanthemum.appdata.querries._old.customers.NewCustomerQuery;
 import com.chrysanthemum.firebase.FireDatabase;
 import com.chrysanthemum.ui.accessAuthentication.AppAuthenticationActivity;
 

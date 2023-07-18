@@ -81,13 +81,27 @@ public class DataStorageModule implements DataStorageFrontEnd, DataStorageBackEn
     }
 
 
-    public Iterable<Technician> getTechList(){
+    public Iterable<Technician> getActiveTechList(){
         Collection<Technician> val = techMap.values();
 
         LinkedList<Technician> list = new LinkedList<>();
 
         for(Technician technician : val){
             if(technician.getID() != DatabaseStructure.Accounting.SALE_TECH.getID() && !technician.getRole().equals(Technician.Inactive)){
+                list.add(technician);
+            }
+        }
+
+        return list;
+    }
+
+    public Iterable<Technician> getFullTechList(){
+        Collection<Technician> val = techMap.values();
+
+        LinkedList<Technician> list = new LinkedList<>();
+
+        for(Technician technician : val){
+            if(technician.getID() != DatabaseStructure.Accounting.SALE_TECH.getID()){
                 list.add(technician);
             }
         }

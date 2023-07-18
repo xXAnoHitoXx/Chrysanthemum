@@ -3,7 +3,6 @@ package com.chrysanthemum.ui.dataView.task.accounting.Daily;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
-import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,22 +10,18 @@ import android.widget.TextView;
 
 import com.chrysanthemum.appdata.dataType.DailyTally;
 import com.chrysanthemum.appdata.Util.Scaler;
-import com.chrysanthemum.appdata.dataType.Transaction;
 import com.chrysanthemum.appdata.dataType.parsing.MoneyParser;
 import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
-import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
-import com.chrysanthemum.appdata.querries.accounting.LoadDailyTallyOfDateQuery;
-import com.chrysanthemum.appdata.querries.accounting.UpdateClosingDataQuery;
+import com.chrysanthemum.appdata.querries.DBQuery;
+import com.chrysanthemum.appdata.querries._old.accounting.UpdateClosingDataQuery;
+import com.chrysanthemum.appdata.querries.accounting.read.ReadDailyTallyOfDate;
 import com.chrysanthemum.ui.dataView.task.Task;
 import com.chrysanthemum.ui.dataView.task.TaskHostestActivity;
 import com.chrysanthemum.ui.dataView.task.TaskSelectionButtion;
 import com.chrysanthemum.ui.dataView.task.display.LineDisplayLayoutTask;
 import com.chrysanthemum.ui.dataView.task.subTasks.DaySelectorTask;
 
-import java.io.File;
 import java.time.LocalDate;
-import java.util.LinkedList;
-import java.util.Map;
 import java.util.Scanner;
 
 public class TallyTask  extends LineDisplayLayoutTask {
@@ -36,8 +31,6 @@ public class TallyTask  extends LineDisplayLayoutTask {
     public TallyTask(TaskHostestActivity host) {
         super(host);
     }
-
-    private Map<String, LinkedList<Transaction>> data;
     private LocalDate selectedDate;
 
     @Override
@@ -59,51 +52,41 @@ public class TallyTask  extends LineDisplayLayoutTask {
         dateForm.setText(TimeParser.parseDateDisplayDay(selectedDate));
         dateForm.setFocusable(false);
 
-        dateForm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setupDaySelectorTask();
-            }
-        });
+        dateForm.setOnClickListener(v -> setupDaySelectorTask());
 
         Button button = host.getFormButton();
         button.setVisibility(View.INVISIBLE);
     }
 
     private void setupDaySelectorTask(){
-        DaySelectorTask task = new DaySelectorTask(host, new DataRetriever<LocalDate>() {
-            @Override
-            public void retrievedData(LocalDate date) {
-                selectedDate = date;
-                setupDaySelectionForm();
-                displayClosingData();
-            }
+        DaySelectorTask task = new DaySelectorTask(host, date -> {
+            selectedDate = date;
+            setupDaySelectionForm();
+            displayClosingData();
         });
 
         task.start();
     }
 
     private void displayClosingData(){
-        host.getBoard().clear(new Scaler(TASK_SCALE));
+        DBQuery<DailyTally> query = new ReadDailyTallyOfDate(selectedDate);
+        DailyTally tally = query.execute();
 
-        LoadDailyTallyOfDateQuery q = new LoadDailyTallyOfDateQuery(selectedDate, new DataRetriever<DailyTally>() {
-            @Override
-            public void retrievedData(DailyTally data) {
-                displayTally(data);
-            }
-        });
-
-        q.executeQuery();
+        if(tally == null){
+            host.popMessage("Daily Tally Loading Timed Out!");
+        } else {
+            displayTally(tally);
+        }
     }
 
     private void displayTally(DailyTally tally){
         host.getBoard().clear(new Scaler(TASK_SCALE));
 
-        String[] topLables = new String[] {
+        String[] topLabels = new String[] {
                 "Difference" , "Amount", "Tip", "Tax"
         };
 
-        displayLine(topLables, new int[] {Color.GREEN, Color.GRAY, Color.GRAY, Color.GRAY}, 0);
+        displayLine(topLabels, new int[] {Color.GREEN, Color.GRAY, Color.GRAY, Color.GRAY}, 0);
 
         String[] topData = new String[] {
                 tally.getDiff(), tally.getAmount(), tally.getTip(), tally.getTax()
@@ -111,11 +94,11 @@ public class TallyTask  extends LineDisplayLayoutTask {
 
         displayLine(topData, new int[] {Color.GREEN, Color.LTGRAY, Color.LTGRAY, Color.LTGRAY}, 1);
 
-        String[] closeLables = new String[] {
+        String[] closeLabels = {
                 "Cash" , "Machine", "Gift", "Discounts"
         };
 
-        displayLine(closeLables, Color.GRAY, 2, null);
+        displayLine(closeLabels, Color.GRAY, 2, null);
 
         String[] closeData = new String[] {
                 tally.getCash(), tally.getMachine(), tally.getGift(), tally.getDiscount()
@@ -127,6 +110,7 @@ public class TallyTask  extends LineDisplayLayoutTask {
         });
     }
 
+    @SuppressLint("SetTextI18n")
     private void closingUpdateForm(DailyTally tally){
         host.clearForm();
 
@@ -139,58 +123,50 @@ public class TallyTask  extends LineDisplayLayoutTask {
         Button button = host.getFormButton();
         button.setText("Update!");
 
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        button.setOnClickListener(v -> {
 
-                Scanner scanner = new Scanner(form.getText().toString());
+            Scanner scanner = new Scanner(form.getText().toString());
 
-                boolean errorDetected = false;
+            boolean errorDetected = false;
 
-                long cash =  scanner.hasNext() ? MoneyParser.parseSingleAmount(scanner.next()) : 0;
+            long cash =  scanner.hasNext() ? MoneyParser.parseSingleAmount(scanner.next()) : 0;
 
-                if(cash == Integer.MIN_VALUE){
-                    form.setError("Invalid Amount");
-                    errorDetected = true;
-                }
-
-                long machine = scanner.hasNext() ? MoneyParser.parseSingleAmount(scanner.next()) : 0;
-
-                if(machine == Integer.MIN_VALUE){
-                    form.setError("Invalid Amount");
-                    errorDetected = true;
-                }
-
-                long gift = scanner.hasNext() ? MoneyParser.parseSingleAmount(scanner.next()) : 0;
-
-                if(gift == Integer.MIN_VALUE){
-                    form.setError("Invalid Amount");
-                    errorDetected = true;
-                }
-
-                long discount = scanner.hasNext() ? MoneyParser.parseSingleAmount(scanner.next()) : 0;
-
-                if(gift == Integer.MIN_VALUE){
-                    form.setError("Invalid Amount");
-                    errorDetected = true;
-                }
-
-                if(errorDetected){
-                    return;
-                }
-
-                UpdateClosingDataQuery q = new UpdateClosingDataQuery(cash, machine, gift, discount, selectedDate, tally);
-                q.executeQuery();
-
-                displayTally(tally);
-                setupDaySelectionForm();
+            if(cash == Integer.MIN_VALUE){
+                form.setError("Invalid Amount");
+                errorDetected = true;
             }
-        });
-    }
 
-    private void generateCSV(){
-        File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
-        path = new File(path, "SalonAccounting");
+            long machine = scanner.hasNext() ? MoneyParser.parseSingleAmount(scanner.next()) : 0;
+
+            if(machine == Integer.MIN_VALUE){
+                form.setError("Invalid Amount");
+                errorDetected = true;
+            }
+
+            long gift = scanner.hasNext() ? MoneyParser.parseSingleAmount(scanner.next()) : 0;
+
+            if(gift == Integer.MIN_VALUE){
+                form.setError("Invalid Amount");
+                errorDetected = true;
+            }
+
+            long discount = scanner.hasNext() ? MoneyParser.parseSingleAmount(scanner.next()) : 0;
+
+            if(discount == Integer.MIN_VALUE){
+                form.setError("Invalid Amount");
+                errorDetected = true;
+            }
+
+            if(errorDetected){
+                return;
+            }
+
+            UpdateClosingDataQuery q = new UpdateClosingDataQuery(cash, machine, gift, discount, selectedDate, tally);
+            q.executeQuery();
+
+            displayTally(tally);
+            setupDaySelectionForm();
+        });
     }
 
     public static TaskSelectionButtion getMenuButton(final Context context, final TaskHostestActivity host) {

@@ -52,7 +52,6 @@ public class FireDatabase implements RemoteDataBase {
                         retriever.retrievedData(m);
                     }
                 });
-
     }
 
     //-Module Retrival------------------------------------------------------------------------------

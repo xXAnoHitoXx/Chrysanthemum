@@ -1,0 +1,46 @@
+package com.chrysanthemum.appdata.querries._old.transactions;
+
+import com.chrysanthemum.appdata.DataStorageModule;
+import com.chrysanthemum.appdata.dataType.Technician;
+import com.chrysanthemum.appdata.dataType.Transaction;
+import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
+import com.chrysanthemum.appdata.dataType.subType.TransactionFrame;
+import com.chrysanthemum.appdata.querries._old.Query;
+import com.chrysanthemum.appdata.querries._old.customers.CustomerByIDQuery;
+import com.chrysanthemum.firebase.DatabaseStructure;
+
+public class TransactionByIDQuery extends Query<Transaction> {
+
+    private final long id;
+    private TransactionFrame frame;
+    private Technician tech;
+
+    public TransactionByIDQuery(long id,
+                                DataRetriever<Transaction> retriever) {
+        super(retriever);
+
+        this.id = id;
+    }
+
+    @Override
+    public void executeQuery() {
+        getRemoteDB().getTransactionManager().findTransactionByID(id, data -> {
+            frame = data;
+            tech = (frame.getTechnicianID() > 0)? DataStorageModule.getFrontEnd().getTech(frame.getTechnicianID()) : null;
+            if(frame.getTechnicianID() == DatabaseStructure.Accounting.SALE_TECH.getID()){
+                tech = DatabaseStructure.Accounting.SALE_TECH;
+            }
+            customerByIDSubQuery(frame.getCustomerID());
+
+        });
+    }
+
+    private void customerByIDSubQuery(long id){
+        CustomerByIDQuery q = new CustomerByIDQuery(id,
+                c -> {
+                    Transaction data = frame.formTransaction(c, tech);
+                    complete(data);
+                });
+        q.executeQuery();
+    }
+}

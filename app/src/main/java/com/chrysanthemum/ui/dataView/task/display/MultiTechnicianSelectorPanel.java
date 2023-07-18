@@ -51,7 +51,7 @@ public class MultiTechnicianSelectorPanel extends TechnicianSelectorPanel {
         if(selected.containsKey(SELECT_ALL)){
             selected.remove(SELECT_ALL);
 
-            for(Technician tech : DataStorageModule.getFrontEnd().getTechList()){
+            for(Technician tech : DataStorageModule.getFrontEnd().getActiveTechList()){
                 selected.put(tech.getID(), tech);
             }
 

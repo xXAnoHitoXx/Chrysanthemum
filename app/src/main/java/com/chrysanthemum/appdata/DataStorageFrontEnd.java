@@ -9,6 +9,7 @@ import com.chrysanthemum.appdata.dataType.Technician;
 public interface DataStorageFrontEnd {
     void close();
     SecurityModule getSecurityModule();
-    Iterable<Technician> getTechList();
+    Iterable<Technician> getActiveTechList();
+    Iterable<Technician> getFullTechList();
     Technician getTech(long id);
 }

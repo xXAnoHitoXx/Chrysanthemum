@@ -11,7 +11,7 @@ import com.chrysanthemum.appdata.Util.Scaler;
 import com.chrysanthemum.appdata.dataType.Customer;
 import com.chrysanthemum.appdata.dataType.parsing.MoneyParser;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
-import com.chrysanthemum.appdata.querries.transactions.NewSaleTransactionQuery;
+import com.chrysanthemum.appdata.querries._old.transactions.NewSaleTransactionQuery;
 import com.chrysanthemum.ui.dataView.task.subTasks.CustomerFinderTask;
 import com.chrysanthemum.ui.dataView.task.subTasks.DaySelectorTask;
 

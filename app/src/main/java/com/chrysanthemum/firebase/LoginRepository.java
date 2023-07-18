@@ -166,7 +166,7 @@ public class LoginRepository extends SecurityModule {
     }
 
     private void testModeLogin(BoolFlag complete){
-        Technician admin = DataStorageModule.getFrontEnd().getTechList().iterator().next();
+        Technician admin = DataStorageModule.getFrontEnd().getActiveTechList().iterator().next();
 
         FireDatabase.getRef().child(DatabaseStructure.TechnicianBranch.BRANCH_NAME)
                 .child(DatabaseStructure.TechnicianBranch.PASSWORD_STORAGE)

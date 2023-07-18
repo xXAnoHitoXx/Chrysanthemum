@@ -11,9 +11,9 @@ import com.chrysanthemum.appdata.Util.Scaler;
 import com.chrysanthemum.appdata.dataType.Gift;
 import com.chrysanthemum.appdata.dataType.parsing.MoneyParser;
 import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
-import com.chrysanthemum.appdata.querries.gift.EditGiftDataQuery;
-import com.chrysanthemum.appdata.querries.gift.FindGiftCardByIDQuery;
-import com.chrysanthemum.appdata.querries.gift.NewGiftCardQuery;
+import com.chrysanthemum.appdata.querries._old.gift.EditGiftDataQuery;
+import com.chrysanthemum.appdata.querries._old.gift.FindGiftCardByIDQuery;
+import com.chrysanthemum.appdata.querries._old.gift.NewGiftCardQuery;
 import com.chrysanthemum.ui.dataView.task.display.LineDisplayLayoutTask;
 import com.chrysanthemum.ui.dataView.task.subTasks.DaySelectorTask;
 

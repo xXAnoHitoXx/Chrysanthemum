@@ -98,7 +98,7 @@ public class MonthTally {
     private Map<Long, Integer> allocateTechPos(){
         Map<Long, Integer> map = new TreeMap<>();
 
-        for(Technician t : DataStorageModule.getFrontEnd().getTechList()){
+        for(Technician t : DataStorageModule.getFrontEnd().getFullTechList()){
             boolean hasTech = firstHalf.hasTech(t.getID())
                     || secondHalf.hasTech(t.getID());
 

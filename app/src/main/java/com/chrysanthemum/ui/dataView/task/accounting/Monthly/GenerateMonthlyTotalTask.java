@@ -13,7 +13,7 @@ import androidx.core.content.ContextCompat;
 
 import com.chrysanthemum.appdata.dataType.MonthTally;
 import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
-import com.chrysanthemum.appdata.querries.accounting.LoadMonthTallyQuery;
+import com.chrysanthemum.appdata.querries._old.accounting.LoadMonthTallyQuery;
 import com.chrysanthemum.ui.dataView.task.Task;
 import com.chrysanthemum.ui.dataView.task.TaskHostestActivity;
 import com.chrysanthemum.ui.dataView.task.TaskSelectionButtion;

@@ -9,8 +9,8 @@ import android.widget.TextView;
 import com.chrysanthemum.appdata.dataType.Transaction;
 import com.chrysanthemum.appdata.dataType.parsing.MoneyParser;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
-import com.chrysanthemum.appdata.querries.appointments.CloseAppointmentQuery;
-import com.chrysanthemum.appdata.querries.transactions.UpdateTransactionNoteQuery;
+import com.chrysanthemum.appdata.querries._old.appointments.CloseAppointmentQuery;
+import com.chrysanthemum.appdata.querries._old.transactions.UpdateTransactionNoteQuery;
 import com.chrysanthemum.ui.dataView.task.Task;
 import com.chrysanthemum.ui.dataView.task.TaskHostestActivity;
 

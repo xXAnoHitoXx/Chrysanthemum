@@ -12,7 +12,7 @@ import com.chrysanthemum.appdata.dataType.TechTallyBlock;
 import com.chrysanthemum.appdata.dataType.Technician;
 import com.chrysanthemum.appdata.dataType.parsing.MoneyParser;
 import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
-import com.chrysanthemum.appdata.querries.accounting.LoadMultiTechTallyBlocksQuery;
+import com.chrysanthemum.appdata.querries._old.accounting.LoadMultiTechTallyBlocksQuery;
 import com.chrysanthemum.ui.dataView.task.Task;
 import com.chrysanthemum.ui.dataView.task.TaskHostestActivity;
 import com.chrysanthemum.ui.dataView.task.TaskSelectionButtion;
