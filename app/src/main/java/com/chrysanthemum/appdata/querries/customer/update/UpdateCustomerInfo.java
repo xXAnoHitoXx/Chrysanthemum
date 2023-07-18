@@ -1,15 +1,15 @@
-package com.chrysanthemum.appdata.querries._old.customers;
+package com.chrysanthemum.appdata.querries.customer.update;
 
 import com.chrysanthemum.appdata.dataType.Customer;
 import com.chrysanthemum.appdata.querries._old.InstantQuery;
 
-public class UpdateCustomerInfoQuery extends InstantQuery<Customer> {
+public class UpdateCustomerInfo extends InstantQuery<Customer> {
 
     private final Customer customer;
     private final String name;
     private final long phoneNumber;
 
-    public UpdateCustomerInfoQuery(Customer customer, String name, long phoneNumber){
+    public UpdateCustomerInfo(Customer customer, String name, long phoneNumber){
         this.customer = customer;
         this.name = name;
         this.phoneNumber = phoneNumber;

@@ -7,8 +7,6 @@ import java.util.LinkedList;
 
 public interface CustomerManager {
 
-    void uploadCustomer(Customer c);
-
     void findCustomerByID(long id, DataRetriever<Customer> retriever);
     void findCustomersByName(String name, DataRetriever<LinkedList<Customer>> retriever);
 

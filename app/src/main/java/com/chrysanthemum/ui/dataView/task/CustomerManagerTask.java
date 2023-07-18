@@ -19,7 +19,7 @@ import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
 import com.chrysanthemum.appdata.dataType.subType.Colour;
 import com.chrysanthemum.appdata.querries._old.Query;
-import com.chrysanthemum.appdata.querries._old.customers.UpdateCustomerInfoQuery;
+import com.chrysanthemum.appdata.querries.customer.update.UpdateCustomerInfo;
 import com.chrysanthemum.appdata.querries._old.transactions.TransactionsByCustomerIDQuery;
 import com.chrysanthemum.ui.dataView.display.Displayable;
 import com.chrysanthemum.ui.dataView.task.display.PhoneNumberBar;
@@ -72,7 +72,7 @@ public class CustomerManagerTask extends Task {
         b.setText("Update Customer Info");
         b.setOnClickListener(v -> {
             if (phoneBar.hasPhoneNumber()) {
-                new UpdateCustomerInfoQuery(customer, name.getText().toString(), phoneBar.getPhoneNumber()).executeQuery();
+                new UpdateCustomerInfo(customer, name.getText().toString(), phoneBar.getPhoneNumber()).executeQuery();
                 host.popMessage("Updated Customer Info!");
                 setupCustomerInfoAdjustmentForm(customer);
             }

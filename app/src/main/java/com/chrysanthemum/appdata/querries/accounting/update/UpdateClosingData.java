@@ -2,13 +2,13 @@ package com.chrysanthemum.appdata.querries.accounting.update;
 
 import com.chrysanthemum.appdata.dataType.DailyTally;
 import com.chrysanthemum.appdata.dataType.subType.DailyClosure;
-import com.chrysanthemum.appdata.querries.DBWriteQuery;
+import com.chrysanthemum.appdata.querries.DBUpdateQuery;
 import com.chrysanthemum.firebase.DatabaseStructure;
 import com.chrysanthemum.firebase.FireDatabase;
 
 import java.time.LocalDate;
 
-public class UpdateClosingData extends DBWriteQuery<DailyTally> {
+public class UpdateClosingData extends DBUpdateQuery<DailyTally> {
 
     private final DailyTally tally;
     private final long cash;
@@ -27,7 +27,7 @@ public class UpdateClosingData extends DBWriteQuery<DailyTally> {
     }
 
     @Override
-    public DailyTally execute() {
+    public void execute() {
         DailyClosure closure = new DailyClosure(cash, machine, gift, discount);
 
         FireDatabase.getRef().child(DatabaseStructure.TransactionBranch.BRANCH_NAME)
@@ -36,6 +36,5 @@ public class UpdateClosingData extends DBWriteQuery<DailyTally> {
                 .child(DatabaseStructure.Accounting.A_CLOSURE).setValue(closure);
 
         tally.updateClosure(closure);
-        return tally;
     }
 }

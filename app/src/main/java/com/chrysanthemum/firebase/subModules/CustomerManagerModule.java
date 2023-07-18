@@ -12,20 +12,6 @@ import java.util.LinkedList;
 
 public class CustomerManagerModule implements CustomerManager {
 
-    @Override
-    public void uploadCustomer(final Customer c){
-        //indexed by phone number
-        FireDatabase.getRef().child(DatabaseStructure.CustomerBranch.BRANCH_NAME)
-                .child(DatabaseStructure.CustomerBranch.PHONE_NUMBER_INDEX)
-                .child("" + c.getPhoneNumber())
-                .child("" + c.getID()).setValue(c.getID());
-
-        // store the customer by id
-        FireDatabase.getRef().child(DatabaseStructure.CustomerBranch.BRANCH_NAME)
-                .child(DatabaseStructure.CustomerBranch.LIST)
-                .child("" + c.getID()).setValue(c);
-    }
-
 
     public void findCustomerByID(long id, final DataRetriever<Customer> retriever){
         FireDatabase.getRef().child(DatabaseStructure.CustomerBranch.BRANCH_NAME)

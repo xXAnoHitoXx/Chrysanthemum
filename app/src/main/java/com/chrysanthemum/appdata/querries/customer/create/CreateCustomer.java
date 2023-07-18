@@ -2,11 +2,11 @@ package com.chrysanthemum.appdata.querries.customer.create;
 
 import com.chrysanthemum.appdata.DataStorageModule;
 import com.chrysanthemum.appdata.dataType.Customer;
-import com.chrysanthemum.appdata.querries.DBWriteQuery;
+import com.chrysanthemum.appdata.querries.DBCreateQuery;
 import com.chrysanthemum.firebase.DatabaseStructure;
 import com.chrysanthemum.firebase.FireDatabase;
 
-public class CreateCustomer extends DBWriteQuery<Customer> {
+public class CreateCustomer extends DBCreateQuery<Customer> {
     private final Customer c;
 
     public CreateCustomer(String name, long phoneNumber) {

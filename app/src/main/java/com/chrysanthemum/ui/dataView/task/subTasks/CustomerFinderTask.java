@@ -17,7 +17,7 @@ import com.chrysanthemum.appdata.dataType.Customer;
 import com.chrysanthemum.appdata.dataType.parsing.PhoneNumberParser;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
 import com.chrysanthemum.appdata.dataType.subType.Colour;
-import com.chrysanthemum.appdata.querries.DBWriteQuery;
+import com.chrysanthemum.appdata.querries.DBCreateQuery;
 import com.chrysanthemum.appdata.querries._old.Query;
 import com.chrysanthemum.appdata.querries._old.customers.CustomerByNameQuery;
 import com.chrysanthemum.appdata.querries._old.customers.CustomerByPhoneQuery;
@@ -198,7 +198,7 @@ public class CustomerFinderTask extends Task {
             }
         }
 
-        DBWriteQuery<Customer> query = new CreateCustomer(selectedName, selectedPhoneNumber);
+        DBCreateQuery<Customer> query = new CreateCustomer(selectedName, selectedPhoneNumber);
         Customer customer = query.execute();
 
         lastCustomer = customer;

@@ -1,9 +1,8 @@
 package com.chrysanthemum.appdata.querries;
 
 /**
- * update data in DB
- * returns updated data
+ * Create and return an object/entry on the DB
  */
-public abstract class DBWriteQuery<T> {
+public abstract class DBCreateQuery<T> {
     public abstract T execute();
 }
