@@ -3,12 +3,8 @@ package com.chrysanthemum.firebase.subModules;
 import com.chrysanthemum.appdata.RemoteDataBase.AccountingManager;
 import com.chrysanthemum.appdata.Util.AppUtil;
 import com.chrysanthemum.appdata.dataType.Transaction;
-import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
-import com.chrysanthemum.appdata.dataType.subType.DailyClosure;
 import com.chrysanthemum.firebase.DatabaseStructure;
 import com.chrysanthemum.firebase.FireDatabase;
-import com.chrysanthemum.ui.dataView.task.accounting.Cal.Amount;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ServerValue;
 
@@ -17,41 +13,11 @@ import java.time.LocalDate;
 public class AccountingManagerModule implements AccountingManager {
 
     @Override
-    public void closeDate(LocalDate date, DailyClosure closure) {
-        FireDatabase.getRef().child(DatabaseStructure.TransactionBranch.BRANCH_NAME)
-                .child(date.getYear() + "").child(date.getMonthValue() + "").child(date.getDayOfMonth() + "")
-                .child(DatabaseStructure.Accounting.BRANCH_NAME)
-                .child(DatabaseStructure.Accounting.A_CLOSURE).setValue(closure);
-    }
-
-    @Override
     public void updateAccountingData(Transaction transaction) {
         updateWeeklyAccountingData(transaction.getLocalDateAppointmentDate(), transaction.getTech().getID()+ "", transaction.getAmount(), transaction.getTip());
         updateMonthlyAccountingData(transaction.getLocalDateAppointmentDate(), transaction.getTech().getID()+ "", transaction.getAmount(), transaction.getTip());
     }
 
-
-    @Override
-    public void findTechTally(LocalDate date, long techID, DataRetriever<Amount> retriever) {
-        FireDatabase.getRef().child(DatabaseStructure.TransactionBranch.BRANCH_NAME)
-                .child(date.getYear() + "").child(date.getMonthValue() + "").child(date.getDayOfMonth() + "")
-                .child(DatabaseStructure.Accounting.BRANCH_NAME).child("" + techID).get().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                DataSnapshot result = task.getResult();
-
-                Amount a = new Amount();
-                assert result != null;
-                if(result.exists()){
-                    a.add(result.child(DatabaseStructure.Accounting.A_AMOUNT).getValue(Integer.class),
-                            result.child(DatabaseStructure.Accounting.A_NO_TAX).getValue(Integer.class));
-                }
-                retriever.retrievedData(a);
-            } else {
-                retriever.retrievedData(null);
-            }
-        });
-
-    }
 
     /**
      * update monthly accounting data for the average item

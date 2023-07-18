@@ -15,7 +15,7 @@ import androidx.core.content.ContextCompat;
 
 import com.chrysanthemum.appdata.dataType.MonthTally;
 import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
-import com.chrysanthemum.appdata.querries.DBQuery;
+import com.chrysanthemum.appdata.querries.DBReadQuery;
 import com.chrysanthemum.appdata.querries.accounting.read.ReadMonthTally;
 import com.chrysanthemum.ui.dataView.task.Task;
 import com.chrysanthemum.ui.dataView.task.TaskHostestActivity;
@@ -72,7 +72,7 @@ public class GenerateMonthlyTotalTask extends Task {
                     e.printStackTrace();
                 }
             } else {
-                DBQuery<MonthTally> query = new ReadMonthTally(title, y, m);
+                DBReadQuery<MonthTally> query = new ReadMonthTally(title, y, m);
                 MonthTally mt = query.execute();
 
                 if(mt == null){

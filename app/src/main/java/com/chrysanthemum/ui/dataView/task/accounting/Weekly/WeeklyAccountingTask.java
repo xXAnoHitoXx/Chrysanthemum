@@ -12,11 +12,12 @@ import com.chrysanthemum.appdata.dataType.TechTallyBlock;
 import com.chrysanthemum.appdata.dataType.Technician;
 import com.chrysanthemum.appdata.dataType.parsing.MoneyParser;
 import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
-import com.chrysanthemum.appdata.querries._old.accounting.LoadMultiTechTallyBlocksQuery;
+import com.chrysanthemum.appdata.querries.DBReadQuery;
+import com.chrysanthemum.appdata.querries.accounting.read.ReadTechTallyBlocks;
 import com.chrysanthemum.ui.dataView.task.Task;
 import com.chrysanthemum.ui.dataView.task.TaskHostestActivity;
 import com.chrysanthemum.ui.dataView.task.TaskSelectionButtion;
-import com.chrysanthemum.ui.dataView.task.accounting.Cal.Amount;
+import com.chrysanthemum.appdata.dataType.Amount;
 import com.chrysanthemum.ui.dataView.task.display.LineDisplayLayoutTask;
 import com.chrysanthemum.ui.dataView.task.subTasks.DaySelectorTask;
 import com.chrysanthemum.ui.dataView.task.subTasks.MultiTechSelectionTask;
@@ -24,6 +25,7 @@ import com.chrysanthemum.ui.dataView.task.subTasks.MultiTechSelectionTask;
 import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.Objects;
+import java.util.TreeMap;
 
 public class WeeklyAccountingTask  extends LineDisplayLayoutTask {
 
@@ -135,14 +137,17 @@ public class WeeklyAccountingTask  extends LineDisplayLayoutTask {
         displayLabel();
         row = 1;
 
-        LoadMultiTechTallyBlocksQuery q = new LoadMultiTechTallyBlocksQuery(Objects.requireNonNull(TimeParser.parseDate(dayA.replaceAll("/", " "))),
-                TimeParser.parseDate(dayB.replaceAll("/", " ")), techs, data -> {
-                    for(long techID : data.keySet()){
-                        DisplayTallyBlock(Objects.requireNonNull(data.get(techID)));
-                    }
-                });
+        DBReadQuery<TreeMap<Long, TechTallyBlock>> query =
+                new ReadTechTallyBlocks(
+                        TimeParser.parseDate(dayA.replaceAll("/", " ")),
+                                TimeParser.parseDate(dayB.replaceAll("/", " ")),
+                                        techs);
 
-        q.executeQuery();
+        TreeMap<Long, TechTallyBlock> blocks = query.execute();
+
+        for(long techID : blocks.keySet()){
+            DisplayTallyBlock(blocks.get(techID));
+        }
     }
 
     private void DisplayTallyBlock(TechTallyBlock block){

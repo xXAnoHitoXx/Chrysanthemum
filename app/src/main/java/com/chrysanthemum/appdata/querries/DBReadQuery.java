@@ -3,7 +3,7 @@ package com.chrysanthemum.appdata.querries;
 /**
  * return null when timed out.
  */
-public abstract class DBQuery<T> {
+public abstract class DBReadQuery<T> {
     private T data = null;
     private long timeOutInMilliseconds = 5000;
 
@@ -23,7 +23,7 @@ public abstract class DBQuery<T> {
         return data;
     }
 
-    protected void setData(T data) {
+    protected void returnQueryData(T data) {
         this.data = data;
     }
 

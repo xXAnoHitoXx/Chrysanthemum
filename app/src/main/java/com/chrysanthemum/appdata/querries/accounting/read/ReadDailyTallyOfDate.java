@@ -2,7 +2,7 @@ package com.chrysanthemum.appdata.querries.accounting.read;
 
 import com.chrysanthemum.appdata.dataType.DailyTally;
 import com.chrysanthemum.appdata.dataType.subType.DailyClosure;
-import com.chrysanthemum.appdata.querries.DBQuery;
+import com.chrysanthemum.appdata.querries.DBReadQuery;
 import com.chrysanthemum.appdata.querries.accounting.read.subquery.ReadDailyClosure;
 import com.chrysanthemum.firebase.DatabaseStructure;
 import com.chrysanthemum.firebase.FireDatabase;
@@ -11,7 +11,7 @@ import com.google.firebase.database.DataSnapshot;
 
 import java.time.LocalDate;
 
-public class ReadDailyTallyOfDate extends DBQuery<DailyTally> {
+public class ReadDailyTallyOfDate extends DBReadQuery<DailyTally> {
     private final LocalDate date;
 
     public ReadDailyTallyOfDate(LocalDate date){
@@ -28,10 +28,10 @@ public class ReadDailyTallyOfDate extends DBQuery<DailyTally> {
 
                 long[] amount_tip = new long[] {preTax, postTax};
 
-                DBQuery<DailyClosure> readClosureQuery = new ReadDailyClosure(date);
+                DBReadQuery<DailyClosure> readClosureQuery = new ReadDailyClosure(date);
                 DailyClosure close = readClosureQuery.execute();
 
-                setData(new DailyTally(close, amount_tip));
+                returnQueryData(new DailyTally(close, amount_tip));
             }
         });
     }

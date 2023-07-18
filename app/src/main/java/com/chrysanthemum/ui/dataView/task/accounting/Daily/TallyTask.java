@@ -12,8 +12,9 @@ import com.chrysanthemum.appdata.dataType.DailyTally;
 import com.chrysanthemum.appdata.Util.Scaler;
 import com.chrysanthemum.appdata.dataType.parsing.MoneyParser;
 import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
-import com.chrysanthemum.appdata.querries.DBQuery;
-import com.chrysanthemum.appdata.querries._old.accounting.UpdateClosingDataQuery;
+import com.chrysanthemum.appdata.querries.DBReadQuery;
+import com.chrysanthemum.appdata.querries.DBWriteQuery;
+import com.chrysanthemum.appdata.querries.accounting.update.UpdateClosingData;
 import com.chrysanthemum.appdata.querries.accounting.read.ReadDailyTallyOfDate;
 import com.chrysanthemum.ui.dataView.task.Task;
 import com.chrysanthemum.ui.dataView.task.TaskHostestActivity;
@@ -69,7 +70,7 @@ public class TallyTask  extends LineDisplayLayoutTask {
     }
 
     private void displayClosingData(){
-        DBQuery<DailyTally> query = new ReadDailyTallyOfDate(selectedDate);
+        DBReadQuery<DailyTally> query = new ReadDailyTallyOfDate(selectedDate);
         DailyTally tally = query.execute();
 
         if(tally == null){
@@ -161,10 +162,9 @@ public class TallyTask  extends LineDisplayLayoutTask {
                 return;
             }
 
-            UpdateClosingDataQuery q = new UpdateClosingDataQuery(cash, machine, gift, discount, selectedDate, tally);
-            q.executeQuery();
+            DBWriteQuery<DailyTally> query = new UpdateClosingData(cash, machine, gift, discount, selectedDate, tally);
 
-            displayTally(tally);
+            displayTally(query.execute());
             setupDaySelectionForm();
         });
     }

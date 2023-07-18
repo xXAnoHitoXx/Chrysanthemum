@@ -17,7 +17,7 @@ import com.chrysanthemum.appdata.querries._old.transactions.UpdateTransactionRec
 import com.chrysanthemum.ui.dataView.task.Task;
 import com.chrysanthemum.ui.dataView.task.TaskHostestActivity;
 import com.chrysanthemum.ui.dataView.task.TaskSelectionButtion;
-import com.chrysanthemum.ui.dataView.task.accounting.Cal.Amount;
+import com.chrysanthemum.appdata.dataType.Amount;
 import com.chrysanthemum.ui.dataView.task.subTasks.DaySelectorTask;
 import com.chrysanthemum.ui.dataView.task.subTasks.MultiTechSelectionTask;
 

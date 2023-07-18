@@ -1,13 +1,13 @@
 package com.chrysanthemum.appdata.querries.accounting.read.subquery;
 
 import com.chrysanthemum.appdata.dataType.subType.DailyClosure;
-import com.chrysanthemum.appdata.querries.DBQuery;
+import com.chrysanthemum.appdata.querries.DBReadQuery;
 import com.chrysanthemum.firebase.DatabaseStructure;
 import com.chrysanthemum.firebase.FireDatabase;
 
 import java.time.LocalDate;
 
-public class ReadDailyClosure extends DBQuery<DailyClosure> {
+public class ReadDailyClosure extends DBReadQuery<DailyClosure> {
 
     private final LocalDate date;
 
@@ -22,7 +22,7 @@ public class ReadDailyClosure extends DBQuery<DailyClosure> {
                 .child(DatabaseStructure.Accounting.BRANCH_NAME)
                 .child(DatabaseStructure.Accounting.A_CLOSURE).get().addOnCompleteListener(task -> {
                     if(task.isSuccessful()){
-                        setData(task.getResult().getValue(DailyClosure.class));
+                        returnQueryData(task.getResult().getValue(DailyClosure.class));
                     }
                 });
     }

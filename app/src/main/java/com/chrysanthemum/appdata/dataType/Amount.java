@@ -1,4 +1,4 @@
-package com.chrysanthemum.ui.dataView.task.accounting.Cal;
+package com.chrysanthemum.appdata.dataType;
 
 public class Amount {
 

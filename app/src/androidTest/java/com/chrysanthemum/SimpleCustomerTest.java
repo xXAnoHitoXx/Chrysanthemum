@@ -5,7 +5,7 @@ import com.chrysanthemum.appdata.Util.BoolFlag;
 import com.chrysanthemum.appdata.dataType.Customer;
 import com.chrysanthemum.appdata.querries._old.customers.CustomerByNameQuery;
 import com.chrysanthemum.appdata.querries._old.customers.CustomerByPhoneQuery;
-import com.chrysanthemum.appdata.querries._old.customers.NewCustomerQuery;
+import com.chrysanthemum.appdata.querries.customer.create.CreateCustomer;
 import com.chrysanthemum.firebase.FireDatabase;
 import com.chrysanthemum.ui.accessAuthentication.AppAuthenticationActivity;
 
@@ -53,8 +53,8 @@ public class SimpleCustomerTest {
      * test the retrieval of a customer that exists in the system
      */
     @Test public void testCustomerRetrieval(){
-        NewCustomerQuery q = new NewCustomerQuery(c1n, c1p);
-        q.executeQuery();
+        CreateCustomer q = new CreateCustomer(c1n, c1p);
+        q.execute();
 
         try {
             Thread.sleep(20000);

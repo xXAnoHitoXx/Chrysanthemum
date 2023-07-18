@@ -4,7 +4,7 @@ import com.chrysanthemum.appdata.dataType.MonthTally;
 import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
 import com.chrysanthemum.appdata.dataType.subType.DailyClosure;
 import com.chrysanthemum.appdata.dataType.subType.MonthTallyEntry;
-import com.chrysanthemum.appdata.querries.DBQuery;
+import com.chrysanthemum.appdata.querries.DBReadQuery;
 import com.chrysanthemum.appdata.querries.accounting.read.subquery.ReadDailyClosure;
 import com.chrysanthemum.firebase.DatabaseStructure;
 import com.chrysanthemum.firebase.FireDatabase;
@@ -12,7 +12,7 @@ import com.google.firebase.database.DataSnapshot;
 
 import java.time.LocalDate;
 
-public class ReadMonthTally extends DBQuery<MonthTally> {
+public class ReadMonthTally extends DBReadQuery<MonthTally> {
 
     private final LocalDate startOfMonth;
     private final MonthTally mt;
@@ -57,7 +57,7 @@ public class ReadMonthTally extends DBQuery<MonthTally> {
 
                         }
 
-                        DBQuery<DailyClosure> readClosureQuery = new ReadDailyClosure(date);
+                        DBReadQuery<DailyClosure> readClosureQuery = new ReadDailyClosure(date);
                         DailyClosure close = readClosureQuery.execute();
 
                         entry.attachClosing(close);
@@ -70,7 +70,7 @@ public class ReadMonthTally extends DBQuery<MonthTally> {
         mt.addEntry(entry);
 
         if(mt.size() >= startOfMonth.lengthOfMonth()){
-            setData(mt);
+            returnQueryData(mt);
         }
     }
 }
