@@ -13,8 +13,6 @@ import java.time.LocalDate;
 
 public class ReadDailyTallyOfDate extends DBQuery<DailyTally> {
     private final LocalDate date;
-    private long[] amount_tip;
-    private DailyClosure close;
 
     public ReadDailyTallyOfDate(LocalDate date){
         this.date = date;
@@ -22,16 +20,17 @@ public class ReadDailyTallyOfDate extends DBQuery<DailyTally> {
 
     @Override
     protected void executeQuery() {
-        DBQuery<DailyClosure> readClosureQuery = new ReadDailyClosure(date);
-        close = readClosureQuery.execute();
-
         findAccountingRecordByDate(task -> {
             if(task.isSuccessful()){
                 DataSnapshot result = task.getResult();
                 long preTax = result.child(DatabaseStructure.Accounting.A_AMOUNT).exists() ? result.child(DatabaseStructure.Accounting.A_AMOUNT).getValue(Long.class) : 0;
                 long postTax = result.child(DatabaseStructure.Accounting.A_NO_TAX).exists() ? result.child(DatabaseStructure.Accounting.A_NO_TAX).getValue(Long.class) : 0;
 
-                amount_tip = new long[] {preTax, postTax};
+                long[] amount_tip = new long[] {preTax, postTax};
+
+                DBQuery<DailyClosure> readClosureQuery = new ReadDailyClosure(date);
+                DailyClosure close = readClosureQuery.execute();
+
                 setData(new DailyTally(close, amount_tip));
             }
         });

@@ -3,10 +3,8 @@ package com.chrysanthemum.firebase.subModules;
 import com.chrysanthemum.appdata.RemoteDataBase.AccountingManager;
 import com.chrysanthemum.appdata.Util.AppUtil;
 import com.chrysanthemum.appdata.dataType.Transaction;
-import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
 import com.chrysanthemum.appdata.dataType.subType.DailyClosure;
-import com.chrysanthemum.appdata.dataType.subType.MonthTallyEntry;
 import com.chrysanthemum.firebase.DatabaseStructure;
 import com.chrysanthemum.firebase.FireDatabase;
 import com.chrysanthemum.ui.dataView.task.accounting.Cal.Amount;
@@ -32,65 +30,6 @@ public class AccountingManagerModule implements AccountingManager {
         updateMonthlyAccountingData(transaction.getLocalDateAppointmentDate(), transaction.getTech().getID()+ "", transaction.getAmount(), transaction.getTip());
     }
 
-
-    @Override
-    public void findClosureByDate(LocalDate date, DataRetriever<DailyClosure> retriever) {
-        FireDatabase.getRef().child(DatabaseStructure.TransactionBranch.BRANCH_NAME)
-                .child(date.getYear() + "").child(date.getMonthValue() + "").child(date.getDayOfMonth() + "")
-                .child(DatabaseStructure.Accounting.BRANCH_NAME)
-                .child(DatabaseStructure.Accounting.A_CLOSURE).get().addOnCompleteListener(task -> {
-                    if(task.isSuccessful()){
-                        retriever.retrievedData(task.getResult().getValue(DailyClosure.class));
-                    }
-                });
-    }
-
-    @Override
-    public void findAccountingRecordByDate(LocalDate date, DataRetriever<long[]> retriever) {
-        FireDatabase.getRef().child(DatabaseStructure.TransactionBranch.BRANCH_NAME)
-                .child(date.getYear() + "").child(date.getMonthValue() + "").child(date.getDayOfMonth() + "")
-                .child(DatabaseStructure.Accounting.BRANCH_NAME)
-                .child(DatabaseStructure.Accounting.SHOP_TOTAL).get().addOnCompleteListener(task -> {
-                    if(task.isSuccessful()){
-                        DataSnapshot result = task.getResult();
-                        long preTax = result.child(DatabaseStructure.Accounting.A_AMOUNT).exists() ? result.child(DatabaseStructure.Accounting.A_AMOUNT).getValue(Long.class) : 0;
-                        long postTax = result.child(DatabaseStructure.Accounting.A_NO_TAX).exists() ? result.child(DatabaseStructure.Accounting.A_NO_TAX).getValue(Long.class) : 0;
-
-                        retriever.retrievedData(new long[] {preTax, postTax});
-                    }
-                });
-    }
-
-    @Override
-    public void findClosurelessMonthTallyEntryByDate(LocalDate date, DataRetriever<MonthTallyEntry> retriever) {
-        FireDatabase.getRef().child(DatabaseStructure.TransactionBranch.BRANCH_NAME)
-                .child(date.getYear() + "").child(date.getMonthValue() + "").child(date.getDayOfMonth() + "")
-                .child(DatabaseStructure.Accounting.BRANCH_NAME).get().addOnCompleteListener(task -> {
-                    if(task.isSuccessful()){
-                        DataSnapshot result = task.getResult();
-
-                        MonthTallyEntry entry = new MonthTallyEntry(TimeParser.parseDateData(date));
-
-                        for (DataSnapshot child: result.getChildren()) {
-                            String key = child.getKey();
-
-                            if(key.matches("-?\\d+(\\.\\d+)?")){
-                                    long techID = Long.parseLong(key);
-
-                                    long[] techPays = new long[]{
-                                            child.child(DatabaseStructure.Accounting.A_AMOUNT).getValue(Long.class),
-                                            child.child(DatabaseStructure.Accounting.A_NO_TAX).getValue(Long.class)
-                                    };
-
-                                    entry.addPay(techID, techPays);
-                            }
-
-                        }
-
-                        retriever.retrievedData(entry);
-                    }
-                });
-    }
 
     @Override
     public void findTechTally(LocalDate date, long techID, DataRetriever<Amount> retriever) {

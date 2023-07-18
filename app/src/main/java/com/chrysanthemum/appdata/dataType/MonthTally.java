@@ -34,6 +34,10 @@ public class MonthTally {
         }
     }
 
+    public int size(){
+        return month.size();
+    }
+
     public String getTitle(){
         return title;
     }

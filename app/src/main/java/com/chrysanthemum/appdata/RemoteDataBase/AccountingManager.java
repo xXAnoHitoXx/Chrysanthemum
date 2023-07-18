@@ -13,11 +13,5 @@ public interface AccountingManager {
     void closeDate(LocalDate date, DailyClosure closure);
     void updateAccountingData(Transaction transaction);
 
-    void findClosureByDate(LocalDate date, DataRetriever<DailyClosure> retriever);
-
-    void findAccountingRecordByDate(LocalDate date, DataRetriever<long[]> retriever);
-
-    void findClosurelessMonthTallyEntryByDate(LocalDate date, DataRetriever<MonthTallyEntry> retriever);
-
     void findTechTally(LocalDate date, long techID, DataRetriever<Amount> retriever);
 }

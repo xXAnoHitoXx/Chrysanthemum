@@ -1,23 +1,22 @@
 package com.chrysanthemum.appdata.querries;
 
 /**
- * return null when timed out
- *
- * To avoid circular calling:
- * main queries may call sub-queries
- * sub-queries must not call any other query;
+ * return null when timed out.
  */
 public abstract class DBQuery<T> {
     private T data = null;
     private long timeOutInMilliseconds = 5000;
 
+    /**
+     * return null when timed out.
+     */
     public T execute(){
         long startTime = System.currentTimeMillis();
         executeQuery();
 
         while (data == null && System.currentTimeMillis() < startTime + timeOutInMilliseconds){
             try {
-                Thread.sleep(1000);
+                Thread.sleep(5);
             } catch (InterruptedException e) {}
         }
 

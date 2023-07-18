@@ -1,5 +1,7 @@
 package com.chrysanthemum.ui.dataView.task.accounting.Monthly;
 
+import static androidx.core.app.ActivityCompat.requestPermissions;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -13,7 +15,8 @@ import androidx.core.content.ContextCompat;
 
 import com.chrysanthemum.appdata.dataType.MonthTally;
 import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
-import com.chrysanthemum.appdata.querries._old.accounting.LoadMonthTallyQuery;
+import com.chrysanthemum.appdata.querries.DBQuery;
+import com.chrysanthemum.appdata.querries.accounting.read.ReadMonthTally;
 import com.chrysanthemum.ui.dataView.task.Task;
 import com.chrysanthemum.ui.dataView.task.TaskHostestActivity;
 import com.chrysanthemum.ui.dataView.task.TaskSelectionButtion;
@@ -23,8 +26,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDate;
-
-import static androidx.core.app.ActivityCompat.requestPermissions;
 
 /***
  * admin task
@@ -68,20 +69,22 @@ public class GenerateMonthlyTotalTask extends Task {
                 try {
                     generateFile(new MonthTally(title));
                 } catch (IOException e) {
-                    //TODO
                     e.printStackTrace();
                 }
             } else {
-                LoadMonthTallyQuery q = new LoadMonthTallyQuery(title, y, m, data -> {
-                    try {
-                        generateFile(data);
-                    } catch (IOException e) {
-                        //TODO
-                        e.printStackTrace();
-                    }
-                });
+                DBQuery<MonthTally> query = new ReadMonthTally(title, y, m);
+                MonthTally mt = query.execute();
 
-                q.executeQuery();
+                if(mt == null){
+                    host.popMessage("Loading Month Tally Timed Out!");
+                    return;
+                }
+
+                try {
+                    generateFile(mt);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
