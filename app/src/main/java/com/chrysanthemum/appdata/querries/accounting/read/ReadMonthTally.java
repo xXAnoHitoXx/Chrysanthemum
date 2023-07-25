@@ -6,6 +6,7 @@ import com.chrysanthemum.appdata.dataType.subType.DailyClosure;
 import com.chrysanthemum.appdata.dataType.subType.MonthTallyEntry;
 import com.chrysanthemum.appdata.querries.DBReadQuery;
 import com.chrysanthemum.appdata.querries.accounting.read.subquery.ReadDailyClosure;
+import com.chrysanthemum.appdata.querries.util.SubQuery;
 import com.chrysanthemum.firebase.DatabaseStructure;
 import com.chrysanthemum.firebase.FireDatabase;
 import com.google.firebase.database.DataSnapshot;
@@ -57,11 +58,12 @@ public class ReadMonthTally extends DBReadQuery<MonthTally> {
 
                         }
 
-                        DBReadQuery<DailyClosure> readClosureQuery = new ReadDailyClosure(date);
-                        DailyClosure close = readClosureQuery.execute();
+                        SubQuery<DailyClosure> readClosureQuery = new ReadDailyClosure(date);
+                        readClosureQuery.execute(close -> {
+                            entry.attachClosing(close);
+                            retrievedEntry(entry);
+                        });
 
-                        entry.attachClosing(close);
-                        retrievedEntry(entry);
                     }
                 });
     }

@@ -12,7 +12,4 @@ public interface CustomerManager {
 
     void findCustomerIDsByPhone(long phoneNumber, DataRetriever<LinkedList<Long>> retriever);
 
-    void changeCustomerName(Customer customer, String name);
-    void changeCustomerPhoneNumber(Customer customer, long phone);
-
 }

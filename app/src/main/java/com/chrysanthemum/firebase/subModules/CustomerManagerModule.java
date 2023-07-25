@@ -6,7 +6,6 @@ import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
 import com.chrysanthemum.firebase.DatabaseStructure;
 import com.chrysanthemum.firebase.FireDatabase;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseReference;
 
 import java.util.LinkedList;
 
@@ -70,32 +69,5 @@ public class CustomerManagerModule implements CustomerManager {
                 });
     }
 
-
-    @Override
-    public void changeCustomerName(Customer customer, String name) {
-        FireDatabase.getRef().child(DatabaseStructure.CustomerBranch.BRANCH_NAME)
-                .child(DatabaseStructure.CustomerBranch.LIST)
-                .child("" + customer.getID()).child(DatabaseStructure.CustomerBranch.C_NAME).setValue(name);
-    }
-
-    @Override
-    public void changeCustomerPhoneNumber(Customer customer, long phone) {
-
-        //customer data
-        FireDatabase.getRef().child(DatabaseStructure.CustomerBranch.BRANCH_NAME)
-                .child(DatabaseStructure.CustomerBranch.LIST)
-                .child("" + customer.getID()).child(DatabaseStructure.CustomerBranch.C_PHONE)
-                .setValue(phone);
-
-        // index
-        // common ref
-        DatabaseReference ref = FireDatabase.getRef().child(DatabaseStructure.CustomerBranch.BRANCH_NAME)
-                .child(DatabaseStructure.CustomerBranch.PHONE_NUMBER_INDEX);
-
-        // remove the index from old phone number
-        // add index from new phone number
-        ref.child(customer.getPhoneNumber() + "").child(customer.getID() + "").removeValue();
-        ref.child(phone + "").child(customer.getID() + "").setValue(customer.getID());
-    }
 
 }

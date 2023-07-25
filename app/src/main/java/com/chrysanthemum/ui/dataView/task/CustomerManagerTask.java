@@ -72,7 +72,7 @@ public class CustomerManagerTask extends Task {
         b.setText("Update Customer Info");
         b.setOnClickListener(v -> {
             if (phoneBar.hasPhoneNumber()) {
-                new UpdateCustomerInfo(customer, name.getText().toString(), phoneBar.getPhoneNumber()).executeQuery();
+                new UpdateCustomerInfo(customer, name.getText().toString(), phoneBar.getPhoneNumber()).execute();
                 host.popMessage("Updated Customer Info!");
                 setupCustomerInfoAdjustmentForm(customer);
             }
