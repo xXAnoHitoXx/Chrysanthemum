@@ -8,9 +8,9 @@ import com.chrysanthemum.appdata.dataType.Transaction;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
 import com.chrysanthemum.appdata.dataType.subType.AppointmentStatus;
 import com.chrysanthemum.appdata.dataType.subType.TransactionStatus;
-import com.chrysanthemum.appdata.querries._old.appointments.AttachTechnicianToAppointmentQuery;
-import com.chrysanthemum.appdata.querries._old.appointments.DeleteNoshowAppointmentQuery;
-import com.chrysanthemum.appdata.querries._old.appointments.MarkAppointmentAsNoShowQuery;
+import com.chrysanthemum.appdata.querries.appointment.update.AssignTechnicianToAppointment;
+import com.chrysanthemum.appdata.querries.appointment.update.DeleteNoShowAppointment;
+import com.chrysanthemum.appdata.querries.appointment.update.MarkAppointmentAsNoShow;
 import com.chrysanthemum.ui.dataView.task.Task;
 import com.chrysanthemum.ui.dataView.task.TaskHostestActivity;
 import com.chrysanthemum.ui.technicianLogin.TechnicianSelectorPanel;
@@ -50,15 +50,15 @@ public class AppointmentClaimTask  extends Task {
                     noShowAlert();
                 }
             } else if(transaction.getAppointmentStatus() == AppointmentStatus.Open) {
-                new AttachTechnicianToAppointmentQuery(transaction, t).executeQuery();
+                new AssignTechnicianToAppointment(transaction, t).execute();
             } else if(transaction.getAppointmentStatus() == AppointmentStatus.Claimed){
 
                 if(t.getID() == transaction.getTech().getID()){
                     // deselect
-                    new AttachTechnicianToAppointmentQuery(transaction, null).executeQuery();
+                    new AssignTechnicianToAppointment(transaction, null).execute();
                 } else {
                     //change Tech
-                    new AttachTechnicianToAppointmentQuery(transaction, t).executeQuery();
+                    new AssignTechnicianToAppointment(transaction, t).execute();
                 }
             }
 
@@ -72,7 +72,7 @@ public class AppointmentClaimTask  extends Task {
                 .setMessage("Mark the appointment with " + transaction.getCustomer().getName()
                         + " as \"No Show\"")
                 .setIcon(android.R.drawable.ic_dialog_alert)
-                .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> new MarkAppointmentAsNoShowQuery(transaction).executeQuery())
+                .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> new MarkAppointmentAsNoShow(transaction).execute())
                 .setNegativeButton(android.R.string.no, null).show();
     }
 
@@ -82,7 +82,7 @@ public class AppointmentClaimTask  extends Task {
                 .setMessage("Delete the appointment with " + transaction.getCustomer().getName())
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
-                    new DeleteNoshowAppointmentQuery(transaction).executeQuery();
+                    new DeleteNoShowAppointment(transaction).deleteData();
                     CustomerFinderTask.service(transaction.getCustomer());
                     retriever.retrievedData(DELETED);
                 })

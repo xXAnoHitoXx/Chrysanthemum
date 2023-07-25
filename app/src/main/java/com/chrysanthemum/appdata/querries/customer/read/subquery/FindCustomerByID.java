@@ -2,11 +2,11 @@ package com.chrysanthemum.appdata.querries.customer.read.subquery;
 
 import com.chrysanthemum.appdata.dataType.Customer;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
-import com.chrysanthemum.appdata.querries.util.SubQuery;
+import com.chrysanthemum.appdata.querries.util.AsyncSubQuery;
 import com.chrysanthemum.firebase.DatabaseStructure;
 import com.chrysanthemum.firebase.FireDatabase;
 
-public class FindCustomerByID implements SubQuery<Customer> {
+public class FindCustomerByID implements AsyncSubQuery<Customer> {
 
     private final long id;
 

@@ -11,6 +11,8 @@ import java.util.Scanner;
 public class Transaction {
 
     public static final int NO_SHOW_AMOUNT = -100000000;
+    public static final int NO_TECH_ID = -1;
+
     /** dd mm yy */
     private final String date; // dd mm yyyy
     /** hour * 60 + min */
@@ -53,7 +55,7 @@ public class Transaction {
     }
 
     public Transaction setBill (int amount, int tip, String services){
-        Transaction diff = new Transaction(date, appointmentTime, duration, getCustomer(), id, tech,
+        Transaction diff = new Transaction(date, appointmentTime, duration, c, id, tech,
                 amount - getAmount(), tip - getTip(), services);
 
         this.amount = amount;
@@ -150,7 +152,7 @@ public class Transaction {
     public TransactionStatus getTransactionStatus(){
 
         if(amount != NO_SHOW_AMOUNT){
-            if(amount != 0 || tip != 0 || services.toLowerCase().contains("void")){
+            if(this.isNonZero() || services.toLowerCase().contains("void")){
                 return TransactionStatus.Closed;
             }
 
@@ -159,6 +161,10 @@ public class Transaction {
             return TransactionStatus.Noshow;
         }
 
+    }
+
+    public boolean isNonZero() {
+        return amount != 0 || tip != 0;
     }
 
     public LocalDate getLocalDateAppointmentDate(){

@@ -8,16 +8,17 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.chrysanthemum.appdata.DataStorageModule;
+import com.chrysanthemum.appdata.dataType.Amount;
 import com.chrysanthemum.appdata.dataType.Technician;
 import com.chrysanthemum.appdata.dataType.Transaction;
 import com.chrysanthemum.appdata.dataType.parsing.MoneyParser;
 import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
+import com.chrysanthemum.appdata.querries.DBUpdateQuery;
 import com.chrysanthemum.appdata.querries._old.accounting.LoadTransactionRecordsOfDateQuery;
-import com.chrysanthemum.appdata.querries._old.transactions.UpdateTransactionRecordQuery;
+import com.chrysanthemum.appdata.querries.transaction.UpdateTransactionData;
 import com.chrysanthemum.ui.dataView.task.Task;
 import com.chrysanthemum.ui.dataView.task.TaskHostestActivity;
 import com.chrysanthemum.ui.dataView.task.TaskSelectionButtion;
-import com.chrysanthemum.appdata.dataType.Amount;
 import com.chrysanthemum.ui.dataView.task.subTasks.DaySelectorTask;
 import com.chrysanthemum.ui.dataView.task.subTasks.MultiTechSelectionTask;
 
@@ -163,7 +164,7 @@ public class DailyAccountingTask_Admin extends DailyAccountingTask {
 
             money = money.replaceAll("\\(" , " ");
             money = money.replaceAll("[$).]", "");
-            money = money.replaceAll("[ ]+", " ");
+            money = money.replaceAll(" +", " ");
 
             int[] pay = MoneyParser.parsePayment(money);
 
@@ -172,7 +173,9 @@ public class DailyAccountingTask_Admin extends DailyAccountingTask {
                 return;
             }
 
-            new UpdateTransactionRecordQuery(transaction, pay[0], pay[1], svc.getText().toString()).executeQuery();
+            DBUpdateQuery<Transaction> q = new UpdateTransactionData(transaction, pay[0], pay[1], svc.getText().toString());
+            q.execute();
+
             displayTransactions();
         });
     }

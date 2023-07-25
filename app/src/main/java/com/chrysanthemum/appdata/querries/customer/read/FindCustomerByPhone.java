@@ -3,7 +3,7 @@ package com.chrysanthemum.appdata.querries.customer.read;
 import com.chrysanthemum.appdata.dataType.Customer;
 import com.chrysanthemum.appdata.querries.DBReadQuery;
 import com.chrysanthemum.appdata.querries.customer.read.subquery.FindCustomerByID;
-import com.chrysanthemum.appdata.querries.util.SubQuery;
+import com.chrysanthemum.appdata.querries.util.AsyncSubQuery;
 import com.chrysanthemum.firebase.DatabaseStructure;
 import com.chrysanthemum.firebase.FireDatabase;
 import com.google.firebase.database.DataSnapshot;
@@ -36,7 +36,7 @@ public class FindCustomerByPhone extends DBReadQuery<Map<String, Customer>> {
                             for(DataSnapshot child : snapshot.getChildren()){
                                 long id = child.getValue(Long.class);
 
-                                SubQuery<Customer> subQuery = new FindCustomerByID(id);
+                                AsyncSubQuery<Customer> subQuery = new FindCustomerByID(id);
                                 subQuery.execute(this::found);
 
                             }
