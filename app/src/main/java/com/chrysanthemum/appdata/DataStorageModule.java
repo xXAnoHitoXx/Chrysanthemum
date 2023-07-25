@@ -76,7 +76,6 @@ public class DataStorageModule implements DataStorageBackEnd {
         });
     }
 
-
     public Iterable<Technician> getActiveTechList(){
         Collection<Technician> val = techMap.values();
 

@@ -13,7 +13,7 @@ public class TechnicianSelectorPanel {
 
     public TechnicianSelectorPanel(Context context, LinearLayout layout, boolean vertical){
         selected = null;
-        Iterable<Technician> it = DataStorageModule.getFrontEnd().getActiveTechList();
+        Iterable<Technician> it = DataStorageModule.getModule().getActiveTechList();
 
         for(Technician tech : it){
 
