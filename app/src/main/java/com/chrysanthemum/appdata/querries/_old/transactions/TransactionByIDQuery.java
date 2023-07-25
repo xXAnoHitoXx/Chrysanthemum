@@ -26,7 +26,7 @@ public class TransactionByIDQuery extends Query<Transaction> {
     public void executeQuery() {
         getRemoteDB().getTransactionManager().findTransactionByID(id, data -> {
             frame = data;
-            tech = (frame.getTechnicianID() > 0)? DataStorageModule.getFrontEnd().getTech(frame.getTechnicianID()) : null;
+            tech = (frame.getTechnicianID() > 0)? DataStorageModule.getModule().getTech(frame.getTechnicianID()) : null;
             if(frame.getTechnicianID() == DatabaseStructure.Accounting.SALE_TECH.getID()){
                 tech = DatabaseStructure.Accounting.SALE_TECH;
             }

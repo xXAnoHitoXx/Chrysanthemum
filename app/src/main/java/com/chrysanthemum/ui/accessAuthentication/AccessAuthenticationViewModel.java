@@ -20,7 +20,7 @@ class AccessAuthenticationViewModel extends ViewModel {
     }
 
     void login(String username, String password) {
-        DataStorageModule.getFrontEnd().getSecurityModule().requestAccess(username, password);
+        DataStorageModule.getModule().getSecurityModule().requestAccess(username, password);
     }
 
     void loginDataChanged(String username, String password) {

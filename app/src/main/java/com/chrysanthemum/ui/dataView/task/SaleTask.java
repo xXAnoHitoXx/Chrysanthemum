@@ -39,7 +39,7 @@ public class SaleTask extends Task {
     }
 
     private void taskSetup(){
-        if(DataStorageModule.getFrontEnd().getSecurityModule().getLoggedinTech().getRole().equalsIgnoreCase("admin")){
+        if(DataStorageModule.getModule().getSecurityModule().getLoggedinTech().getRole().equalsIgnoreCase("admin")){
             DaySelectorTask t = new DaySelectorTask(host, new DataRetriever<LocalDate>() {
                 @Override
                 public void retrievedData(LocalDate data) {

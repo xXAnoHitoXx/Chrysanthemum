@@ -1,4 +1,4 @@
-package com.chrysanthemum.appdata.querries.customer.create;
+package com.chrysanthemum.appdata.querries.customer;
 
 import com.chrysanthemum.appdata.DataStorageModule;
 import com.chrysanthemum.appdata.dataType.Customer;

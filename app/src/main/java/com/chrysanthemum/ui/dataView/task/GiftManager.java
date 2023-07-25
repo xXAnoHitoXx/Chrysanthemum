@@ -11,9 +11,12 @@ import com.chrysanthemum.appdata.Util.Scaler;
 import com.chrysanthemum.appdata.dataType.Gift;
 import com.chrysanthemum.appdata.dataType.parsing.MoneyParser;
 import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
-import com.chrysanthemum.appdata.querries._old.gift.EditGiftDataQuery;
-import com.chrysanthemum.appdata.querries._old.gift.FindGiftCardByIDQuery;
-import com.chrysanthemum.appdata.querries._old.gift.NewGiftCardQuery;
+import com.chrysanthemum.appdata.querries.DBCreateQuery;
+import com.chrysanthemum.appdata.querries.DBReadQuery;
+import com.chrysanthemum.appdata.querries.DBUpdateQuery;
+import com.chrysanthemum.appdata.querries.gift.CreateGiftCard;
+import com.chrysanthemum.appdata.querries.gift.FindGiftCardByID;
+import com.chrysanthemum.appdata.querries.gift.UpdateGiftCardAmount;
 import com.chrysanthemum.ui.dataView.task.display.LineDisplayLayoutTask;
 import com.chrysanthemum.ui.dataView.task.subTasks.DaySelectorTask;
 
@@ -45,16 +48,18 @@ public class GiftManager extends LineDisplayLayoutTask {
         Button button = host.getFormButton();
         button.setText("Search");
         button.setOnClickListener(v -> {
-            FindGiftCardByIDQuery q = new FindGiftCardByIDQuery(code.getText().toString(), data -> {
-                if(data == null){
-                    LocalDate expire = LocalDate.now().plusYears(3);
-                    createGift(code.getText().toString(), TimeParser.parseDateDisplayDay(expire));
-                } else {
-                    displayGiftData(data);
-                }
-            });
 
-            q.executeQuery();
+            String id = code.getText().toString();
+
+            DBReadQuery<Gift> q = new FindGiftCardByID(id);
+            Gift gift = q.execute();
+
+            if(gift == null){
+                LocalDate expire = LocalDate.now().plusYears(3);
+                createGift(code.getText().toString(), TimeParser.parseDateDisplayDay(expire));
+            } else {
+                displayGiftData(gift);
+            }
         });
     }
 
@@ -90,14 +95,12 @@ public class GiftManager extends LineDisplayLayoutTask {
                 return;
             }
 
-            NewGiftCardQuery q = new NewGiftCardQuery(code, MoneyParser.parseSingleAmount(amt),
-                    dateIssued, expireDate.getText().toString().replaceAll("/", " "),
-                    data -> {
-                        giftSearch();
-                        displayGiftData(data);
-                    });
+            DBCreateQuery<Gift> query = new CreateGiftCard(code, MoneyParser.parseSingleAmount(amt),
+                    dateIssued, expireDate.getText().toString().replaceAll("/", " "));
+            Gift gift = query.execute();
 
-            q.executeQuery();
+            giftSearch();
+            displayGiftData(gift);
         });
     }
 
@@ -133,9 +136,10 @@ public class GiftManager extends LineDisplayLayoutTask {
                 return;
             }
 
-            EditGiftDataQuery q = new EditGiftDataQuery(gift, MoneyParser.parseSingleAmount(amt),
-                    expireDate.getText().toString().replaceAll("/", " "));
-            displayGiftData(q.executeQuery());
+            DBUpdateQuery<Gift> q = new UpdateGiftCardAmount(gift, MoneyParser.parseSingleAmount(amt));
+            q.execute();
+
+            displayGiftData(gift);
         });
     }
 

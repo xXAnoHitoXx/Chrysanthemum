@@ -107,18 +107,6 @@ public class GenerateMonthlyTotalTask extends Task {
         File f = new File(path, data.getTitle() + ".csv");
 
         FileOutputStream o = new FileOutputStream(f);
-        /*
-        ContentResolver resolver = context.getContentResolver();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, data.getTitle());
-        contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "text/csv");
-        contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOCUMENTS);
-
-        Uri uri = resolver.insert(MediaStore.Files.getContentUri("external"), contentValues);
-
-        OutputStream o = resolver.openOutputStream(uri);
-
-         */
         PrintWriter writer = new PrintWriter(o);
         writer.println(fileData);
         writer.flush();

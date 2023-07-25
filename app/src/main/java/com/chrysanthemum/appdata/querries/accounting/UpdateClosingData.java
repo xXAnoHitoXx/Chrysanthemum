@@ -1,4 +1,4 @@
-package com.chrysanthemum.appdata.querries.accounting.update;
+package com.chrysanthemum.appdata.querries.accounting;
 
 import com.chrysanthemum.appdata.dataType.DailyTally;
 import com.chrysanthemum.appdata.dataType.subType.DailyClosure;

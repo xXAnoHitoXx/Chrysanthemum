@@ -96,14 +96,14 @@ public class PasswordNumberPad {
 
                     if(tech == null){
                         if(digitCount == 0) {
-                            SecurityModule sm = DataStorageModule.getFrontEnd().getSecurityModule();
+                            SecurityModule sm = DataStorageModule.getModule().getSecurityModule();
                             sm.dummyLogin();
                         } else {
                             setMessage("Please chose a colour!");
                         }
                     } else {
                         lock();
-                        SecurityModule sm = DataStorageModule.getFrontEnd().getSecurityModule();
+                        SecurityModule sm = DataStorageModule.getModule().getSecurityModule();
                         sm.login(panel.getSelectedTech(), value);
                     }
 
@@ -111,7 +111,7 @@ public class PasswordNumberPad {
                     mode = Mode.Login;
 
                     if (value == savedValue) {
-                        DataStorageModule.getFrontEnd().getSecurityModule()
+                        DataStorageModule.getModule().getSecurityModule()
                                 .registerPassword(panel.getSelectedTech(), value);
                         setMessage("New password registered!");
                         clear();
@@ -138,7 +138,7 @@ public class PasswordNumberPad {
     }
 
     private void observeAndDisplayStatus(LifecycleOwner owner) {
-        SecurityModule sm = DataStorageModule.getFrontEnd().getSecurityModule();
+        SecurityModule sm = DataStorageModule.getModule().getSecurityModule();
         sm.observeLoginStatus(owner, loginStatus -> {
             unlock();
             switch(loginStatus){

@@ -55,7 +55,7 @@ public class AppAuthenticationActivity extends AppCompatActivity {
         });
 
 
-        DataStorageModule.getFrontEnd().getSecurityModule().observeAccessToken(this, loginResult -> {
+        DataStorageModule.getModule().getSecurityModule().observeAccessToken(this, loginResult -> {
 
             loadingProgressBar.setVisibility(View.GONE);
             if (loginResult == AccessState.noAccess) {

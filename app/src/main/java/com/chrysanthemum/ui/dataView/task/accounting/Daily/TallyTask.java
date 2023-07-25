@@ -14,7 +14,7 @@ import com.chrysanthemum.appdata.dataType.parsing.MoneyParser;
 import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
 import com.chrysanthemum.appdata.querries.DBReadQuery;
 import com.chrysanthemum.appdata.querries.DBUpdateQuery;
-import com.chrysanthemum.appdata.querries.accounting.update.UpdateClosingData;
+import com.chrysanthemum.appdata.querries.accounting.UpdateClosingData;
 import com.chrysanthemum.appdata.querries.accounting.read.ReadDailyTallyOfDate;
 import com.chrysanthemum.ui.dataView.task.Task;
 import com.chrysanthemum.ui.dataView.task.TaskHostestActivity;

@@ -354,7 +354,7 @@ public class AppointmentViewerTask extends Task {
                 LocalDate sel = TimeParser.parseDate(date);
 
                 if((sel != null && sel.compareTo(LocalDate.now()) >= 0) ||
-                        DataStorageModule.getFrontEnd().getSecurityModule().getLoggedinTech().getRole().equalsIgnoreCase("admin")){
+                        DataStorageModule.getModule().getSecurityModule().getLoggedinTech().getRole().equalsIgnoreCase("admin")){
 
                     NewAppointmentTask subTask = new NewAppointmentTask(host, hour, date, data -> {
                         host.setBarText(host.getMainTaskTitle());

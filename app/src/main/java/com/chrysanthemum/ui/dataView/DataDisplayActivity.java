@@ -53,7 +53,7 @@ public class DataDisplayActivity extends AppCompatActivity implements TaskHostes
         setContentView(R.layout.activity_data_display_avtivity);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        setBarText(DataStorageModule.getFrontEnd().getSecurityModule().getLoggedinTech().getName());
+        setBarText(DataStorageModule.getModule().getSecurityModule().getLoggedinTech().getName());
 
         instantiateTaskPanel();
 
@@ -72,7 +72,7 @@ public class DataDisplayActivity extends AppCompatActivity implements TaskHostes
 
 
     private void logout(){
-        DataStorageModule.getFrontEnd().getSecurityModule().logout();
+        DataStorageModule.getModule().getSecurityModule().logout();
 
         Intent intent = new Intent(this, TechnicianLoginActivity.class);
         startActivity(intent);
@@ -94,7 +94,7 @@ public class DataDisplayActivity extends AppCompatActivity implements TaskHostes
 
         //------------------------------------------------------------------------------------------
 
-        Technician tech = DataStorageModule.getFrontEnd().getSecurityModule().getLoggedinTech();
+        Technician tech = DataStorageModule.getModule().getSecurityModule().getLoggedinTech();
 
         if(!tech.getRole().equals(Technician.Dummy)){
             addTaskPanelDivider();

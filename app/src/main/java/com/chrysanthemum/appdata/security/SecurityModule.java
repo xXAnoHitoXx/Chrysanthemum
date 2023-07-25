@@ -14,7 +14,7 @@ public abstract class SecurityModule {
     public SecurityModule(){
         this.observeAccessToken(null, accessState -> {
             if(accessState == AccessState.blocked){
-                DataStorageModule.getFrontEnd().close();
+                DataStorageModule.getModule().close();
                 System.exit(0);
             }
         });

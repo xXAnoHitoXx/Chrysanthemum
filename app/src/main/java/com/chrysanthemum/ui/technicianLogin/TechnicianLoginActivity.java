@@ -55,7 +55,7 @@ public class TechnicianLoginActivity extends AppCompatActivity {
         View x = findViewById(R.id.fab);
         x.setOnClickListener(v -> logoutAlert());
 
-        SecurityModule sm = DataStorageModule.getFrontEnd().getSecurityModule();
+        SecurityModule sm = DataStorageModule.getModule().getSecurityModule();
         sm.observeLoginStatus(this, loginStatus -> {
             if(loginStatus == LoginStatus.loggedIn){
                 onLoginSuccess();
@@ -85,7 +85,7 @@ public class TechnicianLoginActivity extends AppCompatActivity {
     }
 
     private void endSession() {
-        DataStorageModule.getFrontEnd().close();
+        DataStorageModule.getModule().close();
         Intent intent = new Intent(this, AppAuthenticationActivity.class);
         startActivity(intent);
     }

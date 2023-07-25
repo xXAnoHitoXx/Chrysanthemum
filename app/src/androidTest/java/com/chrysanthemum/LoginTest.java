@@ -27,7 +27,7 @@ public class LoginTest {
 
     @Test
     public void testTestModeInit() {
-        DataStorageModule.getFrontEnd().getSecurityModule()
+        DataStorageModule.getModule().getSecurityModule()
                 .enableTestMode(uname, pword);
 
         assertTrue(LoginRepository.inTestMode());

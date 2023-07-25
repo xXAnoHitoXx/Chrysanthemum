@@ -4,7 +4,7 @@ import com.chrysanthemum.appdata.DataStorageModule;
 import com.chrysanthemum.appdata.Util.BoolFlag;
 import com.chrysanthemum.appdata.dataType.Customer;
 import com.chrysanthemum.appdata.querries.DBReadQuery;
-import com.chrysanthemum.appdata.querries.customer.create.CreateCustomer;
+import com.chrysanthemum.appdata.querries.customer.CreateCustomer;
 import com.chrysanthemum.appdata.querries.customer.read.FindCustomerByName;
 import com.chrysanthemum.appdata.querries.customer.read.FindCustomerByPhone;
 import com.chrysanthemum.firebase.FireDatabase;

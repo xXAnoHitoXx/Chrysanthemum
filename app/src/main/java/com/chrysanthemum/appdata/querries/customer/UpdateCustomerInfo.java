@@ -1,8 +1,7 @@
-package com.chrysanthemum.appdata.querries.customer.update;
+package com.chrysanthemum.appdata.querries.customer;
 
 import com.chrysanthemum.appdata.dataType.Customer;
 import com.chrysanthemum.appdata.querries.DBUpdateQuery;
-import com.chrysanthemum.appdata.querries._old.InstantQuery;
 import com.chrysanthemum.firebase.DatabaseStructure;
 import com.chrysanthemum.firebase.FireDatabase;
 import com.google.firebase.database.DatabaseReference;

@@ -69,7 +69,7 @@ public class DailyAccountingTask_Personal extends DailyAccountingTask {
         host.getBoard().clear(host.getScale().scale(TASK_SCALE));
         displayLabel();
 
-        final Technician tech = DataStorageModule.getFrontEnd().getSecurityModule().getLoggedinTech();
+        final Technician tech = DataStorageModule.getModule().getSecurityModule().getLoggedinTech();
 
         Query<LinkedList<Transaction>> query = new LoadTransactionsByTechnicianIDQuery(TimeParser.parseDateData(date), tech, new DataRetriever<LinkedList<Transaction>>() {
             @Override

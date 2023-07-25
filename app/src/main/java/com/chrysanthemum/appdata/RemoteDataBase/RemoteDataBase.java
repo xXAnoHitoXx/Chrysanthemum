@@ -12,8 +12,6 @@ public interface RemoteDataBase {
 
     //-Module Retrival------------------------------------------------------------------------------
 
-    GiftCardManager getGiftCardManager();
-
     AccountingManager getAccountingManager();
 
     TransactionManager getTransactionManager();

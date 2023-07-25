@@ -19,7 +19,7 @@ import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
 import com.chrysanthemum.appdata.dataType.subType.Colour;
 import com.chrysanthemum.appdata.querries.DBCreateQuery;
 import com.chrysanthemum.appdata.querries.DBReadQuery;
-import com.chrysanthemum.appdata.querries.customer.create.CreateCustomer;
+import com.chrysanthemum.appdata.querries.customer.CreateCustomer;
 import com.chrysanthemum.appdata.querries.customer.read.FindCustomerByName;
 import com.chrysanthemum.appdata.querries.customer.read.FindCustomerByPhone;
 import com.chrysanthemum.ui.dataView.display.DisplayBoard;

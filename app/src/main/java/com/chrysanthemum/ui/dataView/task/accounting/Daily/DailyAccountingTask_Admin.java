@@ -133,7 +133,7 @@ public class DailyAccountingTask_Admin extends DailyAccountingTask {
         }
 
         for(long techID : techTotals.keySet()){
-            Technician tech = DataStorageModule.getFrontEnd().getTech(techID);
+            Technician tech = DataStorageModule.getModule().getTech(techID);
             Amount techTotal = techTotals.get(techID);
 
             displayTotal(tech.getName(), techTotal.getAmount(), techTotal.getTip(), tech.getColour(), row++);
