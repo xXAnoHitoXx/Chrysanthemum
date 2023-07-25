@@ -50,7 +50,7 @@ public class MonthTally {
         csv.append("Date");
 
         for(long id : techPos.keySet()){
-            Technician t = DataStorageModule.getFrontEnd().getTech(id);
+            Technician t = DataStorageModule.getModule().getTech(id);
 
             csv.append(t.getName());
             csv.append("");
@@ -102,7 +102,7 @@ public class MonthTally {
     private Map<Long, Integer> allocateTechPos(){
         Map<Long, Integer> map = new TreeMap<>();
 
-        for(Technician t : DataStorageModule.getFrontEnd().getFullTechList()){
+        for(Technician t : DataStorageModule.getModule().getFullTechList()){
             boolean hasTech = firstHalf.hasTech(t.getID())
                     || secondHalf.hasTech(t.getID());
 

@@ -1,7 +1,6 @@
 package com.chrysanthemum.firebase;
 
 import com.chrysanthemum.appdata.RemoteDataBase.AccountingManager;
-import com.chrysanthemum.appdata.RemoteDataBase.CustomerManager;
 import com.chrysanthemum.appdata.RemoteDataBase.GiftCardManager;
 import com.chrysanthemum.appdata.RemoteDataBase.RemoteDataBase;
 import com.chrysanthemum.appdata.RemoteDataBase.TransactionManager;
@@ -9,7 +8,6 @@ import com.chrysanthemum.appdata.dataType.Technician;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
 import com.chrysanthemum.appdata.security.SecurityModule;
 import com.chrysanthemum.firebase.subModules.AccountingManagerModule;
-import com.chrysanthemum.firebase.subModules.CustomerManagerModule;
 import com.chrysanthemum.firebase.subModules.GiftCardManagerModule;
 import com.chrysanthemum.firebase.subModules.TransactionManagerModule;
 import com.google.firebase.database.DataSnapshot;
@@ -69,11 +67,6 @@ public class FireDatabase implements RemoteDataBase {
     @Override
     public TransactionManager getTransactionManager() {
         return new TransactionManagerModule(getAccountingManager());
-    }
-
-    @Override
-    public CustomerManager getCustomerManager() {
-        return new CustomerManagerModule();
     }
 
     public static DatabaseReference getRef(){

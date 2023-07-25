@@ -3,9 +3,10 @@ package com.chrysanthemum;
 import com.chrysanthemum.appdata.DataStorageModule;
 import com.chrysanthemum.appdata.Util.BoolFlag;
 import com.chrysanthemum.appdata.dataType.Customer;
-import com.chrysanthemum.appdata.querries._old.customers.CustomerByNameQuery;
-import com.chrysanthemum.appdata.querries._old.customers.CustomerByPhoneQuery;
+import com.chrysanthemum.appdata.querries.DBReadQuery;
 import com.chrysanthemum.appdata.querries.customer.create.CreateCustomer;
+import com.chrysanthemum.appdata.querries.customer.read.FindCustomerByName;
+import com.chrysanthemum.appdata.querries.customer.read.FindCustomerByPhone;
 import com.chrysanthemum.firebase.FireDatabase;
 import com.chrysanthemum.ui.accessAuthentication.AppAuthenticationActivity;
 
@@ -29,7 +30,7 @@ public class SimpleCustomerTest {
         String uname = "chrysanthemumspa@gmail.com";
         String pword = "Only4988";
 
-        DataStorageModule.getFrontEnd().getSecurityModule()
+        DataStorageModule.getModule().getSecurityModule()
                 .enableTestMode(uname, pword);
     }
 
@@ -56,91 +57,32 @@ public class SimpleCustomerTest {
         CreateCustomer q = new CreateCustomer(c1n, c1p);
         q.execute();
 
-        try {
-            Thread.sleep(20000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        BoolFlag f = new BoolFlag();
         BoolFlag failed = new BoolFlag();
 
-        CustomerByNameQuery nq = new CustomerByNameQuery(c1f, data -> {
-            verifyCreateOneCustomer(data, failed);
-            f.set();
-        });
-        nq.executeQuery();
-
-        while(!f.read()){
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        f.reset();
+        DBReadQuery<Map<String, Customer>> nq = new FindCustomerByName(c1f);
+        verifyCreateOneCustomer(nq.execute(), failed);
 
         assertFalse(failed.read());
 
-        CustomerByPhoneQuery pq = new CustomerByPhoneQuery(c1p, data -> {
-            verifyCreateOneCustomer(data, failed);
-            f.set();
-        });
+        DBReadQuery<Map<String, Customer>> pq = new FindCustomerByPhone(c1p);
+        verifyCreateOneCustomer(pq.execute(), failed);
 
-        pq.executeQuery();
-
-        while(!f.read()){
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        assertFalse(failed.read());
+        assertTrue(failed.read());
     }
 
     /**
      * test the retrieval of a non existent customer
      */
     @Test public void testEmptyCustomerRetrieval(){
-
-        BoolFlag f = new BoolFlag();
         BoolFlag failed = new BoolFlag();
 
-        CustomerByNameQuery nq = new CustomerByNameQuery(c1f, data -> {
-            verifyCreateOneCustomer(data, failed);
-            f.set();
-        });
-        nq.executeQuery();
-
-        while(!f.read()){
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        DBReadQuery<Map<String, Customer>> nq = new FindCustomerByName(c1f);
+        verifyCreateOneCustomer(nq.execute(), failed);
 
         assertTrue(failed.read());
 
-        f.reset();
-
-        CustomerByPhoneQuery pq = new CustomerByPhoneQuery(c1p, data -> {
-            verifyCreateOneCustomer(data, failed);
-            f.set();
-        });
-
-        pq.executeQuery();
-
-        while(!f.read()){
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        DBReadQuery<Map<String, Customer>> pq = new FindCustomerByPhone(c1p);
+        verifyCreateOneCustomer(pq.execute(), failed);
 
         assertTrue(failed.read());
     }

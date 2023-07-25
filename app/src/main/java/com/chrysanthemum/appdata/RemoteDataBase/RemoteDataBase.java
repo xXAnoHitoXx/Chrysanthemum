@@ -18,5 +18,4 @@ public interface RemoteDataBase {
 
     TransactionManager getTransactionManager();
 
-    CustomerManager getCustomerManager();
 }

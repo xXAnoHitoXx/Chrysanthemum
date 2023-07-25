@@ -15,7 +15,7 @@ import java.util.Map;
  * the database as percived by the system,
  * the central data storage / interpretation unit
  */
-public class DataStorageModule implements DataStorageFrontEnd, DataStorageBackEnd {
+public class DataStorageModule implements DataStorageBackEnd {
 
     private static volatile DataStorageModule database;
     private final RemoteDataBase remote;
@@ -34,11 +34,7 @@ public class DataStorageModule implements DataStorageFrontEnd, DataStorageBackEn
         return database.remote;
     }
 
-    public static DataStorageFrontEnd getFrontEnd() {
-        return database;
-    }
-
-    public static DataStorageBackEnd getBackEnd() {
+    public static DataStorageModule getModule() {
         return database;
     }
 

@@ -18,10 +18,10 @@ import com.chrysanthemum.appdata.dataType.parsing.PhoneNumberParser;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
 import com.chrysanthemum.appdata.dataType.subType.Colour;
 import com.chrysanthemum.appdata.querries.DBCreateQuery;
-import com.chrysanthemum.appdata.querries._old.Query;
-import com.chrysanthemum.appdata.querries._old.customers.CustomerByNameQuery;
-import com.chrysanthemum.appdata.querries._old.customers.CustomerByPhoneQuery;
+import com.chrysanthemum.appdata.querries.DBReadQuery;
 import com.chrysanthemum.appdata.querries.customer.create.CreateCustomer;
+import com.chrysanthemum.appdata.querries.customer.read.FindCustomerByName;
+import com.chrysanthemum.appdata.querries.customer.read.FindCustomerByPhone;
 import com.chrysanthemum.ui.dataView.display.DisplayBoard;
 import com.chrysanthemum.ui.dataView.display.Displayable;
 import com.chrysanthemum.ui.dataView.task.Task;
@@ -116,13 +116,11 @@ public class CustomerFinderTask extends Task {
         board = host.getBoard();
         board.clear(host.getScale());
 
-        DataRetriever<Map<String, Customer>> retriever = this::updateBoardDisplay;
+        DBReadQuery<Map<String, Customer>> query = (selectedPhoneNumber > 0)?
+                new FindCustomerByPhone(selectedPhoneNumber) :
+                new FindCustomerByName(selectedName);
 
-        Query<Map<String, Customer>> query = (selectedPhoneNumber > 0)?
-                new CustomerByPhoneQuery(selectedPhoneNumber, retriever)
-                : new CustomerByNameQuery(selectedName, retriever);
-
-        query.executeQuery();
+        updateBoardDisplay(query.execute());
     }
 
     private void updateBoardDisplay(Map<String, Customer> data){

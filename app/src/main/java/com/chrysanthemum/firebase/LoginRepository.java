@@ -94,7 +94,7 @@ public class LoginRepository extends SecurityModule {
     }
 
     private void loadInitData(){
-        DataStorageModule.getBackEnd().loadTechMap(() -> {
+        DataStorageModule.getModule().loadTechMap(() -> {
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
             grantAccess(currentUser.getUid());
         });
@@ -122,7 +122,7 @@ public class LoginRepository extends SecurityModule {
 
         BoolFlag step2 = new BoolFlag();
 
-        DataStorageModule.getBackEnd().loadTechMap(() -> {
+        DataStorageModule.getModule().loadTechMap(() -> {
             FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
             grantAccess(currentUser.getUid());
 
@@ -166,7 +166,7 @@ public class LoginRepository extends SecurityModule {
     }
 
     private void testModeLogin(BoolFlag complete){
-        Technician admin = DataStorageModule.getFrontEnd().getActiveTechList().iterator().next();
+        Technician admin = DataStorageModule.getModule().getActiveTechList().iterator().next();
 
         FireDatabase.getRef().child(DatabaseStructure.TechnicianBranch.BRANCH_NAME)
                 .child(DatabaseStructure.TechnicianBranch.PASSWORD_STORAGE)

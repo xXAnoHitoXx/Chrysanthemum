@@ -7,24 +7,27 @@ public abstract class DBReadQuery<T> {
     private T data = null;
     private long timeOutInMilliseconds = 5000;
 
+    private Thread waitThread;
+
     /**
      * return null when timed out.
      */
-    public T execute(){
-        long startTime = System.currentTimeMillis();
+    public T execute() {
+        waitThread = Thread.currentThread();
         executeQuery();
 
-        while (data == null && System.currentTimeMillis() < startTime + timeOutInMilliseconds){
-            try {
-                Thread.sleep(5);
-            } catch (InterruptedException e) {}
+        try {
+            Thread.sleep(timeOutInMilliseconds);
+        } catch (InterruptedException e) {
+            return data;
         }
 
-        return data;
+        return null;
     }
 
     protected void returnQueryData(T data) {
         this.data = data;
+        waitThread.interrupt();
     }
 
     protected void setTimeOutInMilliseconds(long timeout) {
