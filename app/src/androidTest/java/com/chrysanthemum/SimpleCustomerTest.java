@@ -4,9 +4,10 @@ import com.chrysanthemum.appdata.DataStorageModule;
 import com.chrysanthemum.appdata.Util.BoolFlag;
 import com.chrysanthemum.appdata.dataType.Customer;
 import com.chrysanthemum.appdata.querries.DBReadQuery;
+import com.chrysanthemum.appdata.querries.TimedOutException;
 import com.chrysanthemum.appdata.querries.customer.CreateCustomer;
-import com.chrysanthemum.appdata.querries.customer.read.FindCustomerByName;
-import com.chrysanthemum.appdata.querries.customer.read.FindCustomerByPhone;
+import com.chrysanthemum.appdata.querries.customer.read.FindCustomersByName;
+import com.chrysanthemum.appdata.querries.customer.read.FindCustomersByPhone;
 import com.chrysanthemum.firebase.FireDatabase;
 import com.chrysanthemum.ui.accessAuthentication.AppAuthenticationActivity;
 
@@ -39,10 +40,10 @@ public class SimpleCustomerTest {
             new ActivityScenarioRule<>(AppAuthenticationActivity.class);
 
     // Customer 1
-    String c1n = "Ano Hito";
-    String c1f = "Ano";
+    final String c1n = "Ano Hito";
+    final String c1f = "Ano";
     String c1l = "Hito";
-    long c1p = 19024206969L;
+    final long c1p = 19024206969L;
 
     @Before
     public void beforeTest(){
@@ -59,13 +60,21 @@ public class SimpleCustomerTest {
 
         BoolFlag failed = new BoolFlag();
 
-        DBReadQuery<Map<String, Customer>> nq = new FindCustomerByName(c1f);
-        verifyCreateOneCustomer(nq.execute(), failed);
+        DBReadQuery<Map<String, Customer>> nq = new FindCustomersByName(c1f);
+        try {
+            verifyCreateOneCustomer(nq.execute(), failed);
+        } catch (TimedOutException e) {
+            assertTrue(false);
+        }
 
         assertFalse(failed.read());
 
-        DBReadQuery<Map<String, Customer>> pq = new FindCustomerByPhone(c1p);
-        verifyCreateOneCustomer(pq.execute(), failed);
+        DBReadQuery<Map<String, Customer>> pq = new FindCustomersByPhone(c1p);
+        try {
+            verifyCreateOneCustomer(pq.execute(), failed);
+        } catch (TimedOutException e) {
+            assertTrue(false);
+        }
 
         assertTrue(failed.read());
     }
@@ -76,13 +85,21 @@ public class SimpleCustomerTest {
     @Test public void testEmptyCustomerRetrieval(){
         BoolFlag failed = new BoolFlag();
 
-        DBReadQuery<Map<String, Customer>> nq = new FindCustomerByName(c1f);
-        verifyCreateOneCustomer(nq.execute(), failed);
+        DBReadQuery<Map<String, Customer>> nq = new FindCustomersByName(c1f);
+        try {
+            verifyCreateOneCustomer(nq.execute(), failed);
+        } catch (TimedOutException e) {
+            assertTrue(false);
+        }
 
         assertTrue(failed.read());
 
-        DBReadQuery<Map<String, Customer>> pq = new FindCustomerByPhone(c1p);
-        verifyCreateOneCustomer(pq.execute(), failed);
+        DBReadQuery<Map<String, Customer>> pq = new FindCustomersByPhone(c1p);
+        try {
+            verifyCreateOneCustomer(pq.execute(), failed);
+        } catch (TimedOutException e) {
+            assertTrue(false);
+        }
 
         assertTrue(failed.read());
     }

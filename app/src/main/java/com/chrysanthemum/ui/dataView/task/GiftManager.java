@@ -14,6 +14,7 @@ import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
 import com.chrysanthemum.appdata.querries.DBCreateQuery;
 import com.chrysanthemum.appdata.querries.DBReadQuery;
 import com.chrysanthemum.appdata.querries.DBUpdateQuery;
+import com.chrysanthemum.appdata.querries.TimedOutException;
 import com.chrysanthemum.appdata.querries.gift.CreateGiftCard;
 import com.chrysanthemum.appdata.querries.gift.FindGiftCardByID;
 import com.chrysanthemum.appdata.querries.gift.UpdateGiftCardAmount;
@@ -48,17 +49,20 @@ public class GiftManager extends LineDisplayLayoutTask {
         Button button = host.getFormButton();
         button.setText("Search");
         button.setOnClickListener(v -> {
+            try {
+                String id = code.getText().toString();
 
-            String id = code.getText().toString();
+                DBReadQuery<Gift> q = new FindGiftCardByID(id);
+                Gift gift = q.execute();
 
-            DBReadQuery<Gift> q = new FindGiftCardByID(id);
-            Gift gift = q.execute();
-
-            if(gift == null){
-                LocalDate expire = LocalDate.now().plusYears(3);
-                createGift(code.getText().toString(), TimeParser.parseDateDisplayDay(expire));
-            } else {
-                displayGiftData(gift);
+                if(gift == null){
+                    LocalDate expire = LocalDate.now().plusYears(3);
+                    createGift(code.getText().toString(), TimeParser.parseDateDisplayDay(expire));
+                } else {
+                    displayGiftData(gift);
+                }
+            } catch (TimedOutException e) {
+                host.popMessage("Gift Card Loading Timed Out");
             }
         });
     }

@@ -1,8 +1,8 @@
 package com.chrysanthemum.appdata;
 
 public class Tax {
-    private static int taxRate = 15;
-    private static int taxRatio = 100 + taxRate;
+    private static final int taxRate = 15;
+    private static final int taxRatio = 100 + taxRate;
 
     public static long getPreTax(long amount){
         return amount * 100 / taxRatio;

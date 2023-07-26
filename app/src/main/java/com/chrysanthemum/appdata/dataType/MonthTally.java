@@ -11,11 +11,11 @@ import java.util.TreeMap;
 
 public class MonthTally {
 
-    String title;
+    final String title;
 
-    Map<LocalDate, MonthTallyEntry> month;
-    MonthTallyEntry firstHalf = new MonthTallyEntry("First Half");
-    MonthTallyEntry secondHalf = new MonthTallyEntry("Second Half");
+    final Map<LocalDate, MonthTallyEntry> month;
+    final MonthTallyEntry firstHalf = new MonthTallyEntry("First Half");
+    final MonthTallyEntry secondHalf = new MonthTallyEntry("Second Half");
 
     public MonthTally(String title){
         this.title = title;

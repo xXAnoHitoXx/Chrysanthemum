@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat;
 import com.chrysanthemum.appdata.dataType.MonthTally;
 import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
 import com.chrysanthemum.appdata.querries.DBReadQuery;
+import com.chrysanthemum.appdata.querries.TimedOutException;
 import com.chrysanthemum.appdata.querries.accounting.read.ReadMonthTally;
 import com.chrysanthemum.ui.dataView.task.Task;
 import com.chrysanthemum.ui.dataView.task.TaskHostestActivity;
@@ -32,7 +33,7 @@ import java.time.LocalDate;
  */
 public class GenerateMonthlyTotalTask extends Task {
 
-    Activity context;
+    final Activity context;
 
     public GenerateMonthlyTotalTask(TaskHostestActivity host, Activity context) {
         super(host);
@@ -72,18 +73,16 @@ public class GenerateMonthlyTotalTask extends Task {
                     e.printStackTrace();
                 }
             } else {
-                DBReadQuery<MonthTally> query = new ReadMonthTally(title, y, m);
-                MonthTally mt = query.execute();
-
-                if(mt == null){
-                    host.popMessage("Loading Month Tally Timed Out!");
-                    return;
-                }
 
                 try {
+                    DBReadQuery<MonthTally> query = new ReadMonthTally(title, y, m);
+                    MonthTally mt = query.execute();
+
                     generateFile(mt);
                 } catch (IOException e) {
                     e.printStackTrace();
+                } catch (TimedOutException e) {
+                    host.popMessage("Loading Month Tally Timed Out!");
                 }
             }
         });

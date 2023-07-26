@@ -13,6 +13,7 @@ import com.chrysanthemum.appdata.dataType.Technician;
 import com.chrysanthemum.appdata.dataType.parsing.MoneyParser;
 import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
 import com.chrysanthemum.appdata.querries.DBReadQuery;
+import com.chrysanthemum.appdata.querries.TimedOutException;
 import com.chrysanthemum.appdata.querries.accounting.read.ReadTechTallyBlocks;
 import com.chrysanthemum.ui.dataView.task.Task;
 import com.chrysanthemum.ui.dataView.task.TaskHostestActivity;
@@ -137,16 +138,20 @@ public class WeeklyAccountingTask  extends LineDisplayLayoutTask {
         displayLabel();
         row = 1;
 
-        DBReadQuery<TreeMap<Long, TechTallyBlock>> query =
-                new ReadTechTallyBlocks(
-                        TimeParser.parseDate(dayA.replaceAll("/", " ")),
-                                TimeParser.parseDate(dayB.replaceAll("/", " ")),
-                                        techs);
+        try {
+            DBReadQuery<TreeMap<Long, TechTallyBlock>> query =
+                    new ReadTechTallyBlocks(
+                            TimeParser.parseDate(dayA.replaceAll("/", " ")),
+                            TimeParser.parseDate(dayB.replaceAll("/", " ")),
+                            techs);
 
-        TreeMap<Long, TechTallyBlock> blocks = query.execute();
+            TreeMap<Long, TechTallyBlock> blocks = query.execute();
 
-        for(long techID : blocks.keySet()){
-            DisplayTallyBlock(blocks.get(techID));
+            for(long techID : blocks.keySet()){
+                DisplayTallyBlock(blocks.get(techID));
+            }
+        } catch (TimedOutException e) {
+            host.popMessage("Loading ReadTechTallyBlocks Time Out");
         }
     }
 

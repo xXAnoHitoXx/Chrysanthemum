@@ -16,16 +16,16 @@ import com.chrysanthemum.appdata.dataType.Customer;
 import com.chrysanthemum.appdata.dataType.Transaction;
 import com.chrysanthemum.appdata.dataType.parsing.PhoneNumberParser;
 import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
-import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
 import com.chrysanthemum.appdata.dataType.subType.Colour;
-import com.chrysanthemum.appdata.querries._old.Query;
+import com.chrysanthemum.appdata.querries.DBReadQuery;
+import com.chrysanthemum.appdata.querries.TimedOutException;
 import com.chrysanthemum.appdata.querries.customer.UpdateCustomerInfo;
-import com.chrysanthemum.appdata.querries._old.transactions.TransactionsByCustomerIDQuery;
+import com.chrysanthemum.appdata.querries.transaction.read.LoadTransactionsByCustomerID;
 import com.chrysanthemum.ui.dataView.display.Displayable;
 import com.chrysanthemum.ui.dataView.task.display.PhoneNumberBar;
 import com.chrysanthemum.ui.dataView.task.subTasks.CustomerFinderTask;
 
-import java.util.LinkedList;
+import java.util.List;
 
 public class CustomerManagerTask extends Task {
 
@@ -81,11 +81,12 @@ public class CustomerManagerTask extends Task {
 
     private void loadTransactions(Customer customer){
         host.getBoard().clear(host.getScale());
-
-        DataRetriever<LinkedList<Transaction>> retriever = data -> {
+        try {
+            DBReadQuery<List<Transaction>> query = new LoadTransactionsByCustomerID(customer.getID());
+            List<Transaction> transactionList = query.execute();
 
             // sort data by appointment time then by id
-            data.sort((o1, o2) -> {
+            transactionList.sort((o1, o2) -> {
                 long comp = o2.getLocalDateAppointmentDate().compareTo(o1.getLocalDateAppointmentDate());
 
                 if(comp == 0){
@@ -98,13 +99,12 @@ public class CustomerManagerTask extends Task {
             // display each transaction in a row
             int row = 0;
 
-            for(Transaction transaction : data){
+            for(Transaction transaction : transactionList){
                 displayTransaction(row++, transaction);
             }
-        };
-
-        Query<LinkedList<Transaction>> query = new TransactionsByCustomerIDQuery(customer, retriever);
-        query.executeQuery();
+        } catch (TimedOutException e) {
+            host.popMessage("Load Transactions timed out");
+        }
     }
 
     private void displayTransaction(int row, Transaction transaction){

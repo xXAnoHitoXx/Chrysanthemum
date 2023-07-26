@@ -5,7 +5,7 @@ import android.widget.EditText;
 import com.chrysanthemum.appdata.dataType.parsing.PhoneNumberParser;
 
 public class PhoneNumberBar {
-    public EditText bar;
+    public final EditText bar;
     private long phoneNumber;
 
     public PhoneNumberBar(final EditText bar){

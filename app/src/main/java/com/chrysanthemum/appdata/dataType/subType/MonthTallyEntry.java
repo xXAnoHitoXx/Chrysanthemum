@@ -9,9 +9,9 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class MonthTallyEntry {
-    String label;
-    Map<Long, long[]> techsPay;
-    DailyTally tally;
+    final String label;
+    final Map<Long, long[]> techsPay;
+    final DailyTally tally;
 
     public MonthTallyEntry(String label) {
         this.label = label;

@@ -1,7 +1,7 @@
 package com.chrysanthemum.appdata.Util;
 
 public class CSVBuilder {
-    StringBuilder file = new StringBuilder();
+    final StringBuilder file = new StringBuilder();
     boolean nl = true;
 
     public CSVBuilder(String title){

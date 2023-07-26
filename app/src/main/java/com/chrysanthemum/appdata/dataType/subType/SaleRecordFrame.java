@@ -1,7 +1,5 @@
 package com.chrysanthemum.appdata.dataType.subType;
 
-import com.chrysanthemum.appdata.dataType.Customer;
-
 public class SaleRecordFrame {
 
     private final String date;

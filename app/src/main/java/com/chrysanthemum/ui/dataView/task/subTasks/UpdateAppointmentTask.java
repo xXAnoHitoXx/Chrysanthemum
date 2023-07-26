@@ -53,7 +53,7 @@ public class UpdateAppointmentTask extends Task {
 
                 money = money.replaceAll("\\(" , " ");
                 money = money.replaceAll("[$).]", "");
-                money = money.replaceAll("[ ]+", " ");
+                money = money.replaceAll(" +", " ");
 
                 int[] pay = MoneyParser.parsePayment(money);
 

@@ -12,8 +12,6 @@ public interface TransactionManager {
 
     void findTransactionByID(long id, DataRetriever<TransactionFrame> retriever);
 
-    void findOpenTransactionIDsByDate(String date, DataRetriever<LinkedList<Long>> retriever);
-    void findTransactionIDsByCustomerID(long id, DataRetriever<LinkedList<Long>> retriever);
     void findTransactionIDsByDateAndTechnicianID(String date, long id, DataRetriever<LinkedList<Long>> retriever);
 
 }

@@ -12,7 +12,7 @@ public abstract class DBReadQuery<T> {
     /**
      * return null when timed out.
      */
-    public T execute() {
+    public T execute() throws TimedOutException {
         waitThread = Thread.currentThread();
         executeQuery();
 
@@ -22,7 +22,7 @@ public abstract class DBReadQuery<T> {
             return data;
         }
 
-        return null;
+        throw new TimedOutException();
     }
 
     protected void returnQueryData(T data) {
@@ -38,5 +38,5 @@ public abstract class DBReadQuery<T> {
      * the query try to set data value before timeout
      */
     protected abstract void executeQuery();
-
 }
+

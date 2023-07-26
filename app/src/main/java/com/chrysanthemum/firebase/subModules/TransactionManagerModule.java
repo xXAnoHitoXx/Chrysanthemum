@@ -70,57 +70,6 @@ public class TransactionManagerModule implements TransactionManager {
     }
 
     @Override
-    public void findOpenTransactionIDsByDate(String date, final DataRetriever<LinkedList<Long>> retriever) {
-        Scanner scanner = new Scanner(date);
-        String day = scanner.next();
-        String month = scanner.next();
-        String year = scanner.next();
-        scanner.close();
-
-        FireDatabase.getRef().child(DatabaseStructure.TransactionBranch.BRANCH_NAME)
-                .child(year).child(month).child(day)
-                .child(DatabaseStructure.TransactionBranch.OPEN_APPOINTMENT)
-                .get().addOnCompleteListener(task -> {
-                    if(task.isSuccessful()){
-                        DataSnapshot snapshot = task.getResult();
-                        LinkedList<Long> IDList = new LinkedList<>();
-
-                        assert snapshot != null;
-                        if(snapshot.exists()){
-                            for(DataSnapshot child : snapshot.getChildren()){
-                                long id = child.getValue(Long.class);
-                                IDList.add(id);
-                            }
-                        }
-
-                        retriever.retrievedData(IDList);
-                    }
-                });
-    }
-
-    @Override
-    public void findTransactionIDsByCustomerID(long customerID, final DataRetriever<LinkedList<Long>> retriever) {
-        FireDatabase.getRef().child(DatabaseStructure.TransactionBranch.BRANCH_NAME)
-                .child(DatabaseStructure.TransactionBranch.CUSTOMER_ID_INDEX)
-                .child(customerID + "").get().addOnCompleteListener(task -> {
-                    if(task.isSuccessful()){
-                        DataSnapshot snapshot = task.getResult();
-                        LinkedList<Long> IDList = new LinkedList<>();
-
-                        assert snapshot != null;
-                        if(snapshot.exists()){
-                            for(DataSnapshot child : snapshot.getChildren()){
-                                long id = child.getValue(Long.class);
-                                IDList.add(id);
-                            }
-                        }
-
-                        retriever.retrievedData(IDList);
-                    }
-                });
-    }
-
-    @Override
     public void findTransactionIDsByDateAndTechnicianID(String date, long technicianId, final DataRetriever<LinkedList<Long>> retriever) {
         Scanner scanner = new Scanner(date);
         String day = scanner.next();

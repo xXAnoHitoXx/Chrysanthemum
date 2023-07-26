@@ -11,13 +11,13 @@ import com.google.firebase.database.DataSnapshot;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class FindCustomerByPhone extends DBReadQuery<Map<String, Customer>> {
+public class FindCustomersByPhone extends DBReadQuery<Map<String, Customer>> {
 
     private final long phoneNumber;
     private final Map<String, Customer> result = new TreeMap<>();
     private long count;
 
-    public FindCustomerByPhone(long phoneNumber) {
+    public FindCustomersByPhone(long phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 

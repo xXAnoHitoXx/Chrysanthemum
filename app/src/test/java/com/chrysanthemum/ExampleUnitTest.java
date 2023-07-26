@@ -1,13 +1,8 @@
 package com.chrysanthemum;
 
-import android.util.Log;
-
 import com.chrysanthemum.appdata.Util.DynamicLCSTable;
 
-import org.apache.commons.codec.language.Metaphone;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 /**
  * Example local unit test, which will execute on the development machine (host).

@@ -12,15 +12,17 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+
 import com.chrysanthemum.appdata.DataStorageModule;
 import com.chrysanthemum.appdata.Util.AppUtil;
 import com.chrysanthemum.appdata.dataType.Transaction;
 import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
-import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
 import com.chrysanthemum.appdata.dataType.subType.AppointmentStatus;
 import com.chrysanthemum.appdata.dataType.subType.Colour;
-import com.chrysanthemum.appdata.querries._old.Query;
-import com.chrysanthemum.appdata.querries._old.appointments.LoadAppointmentListByDayQuery;
+import com.chrysanthemum.appdata.querries.DBReadQuery;
+import com.chrysanthemum.appdata.querries.TimedOutException;
+import com.chrysanthemum.appdata.querries.appointment.LoadAppointmentListByDate;
 import com.chrysanthemum.ui.dataView.display.DisplayBoard;
 import com.chrysanthemum.ui.dataView.display.Displayable;
 import com.chrysanthemum.ui.dataView.task.subTasks.AppointmentClaimTask;
@@ -30,10 +32,9 @@ import com.chrysanthemum.ui.dataView.task.subTasks.UpdateAppointmentTask;
 
 import java.time.LocalDate;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
-import androidx.annotation.Nullable;
 
 public class AppointmentViewerTask extends Task {
 
@@ -92,18 +93,20 @@ public class AppointmentViewerTask extends Task {
 
         final String date = selectedDate.replaceAll("/", " ");
 
-        DataRetriever<LinkedList<Transaction>> retriever = data -> {
+        try {
+            DBReadQuery<List<Transaction>> q = new LoadAppointmentListByDate(date);
+            List<Transaction> data = q.execute();
 
             appointmentList = new TreeMap<>();
 
             for(Transaction transaction : data){
                 appointmentList.put(transaction.getID(), transaction);
             }
-            displayTransactions(date);
-        };
 
-        Query<LinkedList<Transaction>> query = new LoadAppointmentListByDayQuery(date, retriever);
-        query.executeQuery();
+            displayTransactions(date);
+        } catch (TimedOutException e) {
+            host.popMessage("Appointment List Timed Out");
+        }
     }
 
     /**
@@ -275,7 +278,6 @@ public class AppointmentViewerTask extends Task {
         }
 
         private void setupRecordPaymentSubTask(){
-            final Displayable display = this;
 
             UpdateAppointmentTask subTask  = new UpdateAppointmentTask(host, t, data -> {
                 setupDaySelectionForm();
@@ -291,12 +293,10 @@ public class AppointmentViewerTask extends Task {
 
         private final Rect hitbox;
         private final int hour;
-        private final LocalDate date;
         private final int colour;
 
         public HourMarker(int hour, LocalDate date){
             this.hour = hour;
-            this.date = date;
             int time = hour * 60;
             hitbox = new Rect(getTimeXpos(time), getRowYpos(0),
                     getTimeXpos(time + 60),

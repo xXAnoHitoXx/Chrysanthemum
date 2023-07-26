@@ -16,9 +16,9 @@ public class DisplayUnit extends Displayable {
     private static final int BLOCK_WIDTH = 140;
     private  static final int MARGIN = 2;
 
-    private int colour;
-    private String data;
-    private Rect bounds;
+    private final int colour;
+    private final String data;
+    private final Rect bounds;
     private View.OnLongClickListener listener = null;
 
     public DisplayUnit(String data, int colour, int col, int row, int width){

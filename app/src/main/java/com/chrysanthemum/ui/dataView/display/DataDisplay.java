@@ -6,8 +6,6 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 
-import com.chrysanthemum.appdata.dataType.subType.Colour;
-
 /**
  * a slot on  the board that could be used to display a displayable
  */

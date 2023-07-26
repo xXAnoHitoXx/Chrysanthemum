@@ -11,7 +11,7 @@ import com.chrysanthemum.R;
 
 class AccessAuthenticationViewModel extends ViewModel {
 
-    private MutableLiveData<AuthenticationFormState> loginFormState = new MutableLiveData<>();
+    private final MutableLiveData<AuthenticationFormState> loginFormState = new MutableLiveData<>();
 
     AccessAuthenticationViewModel() {}
 

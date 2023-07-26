@@ -9,11 +9,11 @@ import com.google.firebase.database.DataSnapshot;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class FindCustomerByName extends DBReadQuery<Map<String, Customer>> {
+public class FindCustomersByName extends DBReadQuery<Map<String, Customer>> {
 
     private final String name;
 
-    public FindCustomerByName(String name) {
+    public FindCustomersByName(String name) {
         this.name = name;
     }
 

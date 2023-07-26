@@ -8,20 +8,20 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.chrysanthemum.appdata.DataStorageModule;
+import com.chrysanthemum.appdata.dataType.Amount;
 import com.chrysanthemum.appdata.dataType.Technician;
 import com.chrysanthemum.appdata.dataType.Transaction;
 import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
-import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
-import com.chrysanthemum.appdata.querries._old.Query;
-import com.chrysanthemum.appdata.querries._old.transactions.LoadTransactionsByTechnicianIDQuery;
+import com.chrysanthemum.appdata.querries.DBReadQuery;
+import com.chrysanthemum.appdata.querries.TimedOutException;
+import com.chrysanthemum.appdata.querries.transaction.read.LoadTransactionOfTechnicianOnDate;
 import com.chrysanthemum.ui.dataView.task.Task;
 import com.chrysanthemum.ui.dataView.task.TaskHostestActivity;
 import com.chrysanthemum.ui.dataView.task.TaskSelectionButtion;
-import com.chrysanthemum.appdata.dataType.Amount;
 import com.chrysanthemum.ui.dataView.task.subTasks.DaySelectorTask;
 
 import java.time.LocalDate;
-import java.util.LinkedList;
+import java.util.List;
 
 public class DailyAccountingTask_Personal extends DailyAccountingTask {
 
@@ -48,13 +48,7 @@ public class DailyAccountingTask_Personal extends DailyAccountingTask {
         daySelect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Task sub = new DaySelectorTask(host, new DataRetriever<LocalDate>() {
-                    @Override
-                    public void retrievedData(LocalDate date) {
-                        loadBoard(date);
-                    }
-
-                });
+                Task sub = new DaySelectorTask(host, date -> loadBoard(date));
 
                 sub.start();
             }
@@ -67,31 +61,31 @@ public class DailyAccountingTask_Personal extends DailyAccountingTask {
 
     private void loadBoard(LocalDate date) {
         host.getBoard().clear(host.getScale().scale(TASK_SCALE));
-        displayLabel();
 
         final Technician tech = DataStorageModule.getModule().getSecurityModule().getLoggedinTech();
 
-        Query<LinkedList<Transaction>> query = new LoadTransactionsByTechnicianIDQuery(TimeParser.parseDateData(date), tech, new DataRetriever<LinkedList<Transaction>>() {
-            @Override
-            public void retrievedData(LinkedList<Transaction> transactionList) {
+        try {
+            DBReadQuery<List<Transaction>> query = new LoadTransactionOfTechnicianOnDate(tech.getID(), TimeParser.parseDateData(date));
+            List<Transaction> transactionList = query.execute();
 
-                DailyUtil.orderedByTime(transactionList);
+            displayLabel();
 
-                int row = 1;
+            DailyUtil.orderedByTime(transactionList);
 
-                Amount shopTotal = new Amount();
+            int row = 1;
 
-                for(Transaction transaction : transactionList){
-                    displayTransaction(transaction, row++, null);
+            Amount shopTotal = new Amount();
 
-                    shopTotal.add(transaction.getAmount(), transaction.getTip());
-                }
+            for(Transaction transaction : transactionList){
+                displayTransaction(transaction, row++, null);
 
-                displayTotal(tech.getName(), shopTotal.getAmount(), shopTotal.getTip(), Color.LTGRAY, row);
+                shopTotal.add(transaction.getAmount(), transaction.getTip());
             }
-        });
 
-        query.executeQuery();
+            displayTotal(tech.getName(), shopTotal.getAmount(), shopTotal.getTip(), Color.LTGRAY, row);
+        } catch (TimedOutException e) {
+            host.popMessage("Load Transactions Timed Out");
+        }
     }
 
     public static TaskSelectionButtion getMenuButton(Context context, final TaskHostestActivity host) {

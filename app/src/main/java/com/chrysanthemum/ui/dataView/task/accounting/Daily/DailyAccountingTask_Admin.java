@@ -13,9 +13,11 @@ import com.chrysanthemum.appdata.dataType.Technician;
 import com.chrysanthemum.appdata.dataType.Transaction;
 import com.chrysanthemum.appdata.dataType.parsing.MoneyParser;
 import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
+import com.chrysanthemum.appdata.querries.DBReadQuery;
 import com.chrysanthemum.appdata.querries.DBUpdateQuery;
-import com.chrysanthemum.appdata.querries._old.accounting.LoadTransactionRecordsOfDateQuery;
+import com.chrysanthemum.appdata.querries.TimedOutException;
 import com.chrysanthemum.appdata.querries.transaction.UpdateTransactionData;
+import com.chrysanthemum.appdata.querries.transaction.read.LoadTransactionRecordsOfDate;
 import com.chrysanthemum.ui.dataView.task.Task;
 import com.chrysanthemum.ui.dataView.task.TaskHostestActivity;
 import com.chrysanthemum.ui.dataView.task.TaskSelectionButtion;
@@ -24,6 +26,7 @@ import com.chrysanthemum.ui.dataView.task.subTasks.MultiTechSelectionTask;
 
 import java.time.LocalDate;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -89,15 +92,15 @@ public class DailyAccountingTask_Admin extends DailyAccountingTask {
 
 
     private void loadBoard(String date, final LinkedList<Technician> techs) {
-        host.getBoard().clear(host.getScale().scale(TASK_SCALE));
-        displayLabel();
+        try {
+            DBReadQuery<List<Transaction>> query = new LoadTransactionRecordsOfDate(date, techs);
+            List<Transaction> transactionList = query.execute();
 
-        LoadTransactionRecordsOfDateQuery query = new LoadTransactionRecordsOfDateQuery(date, techs, transactionList -> {
-            setTransactionList(transactionList);
+            setTransactionList((LinkedList<Transaction>) transactionList);
             displayTransactions();
-        });
-
-        query.executeQuery();
+        } catch (TimedOutException e) {
+            host.popMessage("Loading Timed Out");
+        }
     }
 
     private void setTransactionList(LinkedList<Transaction> transactionList){

@@ -19,9 +19,10 @@ import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
 import com.chrysanthemum.appdata.dataType.subType.Colour;
 import com.chrysanthemum.appdata.querries.DBCreateQuery;
 import com.chrysanthemum.appdata.querries.DBReadQuery;
+import com.chrysanthemum.appdata.querries.TimedOutException;
 import com.chrysanthemum.appdata.querries.customer.CreateCustomer;
-import com.chrysanthemum.appdata.querries.customer.read.FindCustomerByName;
-import com.chrysanthemum.appdata.querries.customer.read.FindCustomerByPhone;
+import com.chrysanthemum.appdata.querries.customer.read.FindCustomersByName;
+import com.chrysanthemum.appdata.querries.customer.read.FindCustomersByPhone;
 import com.chrysanthemum.ui.dataView.display.DisplayBoard;
 import com.chrysanthemum.ui.dataView.display.Displayable;
 import com.chrysanthemum.ui.dataView.task.Task;
@@ -116,11 +117,15 @@ public class CustomerFinderTask extends Task {
         board = host.getBoard();
         board.clear(host.getScale());
 
-        DBReadQuery<Map<String, Customer>> query = (selectedPhoneNumber > 0)?
-                new FindCustomerByPhone(selectedPhoneNumber) :
-                new FindCustomerByName(selectedName);
+        try{
+            DBReadQuery<Map<String, Customer>> query = (selectedPhoneNumber > 0)?
+                    new FindCustomersByPhone(selectedPhoneNumber) :
+                    new FindCustomersByName(selectedName);
 
-        updateBoardDisplay(query.execute());
+            updateBoardDisplay(query.execute());
+        } catch (TimedOutException e) {
+            host.popMessage("Customer Search Time Out");
+        }
     }
 
     private void updateBoardDisplay(Map<String, Customer> data){

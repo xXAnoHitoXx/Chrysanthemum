@@ -1,7 +1,10 @@
 package com.chrysanthemum.appdata.dataType.subType;
 
 public class Colour {
-    int a, r, g, b;
+    final int a;
+    final int r;
+    final int g;
+    final int b;
 
     public Colour(int c){
 

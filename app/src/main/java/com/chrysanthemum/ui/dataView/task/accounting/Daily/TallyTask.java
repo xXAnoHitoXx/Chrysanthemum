@@ -14,6 +14,7 @@ import com.chrysanthemum.appdata.dataType.parsing.MoneyParser;
 import com.chrysanthemum.appdata.dataType.parsing.TimeParser;
 import com.chrysanthemum.appdata.querries.DBReadQuery;
 import com.chrysanthemum.appdata.querries.DBUpdateQuery;
+import com.chrysanthemum.appdata.querries.TimedOutException;
 import com.chrysanthemum.appdata.querries.accounting.UpdateClosingData;
 import com.chrysanthemum.appdata.querries.accounting.read.ReadDailyTallyOfDate;
 import com.chrysanthemum.ui.dataView.task.Task;
@@ -70,13 +71,12 @@ public class TallyTask  extends LineDisplayLayoutTask {
     }
 
     private void displayClosingData(){
-        DBReadQuery<DailyTally> query = new ReadDailyTallyOfDate(selectedDate);
-        DailyTally tally = query.execute();
-
-        if(tally == null){
-            host.popMessage("Daily Tally Loading Timed Out!");
-        } else {
+        try{
+            DBReadQuery<DailyTally> query = new ReadDailyTallyOfDate(selectedDate);
+            DailyTally tally = query.execute();
             displayTally(tally);
+        } catch (TimedOutException e) {
+            host.popMessage("Daily Tally Loading Timed Out!");
         }
     }
 

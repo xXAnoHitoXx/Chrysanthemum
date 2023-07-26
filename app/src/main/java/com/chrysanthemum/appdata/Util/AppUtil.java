@@ -1,18 +1,10 @@
 package com.chrysanthemum.appdata.Util;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Rect;
 import android.util.TypedValue;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Scanner;
 
 public class AppUtil {
     public static int dpToPx(Context c, int dp){

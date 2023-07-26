@@ -18,8 +18,8 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(JUnit4.class)
 public class LoginTest {
-    String uname = "chrysanthemumspa@gmail.com";
-    String pword = "Only4988";
+    final String uname = "chrysanthemumspa@gmail.com";
+    final String pword = "Only4988";
 
     @Rule
     public ActivityScenarioRule<AppAuthenticationActivity> activityRule =
