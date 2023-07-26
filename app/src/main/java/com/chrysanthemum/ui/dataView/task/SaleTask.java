@@ -9,11 +9,15 @@ import android.widget.TextView;
 import com.chrysanthemum.appdata.DataStorageModule;
 import com.chrysanthemum.appdata.Util.Scaler;
 import com.chrysanthemum.appdata.dataType.Customer;
+import com.chrysanthemum.appdata.dataType.Transaction;
 import com.chrysanthemum.appdata.dataType.parsing.MoneyParser;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
-import com.chrysanthemum.appdata.querries._old.transactions.NewSaleTransactionQuery;
+import com.chrysanthemum.appdata.querries.DBCreateQuery;
+import com.chrysanthemum.appdata.querries.transaction.CreateSaleTransaction;
 import com.chrysanthemum.ui.dataView.task.subTasks.CustomerFinderTask;
 import com.chrysanthemum.ui.dataView.task.subTasks.DaySelectorTask;
+
+import org.apache.poi.ss.formula.functions.T;
 
 import java.time.LocalDate;
 
@@ -84,8 +88,8 @@ public class SaleTask extends Task {
                     return;
                 }
 
-                NewSaleTransactionQuery q = new NewSaleTransactionQuery(date, customer, desc.getText().toString(), amt);
-                q.executeQuery();
+                DBCreateQuery<Transaction> query = new CreateSaleTransaction(date, customer, desc.getText().toString(), amt);
+                query.execute();
 
                 host.popMessage("Sale Record Created!");
 

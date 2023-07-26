@@ -1,8 +1,10 @@
 package com.chrysanthemum.appdata;
 
-import com.chrysanthemum.appdata.RemoteDataBase.RemoteDataBase;
 import com.chrysanthemum.appdata.dataType.Technician;
 import com.chrysanthemum.appdata.dataType.retreiver.NullRetriever;
+import com.chrysanthemum.appdata.querries.DBReadQuery;
+import com.chrysanthemum.appdata.querries.TimedOutException;
+import com.chrysanthemum.appdata.querries.technician.LoadTechnicianMap;
 import com.chrysanthemum.appdata.security.SecurityModule;
 import com.chrysanthemum.firebase.DatabaseStructure;
 import com.chrysanthemum.firebase.FireDatabase;
@@ -18,7 +20,6 @@ import java.util.Map;
 public class DataStorageModule implements DataStorageBackEnd {
 
     private static volatile DataStorageModule database;
-    private final RemoteDataBase remote;
 
     public static void init(){
         if(database == null){
@@ -30,10 +31,6 @@ public class DataStorageModule implements DataStorageBackEnd {
         return System.currentTimeMillis();
     }
 
-    public static RemoteDataBase getRemoteDataBaseModule(){
-        return database.remote;
-    }
-
     public static DataStorageModule getModule() {
         return database;
     }
@@ -43,7 +40,6 @@ public class DataStorageModule implements DataStorageBackEnd {
         firebase.initialization();
 
         this.setSecurityModule(firebase.generateSecurityModule());
-        remote = firebase;
     }
 
     public void close(){
@@ -68,12 +64,15 @@ public class DataStorageModule implements DataStorageBackEnd {
     private Map<String, Technician> techMap;
 
     public void loadTechMap(final NullRetriever retriever) {
-        remote.getTechnicianMap(data -> {
-            techMap = data;
+        try {
+            DBReadQuery<Map<String, Technician>> query = new LoadTechnicianMap();
+            techMap = query.execute();
             Technician sale = DatabaseStructure.Accounting.SALE_TECH;
             techMap.put(sale.getID() + "", sale);
             retriever.retrieved();
-        });
+        } catch (TimedOutException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Iterable<Technician> getActiveTechList(){
