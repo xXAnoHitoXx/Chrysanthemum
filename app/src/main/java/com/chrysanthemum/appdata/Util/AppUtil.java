@@ -18,8 +18,4 @@ public class AppUtil {
         return a.left < b.right && b.left < a.right
                 && a.top < b.bottom && b.top < a.bottom;
     }
-
-    public static LocalDate getMonday(LocalDate day){
-        return day.minusDays(day.getDayOfWeek().getValue() - 1);
-    }
 }

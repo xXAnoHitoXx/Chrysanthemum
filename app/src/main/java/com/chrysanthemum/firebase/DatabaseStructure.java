@@ -38,7 +38,6 @@ public class DatabaseStructure {
     public static class Accounting {
         public static final String BRANCH_NAME = "Acc";
         public static final String SHOP_TOTAL = "ST";
-        public static final String WEEKLY_TOTALS = "WTs";
 
         public static final Technician SALE_TECH= new Technician("Sales", "", Color.LTGRAY, -32098271938L);
 

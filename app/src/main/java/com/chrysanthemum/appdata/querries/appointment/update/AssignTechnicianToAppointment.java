@@ -18,6 +18,7 @@ public class AssignTechnicianToAppointment extends DBUpdateQuery<Transaction> {
 
     @Override
     public void execute() {
+        transaction.setTech(technician);
         long techID = (transaction.getTech() == null)? Transaction.NO_TECH_ID : transaction.getTech().getID();
 
         //update technicianID

@@ -17,8 +17,6 @@ import com.chrysanthemum.appdata.querries.transaction.CreateSaleTransaction;
 import com.chrysanthemum.ui.dataView.task.subTasks.CustomerFinderTask;
 import com.chrysanthemum.ui.dataView.task.subTasks.DaySelectorTask;
 
-import org.apache.poi.ss.formula.functions.T;
-
 import java.time.LocalDate;
 
 public class SaleTask extends Task {

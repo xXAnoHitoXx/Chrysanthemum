@@ -8,6 +8,7 @@ import com.chrysanthemum.appdata.dataType.Transaction;
 import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
 import com.chrysanthemum.appdata.dataType.subType.AppointmentStatus;
 import com.chrysanthemum.appdata.dataType.subType.TransactionStatus;
+import com.chrysanthemum.appdata.querries.DBDeleteQuery;
 import com.chrysanthemum.appdata.querries.appointment.update.AssignTechnicianToAppointment;
 import com.chrysanthemum.appdata.querries.appointment.update.DeleteNoShowAppointment;
 import com.chrysanthemum.appdata.querries.appointment.update.MarkAppointmentAsNoShow;
@@ -82,7 +83,8 @@ public class AppointmentClaimTask  extends Task {
                 .setMessage("Delete the appointment with " + transaction.getCustomer().getName())
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
-                    new DeleteNoShowAppointment(transaction).deleteData();
+                    DBDeleteQuery<Transaction> query = new DeleteNoShowAppointment(transaction);
+                    query.deleteData();
                     CustomerFinderTask.service(transaction.getCustomer());
                     retriever.retrievedData(DELETED);
                 })

@@ -37,7 +37,4 @@ public class Gift {
         this.amount = amount;
     }
 
-    public void setDateExpires(String dateExpires) {
-        this.dateExpires = dateExpires;
-    }
 }

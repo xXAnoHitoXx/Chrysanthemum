@@ -36,40 +36,12 @@ public class TransactionFrame {
         services = transaction.getServices();
     }
 
-    public void setID(long id){
-        this.id = id;
-    }
-
-    public String getDate(){
-        return date;
-    }
-
-    public String getAppointmentTime(){
-        return appointmentTime;
-    }
-
-    public String getDuration(){
-        return duration;
-    }
-
     public long getCustomerID(){
         return  customerID;
     }
 
     public long getTechnicianID(){
         return technicianID;
-    }
-
-    public String getAmount(){
-        return amount;
-    }
-
-    public String getTip(){
-        return tip;
-    }
-
-    public String getServices(){
-        return services;
     }
 
     public Transaction formTransaction(Customer c, Technician tech){

@@ -17,7 +17,7 @@ import java.util.Map;
  * the database as percived by the system,
  * the central data storage / interpretation unit
  */
-public class DataStorageModule implements DataStorageBackEnd {
+public class DataStorageModule {
 
     private static volatile DataStorageModule database;
 
