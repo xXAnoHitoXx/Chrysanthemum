@@ -43,9 +43,7 @@ public class FindTransactionsByID implements AsyncSubQuery<Transaction> {
                             }
 
                             AsyncSubQuery<Customer> subQuery = new FindCustomerByID(frame.getCustomerID());
-                            subQuery.execute(customer -> {
-                                retriever.retrievedData(frame.formTransaction(customer, tech));
-                            });
+                            subQuery.execute(customer -> retriever.retrievedData(frame.formTransaction(customer, tech)));
                         }
                     }
                 });

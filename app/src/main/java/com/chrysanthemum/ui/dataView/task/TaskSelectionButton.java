@@ -6,13 +6,13 @@ import android.util.AttributeSet;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-public abstract class TaskSelectionButtion extends androidx.appcompat.widget.AppCompatButton {
+public abstract class TaskSelectionButton extends androidx.appcompat.widget.AppCompatButton {
 
-    public TaskSelectionButtion(@NonNull Context context) {
+    public TaskSelectionButton(@NonNull Context context) {
         super(context);
     }
 
-    public TaskSelectionButtion(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public TaskSelectionButton(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
     }
 

@@ -19,7 +19,7 @@ import com.chrysanthemum.appdata.querries.accounting.UpdateClosingData;
 import com.chrysanthemum.appdata.querries.accounting.read.ReadDailyTallyOfDate;
 import com.chrysanthemum.ui.dataView.task.Task;
 import com.chrysanthemum.ui.dataView.task.TaskHostestActivity;
-import com.chrysanthemum.ui.dataView.task.TaskSelectionButtion;
+import com.chrysanthemum.ui.dataView.task.TaskSelectionButton;
 import com.chrysanthemum.ui.dataView.task.display.LineDisplayLayoutTask;
 import com.chrysanthemum.ui.dataView.task.subTasks.DaySelectorTask;
 
@@ -170,8 +170,8 @@ public class TallyTask  extends LineDisplayLayoutTask {
         });
     }
 
-    public static TaskSelectionButtion getMenuButton(final Context context, final TaskHostestActivity host) {
-        return new TaskSelectionButtion(context) {
+    public static TaskSelectionButton getMenuButton(final Context context, final TaskHostestActivity host) {
+        return new TaskSelectionButton(context) {
             @Override
             public Task getTask() {
                 return new TallyTask(host);

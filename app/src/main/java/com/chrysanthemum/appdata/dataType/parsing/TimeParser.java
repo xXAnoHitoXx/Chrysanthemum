@@ -178,39 +178,36 @@ public class TimeParser {
     }
 
     public static Comparator<Transaction> getTimeBasedComparator() {
-        return new Comparator<Transaction>() {
-            @Override
-            public int compare(Transaction o1, Transaction o2) {
-                int comp;
+        return (o1, o2) -> {
+            int comp;
 
-                comp = o1.getLocalDateAppointmentDate().compareTo(o2.getLocalDateAppointmentDate());
+            comp = o1.getLocalDateAppointmentDate().compareTo(o2.getLocalDateAppointmentDate());
 
-                if(comp != 0){
-                    return comp;
-                }
-
-                comp = o1.getAppointmentTime() - o2.getAppointmentTime();
-
-                if(comp!= 0){
-                    return comp;
-                }
-
-                long l = 0;
-
-                if(o1.getTech() != null && o2.getTech() != null){
-                    l = o1.getTech().getID() - o2.getTech().getID();
-                }
-
-                if(l == 0){
-                    l = o1.getID() - o2.getID();
-                }
-
-                if(l != 0){
-                    l /= Math.abs(l);
-                }
-
-                return (int)l;
+            if(comp != 0){
+                return comp;
             }
+
+            comp = o1.getAppointmentTime() - o2.getAppointmentTime();
+
+            if(comp!= 0){
+                return comp;
+            }
+
+            long l = 0;
+
+            if(o1.getTech() != null && o2.getTech() != null){
+                l = o1.getTech().getID() - o2.getTech().getID();
+            }
+
+            if(l == 0){
+                l = o1.getID() - o2.getID();
+            }
+
+            if(l != 0){
+                l /= Math.abs(l);
+            }
+
+            return (int)l;
         };
     }
 }

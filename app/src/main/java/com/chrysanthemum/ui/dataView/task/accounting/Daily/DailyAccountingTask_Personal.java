@@ -17,7 +17,7 @@ import com.chrysanthemum.appdata.querries.TimedOutException;
 import com.chrysanthemum.appdata.querries.transaction.read.LoadTransactionOfTechnicianOnDate;
 import com.chrysanthemum.ui.dataView.task.Task;
 import com.chrysanthemum.ui.dataView.task.TaskHostestActivity;
-import com.chrysanthemum.ui.dataView.task.TaskSelectionButtion;
+import com.chrysanthemum.ui.dataView.task.TaskSelectionButton;
 import com.chrysanthemum.ui.dataView.task.subTasks.DaySelectorTask;
 
 import java.time.LocalDate;
@@ -45,13 +45,10 @@ public class DailyAccountingTask_Personal extends DailyAccountingTask {
         daySelect.setFocusable(false);
         daySelect.setText(TimeParser.parseDateDisplayDay(today));
 
-        daySelect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Task sub = new DaySelectorTask(host, date -> loadBoard(date));
+        daySelect.setOnClickListener(v -> {
+            Task sub = new DaySelectorTask(host, this::loadBoard);
 
-                sub.start();
-            }
+            sub.start();
         });
 
         host.getFormButton().setVisibility(View.INVISIBLE);
@@ -88,8 +85,8 @@ public class DailyAccountingTask_Personal extends DailyAccountingTask {
         }
     }
 
-    public static TaskSelectionButtion getMenuButton(Context context, final TaskHostestActivity host) {
-        return new TaskSelectionButtion(context) {
+    public static TaskSelectionButton getMenuButton(Context context, final TaskHostestActivity host) {
+        return new TaskSelectionButton(context) {
             @Override
             public Task getTask() {
                 return new DailyAccountingTask_Personal(host);

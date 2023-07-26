@@ -46,26 +46,23 @@ public class UpdateAppointmentTask extends Task {
 
         Button button = host.getFormButton();
         button.setText("Close Transaction");
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String money = payment.getText().toString();
+        button.setOnClickListener(v -> {
+            String money = payment.getText().toString();
 
-                money = money.replaceAll("\\(" , " ");
-                money = money.replaceAll("[$).]", "");
-                money = money.replaceAll(" +", " ");
+            money = money.replaceAll("\\(" , " ");
+            money = money.replaceAll("[$).]", "");
+            money = money.replaceAll(" +", " ");
 
-                int[] pay = MoneyParser.parsePayment(money);
+            int[] pay = MoneyParser.parsePayment(money);
 
-                if(pay == null){
-                    new UpdateTransactionData(transaction, service.getText().toString()).execute();
-                } else {
-                    new CloseAppointment(transaction, pay[0], pay[1], service.getText().toString()).execute();
-                }
-
-                CustomerFinderTask.service(transaction.getCustomer());
-                retriever.retrievedData(transaction);
+            if(pay == null){
+                new UpdateTransactionData(transaction, service.getText().toString()).execute();
+            } else {
+                new CloseAppointment(transaction, pay[0], pay[1], service.getText().toString()).execute();
             }
+
+            CustomerFinderTask.service(transaction.getCustomer());
+            retriever.retrievedData(transaction);
         });
     }
 }

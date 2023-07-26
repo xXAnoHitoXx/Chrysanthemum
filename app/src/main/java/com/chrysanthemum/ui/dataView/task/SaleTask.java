@@ -1,7 +1,6 @@
 package com.chrysanthemum.ui.dataView.task;
 
 import android.content.Context;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -11,7 +10,6 @@ import com.chrysanthemum.appdata.Util.Scaler;
 import com.chrysanthemum.appdata.dataType.Customer;
 import com.chrysanthemum.appdata.dataType.Transaction;
 import com.chrysanthemum.appdata.dataType.parsing.MoneyParser;
-import com.chrysanthemum.appdata.dataType.retreiver.DataRetriever;
 import com.chrysanthemum.appdata.querries.DBCreateQuery;
 import com.chrysanthemum.appdata.querries.transaction.CreateSaleTransaction;
 import com.chrysanthemum.ui.dataView.task.subTasks.CustomerFinderTask;
@@ -30,24 +28,18 @@ public class SaleTask extends Task {
 
     @Override
     public void start() {
-        Task customerSelect = new CustomerFinderTask(host, new DataRetriever<Customer>() {
-            @Override
-            public void retrievedData(Customer data) {
-                customer = data;
-                taskSetup();
-            }
+        Task customerSelect = new CustomerFinderTask(host, data -> {
+            customer = data;
+            taskSetup();
         });
         customerSelect.start();
     }
 
     private void taskSetup(){
         if(DataStorageModule.getModule().getSecurityModule().getLoggedinTech().getRole().equalsIgnoreCase("admin")){
-            DaySelectorTask t = new DaySelectorTask(host, new DataRetriever<LocalDate>() {
-                @Override
-                public void retrievedData(LocalDate data) {
-                    date = data;
-                    saleForm();
-                }
+            DaySelectorTask t = new DaySelectorTask(host, data -> {
+                date = data;
+                saleForm();
             });
             t.start();
         } else {
@@ -76,33 +68,30 @@ public class SaleTask extends Task {
         Button button = host.getFormButton();
         button.setText("Finish!");
 
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        button.setOnClickListener(v -> {
 
-                int amt = MoneyParser.parseSingleAmount(amount.getText().toString());
-                if(amt == Integer.MIN_VALUE){
-                    amount.setError("Amount Isn't Recognizable!");
-                    return;
-                }
-
-                DBCreateQuery<Transaction> query = new CreateSaleTransaction(date, customer, desc.getText().toString(), amt);
-                query.execute();
-
-                host.popMessage("Sale Record Created!");
-
-                host.getBoard().clear(new Scaler(1));
-                host.clearForm();
-
-                start();
+            int amt = MoneyParser.parseSingleAmount(amount.getText().toString());
+            if(amt == Integer.MIN_VALUE){
+                amount.setError("Amount Isn't Recognizable!");
+                return;
             }
+
+            DBCreateQuery<Transaction> query = new CreateSaleTransaction(date, customer, desc.getText().toString(), amt);
+            query.execute();
+
+            host.popMessage("Sale Record Created!");
+
+            host.getBoard().clear(new Scaler(1));
+            host.clearForm();
+
+            start();
         });
 
     }
 
 
-    public static TaskSelectionButtion getMenuButton(Context context, final TaskHostestActivity host) {
-        return new TaskSelectionButtion(context) {
+    public static TaskSelectionButton getMenuButton(Context context, final TaskHostestActivity host) {
+        return new TaskSelectionButton(context) {
             @Override
             public Task getTask() {
                 return new SaleTask(host);

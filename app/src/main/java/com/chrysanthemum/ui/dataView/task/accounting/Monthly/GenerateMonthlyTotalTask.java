@@ -20,7 +20,7 @@ import com.chrysanthemum.appdata.querries.TimedOutException;
 import com.chrysanthemum.appdata.querries.accounting.read.ReadMonthTally;
 import com.chrysanthemum.ui.dataView.task.Task;
 import com.chrysanthemum.ui.dataView.task.TaskHostestActivity;
-import com.chrysanthemum.ui.dataView.task.TaskSelectionButtion;
+import com.chrysanthemum.ui.dataView.task.TaskSelectionButton;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -114,8 +114,8 @@ public class GenerateMonthlyTotalTask extends Task {
     }
 
 
-    public static TaskSelectionButtion getMenuButton(Activity context, final TaskHostestActivity host) {
-        return new TaskSelectionButtion(context) {
+    public static TaskSelectionButton getMenuButton(Activity context, final TaskHostestActivity host) {
+        return new TaskSelectionButton(context) {
             @Override
             public Task getTask() {
                 return new GenerateMonthlyTotalTask(host, context);

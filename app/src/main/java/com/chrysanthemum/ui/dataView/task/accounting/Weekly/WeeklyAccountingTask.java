@@ -17,7 +17,7 @@ import com.chrysanthemum.appdata.querries.TimedOutException;
 import com.chrysanthemum.appdata.querries.accounting.read.ReadTechTallyBlocks;
 import com.chrysanthemum.ui.dataView.task.Task;
 import com.chrysanthemum.ui.dataView.task.TaskHostestActivity;
-import com.chrysanthemum.ui.dataView.task.TaskSelectionButtion;
+import com.chrysanthemum.ui.dataView.task.TaskSelectionButton;
 import com.chrysanthemum.appdata.dataType.Amount;
 import com.chrysanthemum.ui.dataView.task.display.LineDisplayLayoutTask;
 import com.chrysanthemum.ui.dataView.task.subTasks.DaySelectorTask;
@@ -193,8 +193,8 @@ public class WeeklyAccountingTask  extends LineDisplayLayoutTask {
         displayLine(data, Color.GRAY, 0, null);
     }
 
-    public static TaskSelectionButtion getMenuButton(Context context, final TaskHostestActivity host, final Technician tech){
-        return new TaskSelectionButtion(context){
+    public static TaskSelectionButton getMenuButton(Context context, final TaskHostestActivity host, final Technician tech){
+        return new TaskSelectionButton(context){
             @Override
             public Task getTask() {
                 return new WeeklyAccountingTask(host, tech);

@@ -23,7 +23,7 @@ import com.chrysanthemum.ui.dataView.task.GiftManager;
 import com.chrysanthemum.ui.dataView.task.SaleTask;
 import com.chrysanthemum.ui.dataView.task.Task;
 import com.chrysanthemum.ui.dataView.task.TaskHostestActivity;
-import com.chrysanthemum.ui.dataView.task.TaskSelectionButtion;
+import com.chrysanthemum.ui.dataView.task.TaskSelectionButton;
 import com.chrysanthemum.ui.dataView.task.accounting.Daily.DailyAccountingTask_Admin;
 import com.chrysanthemum.ui.dataView.task.accounting.Daily.DailyAccountingTask_Personal;
 import com.chrysanthemum.ui.dataView.task.accounting.Daily.TallyTask;
@@ -80,16 +80,16 @@ public class DataDisplayActivity extends AppCompatActivity implements TaskHostes
 
     private void instantiateTaskPanel(){
 
-        TaskSelectionButtion appointmentViewer = AppointmentViewerTask.getMenuButton(this, this);
+        TaskSelectionButton appointmentViewer = AppointmentViewerTask.getMenuButton(this, this);
         addTaskPanelButton(appointmentViewer);
 
-        TaskSelectionButtion sales = SaleTask.getMenuButton(this, this);
+        TaskSelectionButton sales = SaleTask.getMenuButton(this, this);
         addTaskPanelButton(sales);
 
-        TaskSelectionButtion giftCardManager = GiftManager.getMenuButton(this, this);
+        TaskSelectionButton giftCardManager = GiftManager.getMenuButton(this, this);
         addTaskPanelButton(giftCardManager);
 
-        TaskSelectionButtion customerManager = CustomerManagerTask.getMenuButton(this, this);
+        TaskSelectionButton customerManager = CustomerManagerTask.getMenuButton(this, this);
         addTaskPanelButton(customerManager);
 
         //------------------------------------------------------------------------------------------
@@ -99,23 +99,23 @@ public class DataDisplayActivity extends AppCompatActivity implements TaskHostes
         if(!tech.getRole().equals(Technician.Dummy)){
             addTaskPanelDivider();
 
-            TaskSelectionButtion personalAccounting = DailyAccountingTask_Personal.getMenuButton(this, this);
+            TaskSelectionButton personalAccounting = DailyAccountingTask_Personal.getMenuButton(this, this);
             addTaskPanelButton(personalAccounting);
 
 
-            TaskSelectionButtion periodAccounting = WeeklyAccountingTask.getMenuButton(this, this, tech);
+            TaskSelectionButton periodAccounting = WeeklyAccountingTask.getMenuButton(this, this, tech);
             addTaskPanelButton(periodAccounting);
         }
 
         if(tech.getRole().equals(Technician.ADMIN)){
 
-            TaskSelectionButtion dailyAccounting = DailyAccountingTask_Admin.getMenuButton(this, this);
+            TaskSelectionButton dailyAccounting = DailyAccountingTask_Admin.getMenuButton(this, this);
             addTaskPanelButton(dailyAccounting);
 
-            TaskSelectionButtion dailyClosing = TallyTask.getMenuButton(this, this);
+            TaskSelectionButton dailyClosing = TallyTask.getMenuButton(this, this);
             addTaskPanelButton(dailyClosing);
 
-            TaskSelectionButtion monthReport = GenerateMonthlyTotalTask.getMenuButton(this, this);
+            TaskSelectionButton monthReport = GenerateMonthlyTotalTask.getMenuButton(this, this);
             addTaskPanelButton(monthReport);
 
         }
@@ -131,7 +131,7 @@ public class DataDisplayActivity extends AppCompatActivity implements TaskHostes
     }
 
     private void addTaskPanelDivider() {
-        TaskSelectionButtion button = new TaskSelectionButtion(this) {
+        TaskSelectionButton button = new TaskSelectionButton(this) {
             @Override
             public Task getTask() {
                 return null;
@@ -146,11 +146,11 @@ public class DataDisplayActivity extends AppCompatActivity implements TaskHostes
         addTaskPanelButton(button, null);
     }
 
-    private void addTaskPanelButton(TaskSelectionButtion button){
+    private void addTaskPanelButton(TaskSelectionButton button){
         addTaskPanelButton(button, getTaskPanelButtonListener(button));
     }
 
-    private void addTaskPanelButton(TaskSelectionButtion button, View.OnClickListener listener){
+    private void addTaskPanelButton(TaskSelectionButton button, View.OnClickListener listener){
         button.setOnClickListener(listener);
         button.setText(button.getTaskName());
         button.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
@@ -161,7 +161,7 @@ public class DataDisplayActivity extends AppCompatActivity implements TaskHostes
         button.invalidate();
     }
 
-    private View.OnClickListener getTaskPanelButtonListener(final TaskSelectionButtion button){
+    private View.OnClickListener getTaskPanelButtonListener(final TaskSelectionButton button){
         return v -> setTask(button.getTask(), button.getTaskName());
     }
 

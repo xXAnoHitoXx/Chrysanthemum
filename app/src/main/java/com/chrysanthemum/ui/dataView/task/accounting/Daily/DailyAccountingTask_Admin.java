@@ -20,7 +20,7 @@ import com.chrysanthemum.appdata.querries.transaction.UpdateTransactionData;
 import com.chrysanthemum.appdata.querries.transaction.read.LoadTransactionRecordsOfDate;
 import com.chrysanthemum.ui.dataView.task.Task;
 import com.chrysanthemum.ui.dataView.task.TaskHostestActivity;
-import com.chrysanthemum.ui.dataView.task.TaskSelectionButtion;
+import com.chrysanthemum.ui.dataView.task.TaskSelectionButton;
 import com.chrysanthemum.ui.dataView.task.subTasks.DaySelectorTask;
 import com.chrysanthemum.ui.dataView.task.subTasks.MultiTechSelectionTask;
 
@@ -183,8 +183,8 @@ public class DailyAccountingTask_Admin extends DailyAccountingTask {
         });
     }
 
-    public static TaskSelectionButtion getMenuButton(Context context, final TaskHostestActivity host) {
-        return new TaskSelectionButtion(context) {
+    public static TaskSelectionButton getMenuButton(Context context, final TaskHostestActivity host) {
+        return new TaskSelectionButton(context) {
             @Override
             public Task getTask() {
                 return new DailyAccountingTask_Admin(host);

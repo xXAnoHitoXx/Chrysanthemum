@@ -205,8 +205,8 @@ public class CustomerManagerTask extends Task {
     }
 
 
-    public static TaskSelectionButtion getMenuButton(Context context, final TaskHostestActivity host){
-        return new TaskSelectionButtion(context){
+    public static TaskSelectionButton getMenuButton(Context context, final TaskHostestActivity host){
+        return new TaskSelectionButton(context){
             @Override
             public Task getTask() {
                 return new CustomerManagerTask(host);

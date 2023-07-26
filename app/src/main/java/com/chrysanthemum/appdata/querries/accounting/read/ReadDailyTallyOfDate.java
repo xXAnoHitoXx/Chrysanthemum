@@ -30,9 +30,7 @@ public class ReadDailyTallyOfDate extends DBReadQuery<DailyTally> {
                 long[] amount_tip = new long[] {preTax, postTax};
 
                 AsyncSubQuery<DailyClosure> readClosureQuery = new ReadDailyClosure(date);
-                readClosureQuery.execute(close -> {
-                    returnQueryData(new DailyTally(close, amount_tip));
-                });
+                readClosureQuery.execute(close -> returnQueryData(new DailyTally(close, amount_tip)));
 
             }
         });

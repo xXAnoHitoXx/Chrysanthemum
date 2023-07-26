@@ -64,7 +64,7 @@ public class SimpleCustomerTest {
         try {
             verifyCreateOneCustomer(nq.execute(), failed);
         } catch (TimedOutException e) {
-            assertTrue(false);
+            fail();
         }
 
         assertFalse(failed.read());
@@ -73,7 +73,7 @@ public class SimpleCustomerTest {
         try {
             verifyCreateOneCustomer(pq.execute(), failed);
         } catch (TimedOutException e) {
-            assertTrue(false);
+            fail();
         }
 
         assertTrue(failed.read());
@@ -89,7 +89,7 @@ public class SimpleCustomerTest {
         try {
             verifyCreateOneCustomer(nq.execute(), failed);
         } catch (TimedOutException e) {
-            assertTrue(false);
+            fail();
         }
 
         assertTrue(failed.read());
@@ -98,7 +98,7 @@ public class SimpleCustomerTest {
         try {
             verifyCreateOneCustomer(pq.execute(), failed);
         } catch (TimedOutException e) {
-            assertTrue(false);
+            fail();
         }
 
         assertTrue(failed.read());
