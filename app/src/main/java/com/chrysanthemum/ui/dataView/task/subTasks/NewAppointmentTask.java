@@ -45,26 +45,50 @@ public class NewAppointmentTask extends Task {
 
         StringBuilder time = new StringBuilder();
         if(estimatedHour == 0){
-            time.append("12:0 am");
+            time.append("12:00 am");
         } else if(estimatedHour == 12){
-            time.append("12:0 pm");
+            time.append("12:00 pm");
         } else if (estimatedHour < 12) {
-            time.append(estimatedHour).append(":0 am");
+            time.append(estimatedHour).append(":00 am");
         } else {
-            time.append(estimatedHour - 12).append(":0 pm");
+            time.append(estimatedHour - 12).append(":00 pm");
         }
 
 
-        final TextView dateLabel = host.createFormLabel(1);
-        dateLabel.setText("Appointment Time:");
+        final TextView TimeLabel = host.createFormLabel(1);
+        TimeLabel.setText("Appointment Time:");
 
         final EditText appTime = host.createEditableForm(1);
         appTime.setText(time.toString());
+
+
+        final TextView minuteLabel = host.createFormLabel(2);
+        minuteLabel.setText("Offset: A->15 B->30 C->45");
+
+        final EditText offSet = host.createEditableForm(2);
+        offSet.setHint("A");
+
 
         Button button = host.getFormButton();
         button.setText("Create");
         button.setOnClickListener(v -> {
             appointmentTime = TimeParser.parseTime(appTime.getText().toString().replace(":", " "));
+
+            switch (offSet.getText().toString()) {
+                case "A":
+                case "a":
+                    appointmentTime += 15;
+                    break;
+                case "B":
+                case "b":
+                    appointmentTime += 30;
+                    break;
+                case "C":
+                case "c":
+                    appointmentTime += 45;
+                default:
+                    break;
+            }
 
             if(appointmentTime < 0){
                 appTime.setError("Appointment Time Example: 8:30 am");
