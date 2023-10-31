@@ -3,6 +3,7 @@ package com.chrysanthemum.ui.dataView.display;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 
@@ -44,7 +45,7 @@ public class DataDisplay extends androidx.appcompat.widget.AppCompatTextView {
             } else {
                 this.setTextColor(0xff000000);
             }
-
+            this.setTypeface(Typeface.MONOSPACE);
             this.setText(data.getDisplayData());
         } else {
             this.setText("");
