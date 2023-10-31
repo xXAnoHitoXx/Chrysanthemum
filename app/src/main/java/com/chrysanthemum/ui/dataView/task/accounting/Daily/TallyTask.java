@@ -98,38 +98,43 @@ public class TallyTask  extends LineDisplayLayoutTask {
 
     private void displayTally(DailyTally tally){
         host.getBoard().clear(new Scaler(TASK_SCALE));
-        displayLabel();
 
-        String[] data = new String[] {
-          tally.getAmount(), tally.getTip(), tally.getTax(), tally.getCash(), tally.getMachine(), tally.getGift(), tally.getDiff()
-
+        String[] topLables = new String[] {
+                "Difference" , "Amount", "Tip", "Tax"
         };
 
-        displayLine(data, Color.GRAY, 1, new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                closingUpdateForm(tally);
-                return true;
-            }
+        displayLine(topLables, new int[] {Color.GREEN, Color.GRAY, Color.GRAY, Color.GRAY}, 0);
+
+        String[] topData = new String[] {
+                tally.getDiff(), tally.getAmount(), tally.getTip(), tally.getTax()
+        };
+
+        displayLine(topData, new int[] {Color.GREEN, Color.LTGRAY, Color.LTGRAY, Color.LTGRAY}, 1);
+
+        String[] closeLables = new String[] {
+                "Cash" , "Machine", "Gift", "Discounts"
+        };
+
+        displayLine(closeLables, Color.GRAY, 2, null);
+
+        String[] closeData = new String[] {
+                tally.getCash(), tally.getMachine(), tally.getGift(), tally.getDiscount()
+        };
+
+        displayLine(closeData, Color.LTGRAY, 3, (View v) -> {
+            closingUpdateForm(tally);
+            return true;
         });
-    }
-
-    private void displayLabel(){
-        String[] data = new String[] {
-                "Amount", "Tip", "Tax", "Cash", "Machine", "Gift", "Difference"
-        };
-
-        displayLine(data, Color.GRAY, 0, null);
     }
 
     private void closingUpdateForm(DailyTally tally){
         host.clearForm();
 
         final TextView label = host.createFormLabel(1);
-        label.setText("Cash Machine Gift:");
+        label.setText("Cash Machine Gift Discount:");
 
         final EditText form = host.createEditableForm(1);
-        form.setText(tally.getCash() + " " + tally.getMachine() + " " + tally.getGift());
+        form.setText(tally.getCash() + " " + tally.getMachine() + " " + tally.getGift() + " " + tally.getDiscount());
 
         Button button = host.getFormButton();
         button.setText("Update!");
@@ -142,21 +147,28 @@ public class TallyTask  extends LineDisplayLayoutTask {
 
                 boolean errorDetected = false;
 
-                long cash = MoneyParser.parseSingleAmount(scanner.next());
+                long cash =  scanner.hasNext() ? MoneyParser.parseSingleAmount(scanner.next()) : 0;
 
                 if(cash == Integer.MIN_VALUE){
                     form.setError("Invalid Amount");
                     errorDetected = true;
                 }
 
-                long machine = MoneyParser.parseSingleAmount(scanner.next());
+                long machine = scanner.hasNext() ? MoneyParser.parseSingleAmount(scanner.next()) : 0;
 
                 if(machine == Integer.MIN_VALUE){
                     form.setError("Invalid Amount");
                     errorDetected = true;
                 }
 
-                long gift = MoneyParser.parseSingleAmount(scanner.next());
+                long gift = scanner.hasNext() ? MoneyParser.parseSingleAmount(scanner.next()) : 0;
+
+                if(gift == Integer.MIN_VALUE){
+                    form.setError("Invalid Amount");
+                    errorDetected = true;
+                }
+
+                long discount = scanner.hasNext() ? MoneyParser.parseSingleAmount(scanner.next()) : 0;
 
                 if(gift == Integer.MIN_VALUE){
                     form.setError("Invalid Amount");
@@ -167,7 +179,7 @@ public class TallyTask  extends LineDisplayLayoutTask {
                     return;
                 }
 
-                UpdateClosingDataQuery q = new UpdateClosingDataQuery(cash, machine, gift, selectedDate, tally);
+                UpdateClosingDataQuery q = new UpdateClosingDataQuery(cash, machine, gift, discount, selectedDate, tally);
                 q.executeQuery();
 
                 displayTally(tally);
