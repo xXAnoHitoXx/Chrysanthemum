@@ -123,12 +123,36 @@ public class GenerateMonthlyTotalTask extends Task {
 
         while(scanner.hasNext()){
             String line = scanner.nextLine();
-            String lineData = "";
             Scanner lineScanner = new Scanner(line);
+            String lineData = "";
+            String word = "";
 
-            while(lineScanner.hasNext()){
-                String word = lineScanner.next();
-                lineData += String.format("%1$12s", word.substring(0, word.length() - 1));
+            if(row >= 2){
+                word = lineScanner.next();
+
+                if(word.equals("First") || word.equals("Second") | word.equals("Month")){
+                    word += " " + lineScanner.next();
+                } else {
+                    word += "/" + lineScanner.next();
+                    word += "/" + lineScanner.next();
+                }
+
+                if(word.charAt(word.length() - 1) == ',') {
+                    word = word.substring(0, word.length() - 1);
+                }
+
+                lineData = String.format("%1$12s", word);
+            }
+
+            while(lineScanner.hasNext()) {
+
+                word = lineScanner.next();
+
+                if(word.charAt(word.length() - 1) == ',') {
+                    word = word.substring(0, word.length() - 1);
+                }
+
+                lineData += String.format("%1$12s", word);
             }
 
             host.getBoard().displayData(new DataDisplay(row++, 0, lineData));
@@ -143,7 +167,7 @@ public class GenerateMonthlyTotalTask extends Task {
         int rowNum; int colNum;
 
         private final String data;
-        private final int colour = 0xFF8C8C8C;
+        private final int colour = Color.LTGRAY;
 
         public DataDisplay(int row, int col, String data){
             this.data = data;
